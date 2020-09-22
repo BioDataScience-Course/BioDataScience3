@@ -3,7 +3,7 @@ title: "Découverte de learnr"
 author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III** Quelques exercices simples pour découvrir learnr."
 tutorial:
-  id: "C00a_decouverte"
+  id: "C00La_decouverte"
   version: 2.0.0/5
 output:
   learnr::tutorial:
