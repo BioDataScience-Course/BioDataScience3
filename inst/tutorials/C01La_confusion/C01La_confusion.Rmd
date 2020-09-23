@@ -4,13 +4,14 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III** Exercices sur les matrices de confusion."
 tutorial:
   id: "C01La_confusion"
-  version: 0.0.1/2
+  version: 1.0.0/4
 output:
   learnr::tutorial:
     progressive: true
     allow_skip: true
 runtime: shiny_prerendered
 ---
+
 ```{r setup, include=FALSE}
 BioDataScience3::learnr_setup()
 SciViews::R()
@@ -43,7 +44,7 @@ data.frame(
   knitr::kable(., caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
 ```
 
-Sur base de la matrice de confusion confusion ci dessus, calculez le taux de reconnaissance global du groupe B.
+Sur base de la matrice de confusion ci-dessus, calculez le taux de reconnaissance global du groupe B.
 
 ```{r conf1_h2, exercise = TRUE}
 tp <- ___ # TRUE POSITIVE, vrai positif
@@ -94,7 +95,7 @@ data.frame(
   knitr::kable(., caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
 ```
 
-Sur base de la matrice de confusion confusion ci dessus, calculez le **taux de vrai positif** du groupe C.
+Sur base de la matrice de confusion ci-dessus, calculez le **taux de vrai positif** du groupe C.
 
 ```{r conf2_h2, exercise = TRUE}
 tp <- ___
@@ -131,6 +132,108 @@ conf
 ```{r conf2_h2-check}
 grade_result(
   pass_if(~ identical(.result, (14/(14 + 10))), "Bien joué !")
+)
+```
+
+### La spécificité
+
+```{r, echo=FALSE, message=FALSE}
+data.frame(
+  "A" = c( 9, 4, 1), 
+  "B" = c(0, 6, 9), 
+  "C" = c(0,1, 14),  
+  row.names = c("A", "B", "C")) %>.%
+  knitr::kable(., caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
+```
+
+Sur base de la matrice de confusion ci-dessus, calculez la **spécificité** du groupe A.
+
+```{r conf3_h2, exercise = TRUE}
+tp <- ___
+fp <- ___
+fn <- ___
+tn <- ___
+# calcul de la matrice
+conf <- ___
+conf
+```
+
+```{r conf3_h2-hint-1}
+tp <- 9
+fp <- 5
+fn <- 0
+tn <- 30
+# calcul de la matrice
+conf <- ___
+conf
+## Attention, le prochain indice est la solution ##
+```
+
+```{r conf3_h2-solution}
+## Solution ##
+tp <- 9
+fp <- 5
+fn <- 0
+tn <- 30
+# calcul de la matrice
+conf <- (tn)/(tn+fp)
+conf
+```
+
+```{r conf3_h2-check}
+grade_result(
+  pass_if(~ identical(.result, (30/(30 + 5))), "Bien joué !")
+)
+```
+
+### La précision
+
+```{r, echo=FALSE, message=FALSE}
+data.frame(
+  "A" = c(10, 3, 2), 
+  "B" = c(0, 0, 15), 
+  "C" = c(3, 1, 11),  
+  row.names = c("A", "B", "C")) %>.%
+  knitr::kable(., caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
+```
+
+Sur base de la matrice de confusion ci-dessus, calculez la **précision** du groupe B.
+
+```{r conf4_h2, exercise = TRUE}
+tp <- ___
+fp <- ___
+fn <- ___
+tn <- ___
+# calcul de la matrice
+conf <- ___
+conf
+```
+
+```{r conf4_h2-hint-1}
+tp <- 15
+fp <- 0
+fn <- 13
+tn <- 17
+# calcul de la matrice
+conf <- ___
+conf
+## Attention, le prochain indice est la solution ##
+```
+
+```{r conf4_h2-solution}
+## Solution ##
+tp <- 15
+fp <- 0
+fn <- 13
+tn <- 17
+# calcul de la matrice
+conf <- (tp)/(tp+fp)
+conf
+```
+
+```{r conf4_h2-check}
+grade_result(
+  pass_if(~ identical(.result, (15/(15+0))), "Bien joué !")
 )
 ```
 
