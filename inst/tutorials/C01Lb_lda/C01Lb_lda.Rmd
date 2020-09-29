@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III** Exercices sur l'ADL"
 tutorial:
   id: "C01Lb_lda"
-  version: 1.2.0/5
+  version: 1.0.0/5
 output:
   learnr::tutorial:
     progressive: true
@@ -16,6 +16,23 @@ runtime: shiny_prerendered
 BioDataScience3::learnr_setup()
 SciViews::R()
 library(mlearning)
+
+# prepa data
+read("biometry", package = "BioDataScience") %>.%
+  select(., gender, weight, height, wrist) %>.%
+  drop_na(.) -> bio
+
+# Prepare learn test and set test
+n <- nrow(bio)
+n_learning <- round(n * 2/3)
+set.seed(164)
+learning <- sample(1:n, n_learning)
+
+bio_test <- slice(bio, -learning)
+bio_learn <- slice(bio,learning)
+
+bio_lda <- mlLda(formula = gender ~ ., data = bio_learn)
+
 ```
 
 ```{r, echo=FALSE}
@@ -33,6 +50,9 @@ BioDataScience3::learnr_server(input, output, session)
 - Réalisez une analyse discriminante linéaire.
 
 ```{r, message=FALSE, warning=FALSE}
+library(mlearning)
+SciViews::R()
+
 # exercice 1 : résolution
 read("biometry", package = "BioDataScience") %>.%
   select(., gender, weight, height, wrist) %>.%
@@ -45,28 +65,11 @@ set.seed(164)
 learning <- sample(1:n, n_learning)
 
 bio_test <- slice(bio, -learning)
-bio_learn <- slice(bio,learning)
+bio_learn <- slice(bio, learning)
 
-bio_lda <- mlLda(formula = gender ~ ., data = bio_learn)
+bio_lda <- mlLda(formula = gender ~ ., data= bio_learn)
 bio_conf <- confusion(predict(bio_lda, bio_test), bio_test$gender)
 conf_tab <- summary(bio_conf)
-```
-
-```{r ldaprepa}
-read("biometry", package = "BioDataScience") %>.%
-  select(., gender, weight, height, wrist) %>.%
-  drop_na(.) -> bio
-
-# Prepare learn test and set test
-n <- nrow(bio)
-n_learning <- round(n * 2/3)
-set.seed(164)
-learning <- sample(1:n, n_learning)
-
-bio_test <- slice(bio, -learning)
-bio_learn <- slice(bio,learning)
-
-bio_lda <- mlLda(formula = gender ~ ., data = bio_learn)
 ```
 
 ## Création de votre modèle
@@ -98,7 +101,7 @@ table(bio_test$gender)
 
 Réalisez un modèle avec le set d'apprentissage. Prédisez la variable `gender` à l'aide des 3 variables numériques. 
 
-```{r lda1_h2, exercise = TRUE, exercise.setup = "ldaprepa"}
+```{r lda1_h2, exercise = TRUE}
 bio_lda <- mlLda(formula = ___ ~ ___, data = ___)
 summary(bio_lda)
 ```
@@ -123,7 +126,7 @@ grade_code("Votre premier modèle est une réussite.")
 
 Vous venez de créer votre outils de classification qui se nomme `bio_lda`. Vous devez maintenant tester les performances de votre modèle.
 
-```{r lda2_h2, exercise = TRUE, exercise.setup = "ldaprepa"}
+```{r lda2_h2, exercise = TRUE}
 # prédiction sur le set de test
 bio_pred <- predict(___, ___)
 # matrice de confusion
