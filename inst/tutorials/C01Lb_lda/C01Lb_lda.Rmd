@@ -35,7 +35,7 @@ bio_learn <- bio[ learning, ]
 #bio_learn <- slice(bio, learning)
 
 ## Creation d'un modèle lda
-bio_lda <- mlLda(formula = gender ~ ., data = bio_test)
+bio_lda <- mlLda(formula = gender ~ ., data = bio_learn)
 
 ## Confusion 
 bio_conf <- confusion(predict(bio_lda, bio_test), bio_test$gender)
