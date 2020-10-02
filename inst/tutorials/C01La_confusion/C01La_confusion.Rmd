@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III** Exercices sur les matrices de confusion."
 tutorial:
   id: "C01La_confusion"
-  version: 1.0.0/4
+  version: 1.1.0/4
 output:
   learnr::tutorial:
     progressive: true
@@ -37,9 +37,9 @@ BioDataScience3::learnr_server(input, output, session)
 
 ```{r, echo=FALSE, message=FALSE}
 data.frame(
-  "A" = c( 25, 0, 1), 
-  "B" = c(0, 16, 9), 
-  "C" = c(0,8, 18),  
+  "A" = c(250, 0, 10), 
+  "B" = c(0, 160, 90), 
+  "C" = c(0, 80, 180),  
   row.names = c("A", "B", "C")) %>.%
   knitr::kable(., caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
 ```
@@ -57,10 +57,10 @@ conf
 ```
 
 ```{r conf1_h2-hint-1}
-tp <- 16
-fp <- 9
-fn <- 8
-tn <- 44
+tp <- 160
+fp <- 90
+fn <- 80
+tn <- 440
 # calcul de la matrice
 conf <- ___
 conf
@@ -69,10 +69,10 @@ conf
 
 ```{r conf1_h2-solution}
 ## Solution ##
-tp <- 16
-fp <- 9
-fn <- 8
-tn <- 44
+tp <- 160
+fp <- 90
+fn <- 80
+tn <- 440
 # calcul de la matrice
 conf <- (tp+tn)/(tp+fp+fn+tn)
 conf
@@ -80,7 +80,7 @@ conf
 
 ```{r conf1_h2-check}
 grade_result(
-  pass_if(~ identical(.result, ((16+44)/(16+9+8+44))), "Bien joué !")
+  pass_if(~ identical(.result, ((160+440)/(160+90+80+440))), "Bien joué !")
 )
 ```
 
@@ -88,9 +88,9 @@ grade_result(
 
 ```{r, echo=FALSE, message=FALSE}
 data.frame(
-  "A" = c( 9, 4, 1), 
-  "B" = c(0, 6, 9), 
-  "C" = c(0,1, 14),  
+  "A" = c(90, 40, 10), 
+  "B" = c(0, 60, 90), 
+  "C" = c(0, 10, 140),  
   row.names = c("A", "B", "C")) %>.%
   knitr::kable(., caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
 ```
@@ -108,10 +108,10 @@ conf
 ```
 
 ```{r conf2_h2-hint-1}
-tp <- 14
-fp <- 1
-fn <- 10
-tn <- 19
+tp <- 140
+fp <- 10
+fn <- 100
+tn <- 190
 # calcul de la matrice
 conf <- ___
 conf
@@ -120,10 +120,10 @@ conf
 
 ```{r conf2_h2-solution}
 ## Solution ##
-tp <- 14
-fp <- 1
-fn <- 10
-tn <- 19
+tp <- 140
+fp <- 10
+fn <- 100
+tn <- 190
 # calcul de la matrice
 conf <- (tp)/(tp+fn)
 conf
@@ -131,7 +131,7 @@ conf
 
 ```{r conf2_h2-check}
 grade_result(
-  pass_if(~ identical(.result, (14/(14 + 10))), "Bien joué !")
+  pass_if(~ identical(.result, (140/(140 + 100))), "Bien joué !")
 )
 ```
 
@@ -139,9 +139,9 @@ grade_result(
 
 ```{r, echo=FALSE, message=FALSE}
 data.frame(
-  "A" = c( 9, 4, 1), 
-  "B" = c(0, 6, 9), 
-  "C" = c(0,1, 14),  
+  "A" = c(90, 40, 10), 
+  "B" = c(0, 60, 90), 
+  "C" = c(0, 10, 140),  
   row.names = c("A", "B", "C")) %>.%
   knitr::kable(., caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
 ```
@@ -159,10 +159,10 @@ conf
 ```
 
 ```{r conf3_h2-hint-1}
-tp <- 9
-fp <- 5
+tp <- 90
+fp <- 50
 fn <- 0
-tn <- 30
+tn <- 300
 # calcul de la matrice
 conf <- ___
 conf
@@ -171,10 +171,10 @@ conf
 
 ```{r conf3_h2-solution}
 ## Solution ##
-tp <- 9
-fp <- 5
+tp <- 90
+fp <- 50
 fn <- 0
-tn <- 30
+tn <- 300
 # calcul de la matrice
 conf <- (tn)/(tn+fp)
 conf
@@ -182,7 +182,7 @@ conf
 
 ```{r conf3_h2-check}
 grade_result(
-  pass_if(~ identical(.result, (30/(30 + 5))), "Bien joué !")
+  pass_if(~ identical(.result, (300/(300 + 50))), "Bien joué !")
 )
 ```
 
@@ -190,9 +190,9 @@ grade_result(
 
 ```{r, echo=FALSE, message=FALSE}
 data.frame(
-  "A" = c(10, 3, 2), 
-  "B" = c(0, 0, 15), 
-  "C" = c(3, 1, 11),  
+  "A" = c(100, 30, 20), 
+  "B" = c(0, 10, 150), 
+  "C" = c(30, 20, 110),  
   row.names = c("A", "B", "C")) %>.%
   knitr::kable(., caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
 ```
@@ -210,10 +210,10 @@ conf
 ```
 
 ```{r conf4_h2-hint-1}
-tp <- 15
-fp <- 0
-fn <- 13
-tn <- 17
+tp <- 10
+fp <- 150
+fn <- 30
+tn <- 260
 # calcul de la matrice
 conf <- ___
 conf
@@ -222,10 +222,10 @@ conf
 
 ```{r conf4_h2-solution}
 ## Solution ##
-tp <- 15
-fp <- 0
-fn <- 13
-tn <- 17
+tp <- 10
+fp <- 150
+fn <- 30
+tn <- 260
 # calcul de la matrice
 conf <- (tp)/(tp+fp)
 conf
@@ -233,7 +233,7 @@ conf
 
 ```{r conf4_h2-check}
 grade_result(
-  pass_if(~ identical(.result, (15/(15+0))), "Bien joué !")
+  pass_if(~ identical(.result, (10/(10+150))), "Bien joué !")
 )
 ```
 
