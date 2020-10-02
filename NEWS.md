@@ -1,6 +1,6 @@
-# BioDataScience2 News
+# BioDataScience3 News
 
-## Changes in version 2020.2.0
+## Changes in version 2020.2.1
 
 - New tutorial : C01Lb_lda
 
