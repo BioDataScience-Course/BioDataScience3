@@ -1,10 +1,10 @@
 ---
 title: "Matrices de confusion"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III** Exercices sur les matrices de confusion."
+description: "**SDD III Module 1** Exercices sur les matrices de confusion."
 tutorial:
   id: "C01La_confusion"
-  version: 1.1.0/4
+  version: 1.1.1/4
 output:
   learnr::tutorial:
     progressive: true

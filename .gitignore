@@ -25,3 +25,6 @@
 
 # RSconnect
 rsconnect
+
+/inst/tutorials/**/*.html
+/inst/tutorials/**/tests
