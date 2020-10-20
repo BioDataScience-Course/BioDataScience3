@@ -109,7 +109,9 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       fileInput("file", "Votre proposition (fichier RDS)", accept = ".rds"),
-      textOutput("message")
+      textOutput("message"),
+      hr(),
+      actionButton("refresh", "Actualiser le classement")
     ),
     mainPanel(
       h3("Temps restant pour le challenge :"),
@@ -152,6 +154,7 @@ server <- function(input, output) {
   })
 
   output$ranking <- renderTable({
+    input$refresh # Trigger this code when the refresh button is clicked
     file <- input$file
     if (!is.null(file$datapath) && grepl("^.+__.+\\.rds", file$name) &&
       !is_done()) {
