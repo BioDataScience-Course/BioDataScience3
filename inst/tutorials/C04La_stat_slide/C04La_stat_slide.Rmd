@@ -42,19 +42,19 @@ La température moyenne mensuelle en Fahrenheit de l'air est étudié entre 1920
 plot(nottem)
 ```
 
-Vous avez à votre disposition quelques information sur cette série.
+Vous avez à votre disposition quelques informations sur cette série.
 
 ```{r}
 start(nottem) # début
 end(nottem) # fin
-frequency(nottem) # frequence
+frequency(nottem) # fréquence
 ```
 
 ### Les statistiques glissantes
 
-Les statistiques glissantes (sliding statistics en anglais) permettent de calculer des descripteurs (moyenne, médiane, ...) pour des intervalles de temps précis le long de l’axe temporelle de notre série. Les statistiques glissantes (sliding statistics en anglais) correspondent précisément à l’analyse de blocs successifs de données suivant un axe spatio-temporel. Dans {pastecs}, elles se calculent à l’aide de la fonction stat.slide()
+Les statistiques glissantes (sliding statistics en anglais) permettent de calculer des descripteurs (moyenne, médiane, ...) pour des intervalles de temps précis le long de l’axe temporelle de notre série. Il s'agit de l'analyse de blocs successifs de données suivant un axe spatio-temporel. Dans {pastecs}, elles se calculent à l’aide de la fonction stat.slide()
 
-Cette fonction comprend de nombreux arguments qu'il est intéressant de connaître. N'hésitez pas à lire l'aide de la fonction.
+Cette fonction comprend de nombreux arguments qu'il est intéressant de connaître. N'hésitez pas à lire l'aide de la fonction. Nous n'utiliserons que quelques arguments dans ces exercices.
 
 #### Bloc annuel
 
