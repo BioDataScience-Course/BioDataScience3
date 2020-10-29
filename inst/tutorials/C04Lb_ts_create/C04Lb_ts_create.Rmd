@@ -61,7 +61,7 @@ grade_code(" ")
 
 ### Série 2
 
-Votre série fictive débute en juilet 2005. Une observation est réalisée chaque mois. Transformez le vecteur `vec` ci dessous en un objet `ts` nommés `series`. Réalisez un graphique de cette série avec la fonction plot().
+Votre série fictive débute en juilet 2005. Une observation est réalisée chaque mois. Transformez le vecteur `vec` ci dessous en un objet `ts` nommés `serie`. Réalisez un graphique de cette série avec la fonction plot().
 
 ```{r ts2, exercise = TRUE}
 serie <- ts(vec, start = c(___,___), frequency = ___)
@@ -80,7 +80,7 @@ grade_code(" ")
 
 ### Série 3
 
-Votre série fictive débute au second trimestre de 1993. Une observation est réalisée chaque trimestre. Transformez le vecteur `vec` ci dessous en un objet `ts` nommés `series`. Réalisez un graphique de cette série avec la fonction plot().
+Votre série fictive débute au second trimestre de 1993. Une observation est réalisée chaque trimestre. Transformez le vecteur `vec` ci dessous en un objet `ts` nommés `serie`. Réalisez un graphique de cette série avec la fonction plot().
 
 ```{r ts3, exercise = TRUE}
 serie <- ts(vec, start = c(___, ___), frequency = ___)

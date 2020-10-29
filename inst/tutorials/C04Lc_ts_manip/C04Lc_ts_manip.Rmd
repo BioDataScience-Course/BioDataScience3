@@ -61,7 +61,7 @@ grade_code(" ")
 
 ### Exercice 2
 
-Quand débute cette série ? Combien d'observations y a t'il par unité de temps ? Utilisez la fonction la plus adaptée et qui ne revoie que le résultat demandé. 
+Quand débute cette série nommé `serie` ?  Utilisez la fonction la plus adaptée et qui ne revoie que le résultat demandé. 
 
 ```{r manip2, exercise = TRUE, exercise.lines = 1}
 ___(___)
@@ -81,7 +81,7 @@ grade_code(" ")
 boxplot(split(serie, cycle(serie)), col = "cornsilk")
 ```
 
-Reproduisez le graphique ci-dessus
+Reproduisez le graphique ci-dessus sur la série nommé `serie`.
 
 ```{r manip3, exercise = TRUE, exercise.lines = 1}
 ___(___(___,___(___)), col = "cornsilk")
