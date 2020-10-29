@@ -2,6 +2,12 @@
 
 ## Changes in version 2020.3.0
 
+- New tutorial : C04La_stat_slide
+- New tutorial : C04Lb_ts_create
+- New tutorial : C04Lc_ts_manip
+
+## Changes in version 2020.3.0
+
 - New tutorial : C02La_cv
 
 ## Changes in version 2020.2.1
