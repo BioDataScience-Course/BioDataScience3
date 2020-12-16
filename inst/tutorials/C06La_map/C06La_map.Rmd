@@ -1,0 +1,323 @@
+---
+title: "Réalisation de cartes"
+author: "Guyliann Engels & Philippe Grosjean"
+description: "**SDD III : Module 6** Réalisation de cartes avec R"
+tutorial:
+  id: "C06La_map"
+  version: 0.0.1/3
+output:
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+BioDataScience3::learnr_setup()
+SciViews::R()
+library(sf)
+library(tmap)
+fr_sf <- sf::st_as_sf(maps::map("france", plot = FALSE, fill = TRUE))
+
+# function 
+chart.sf <- function(data, specif = aes(), formula = NULL, mapping = aes(), type = NULL, theme = theme_svmap, env = parent.frame()) {
+  if (!missing(specif))
+    if (inherits(specif, "formula")) {
+      formula <- specif
+    } else if (inherits(specif, "uneval")) {
+      mapping <- specif
+    } else rlang::abort("'specif' must be either a formula or aes()/f_aes()")
+  if (!is.null(formula)) {
+    args <- chart:::as_list(match.call())[-1]
+    args$data <- NULL
+    args$specif <- NULL
+    args$formula <- NULL
+    args$mapping <- NULL
+    args$type <- NULL
+    args$auto.labs <- NULL
+    args$env <- NULL
+    mapping <- chart:::.rename_aes(chart:::.f_to_aes(formula, args, with.facets = TRUE))
+    # Special case ~0
+    if (is.numeric(mapping$x) && mapping$x == 0)
+      mapping$x <- NULL
+  }
+  facets <- mapping$facets
+  mapping$facets <- NULL
+  p <- ggplot(data = data, mapping = mapping, environment = env) +
+    theme()
+  if (!is_null(facets)) {
+    if (is_null(rlang::f_lhs(facets))) {
+      p <- p + facet_wrap(facets)
+    } else {
+      p <- p + facet_grid(facets)
+    }
+  }
+  if (inherits(p, "ggplot")) 
+    class(p) <- unique(c("Chart", class(p)))
+  p
+}
+```
+
+```{r, echo=FALSE}
+BioDataScience3::learnr_banner()
+```
+
+```{r, context="server"}
+BioDataScience3::learnr_server(input, output, session)
+```
+
+----
+
+## Objectifs
+
+- appréhender les objets sf
+
+- Réaliser des cartes avec R
+
+## Avant de débuter
+
+Les packages suivants sont chargé par défaut pour chaque exercice
+
+```{r, eval=FALSE, echo=TRUE}
+SciViews::R()
+library(sf)
+library(tmap)
+```
+
+Ce code est exécuté par défaut avant de débuter votre séance d'exercices. Il permet de réaliser des cartes avec la fonctio chart().
+
+```{r, eval=FALSE, echo=TRUE}
+SciViews::R
+chart.sf <- function(data, specif = aes(), formula = NULL, mapping = aes(), type = NULL, theme = theme_svmap, env = parent.frame()) {
+  if (!missing(specif))
+    if (inherits(specif, "formula")) {
+      formula <- specif
+    } else if (inherits(specif, "uneval")) {
+      mapping <- specif
+    } else rlang::abort("'specif' must be either a formula or aes()/f_aes()")
+  if (!is.null(formula)) {
+    args <- chart:::as_list(match.call())[-1]
+    args$data <- NULL
+    args$specif <- NULL
+    args$formula <- NULL
+    args$mapping <- NULL
+    args$type <- NULL
+    args$auto.labs <- NULL
+    args$env <- NULL
+    mapping <- chart:::.rename_aes(chart:::.f_to_aes(formula, args, with.facets = TRUE))
+    # Special case ~0
+    if (is.numeric(mapping$x) && mapping$x == 0)
+      mapping$x <- NULL
+  }
+  facets <- mapping$facets
+  mapping$facets <- NULL
+  p <- ggplot(data = data, mapping = mapping, environment = env) +
+    theme()
+  if (!is_null(facets)) {
+    if (is_null(rlang::f_lhs(facets))) {
+      p <- p + facet_wrap(facets)
+    } else {
+      p <- p + facet_grid(facets)
+    }
+  }
+  if (inherits(p, "ggplot")) 
+    class(p) <- unique(c("Chart", class(p)))
+  p
+}
+```
+
+## Réalisation de cartes basiques
+
+```{r}
+read("NLD_prov", package = "tmap") %>.%
+  select(., name, population, geometry) %>.%
+  st_as_sf(.) -> nld
+
+nld
+```
+
+
+Vous avez à disposition l'objet nld qui représente les provinces au Pays-bas.
+
+### chart
+
+Réalisez une carte des Pays-Bas avec les limites de chaque province.
+
+```{r}
+chart(data = nld) +
+  geom_sf()
+```
+
+- Utilisez la fonction chart() afin de reproduire le graphique ci-dessus
+
+```{r chartmap1, exercise = TRUE, exercise.lines = 2}
+___(___ = ___) +
+  ___()
+```
+
+```{r chartmap1-solution}
+chart(data = nld) +
+  geom_sf()
+```
+
+```{r chartmap1-check}
+grade_code("C'est parfait tu as su réaliser ta première carte avec avec chart()")
+```
+
+```{r}
+chart(data = nld, ~ 0 %fill=% name) +
+  geom_sf()
+```
+
+- Reproduisez avec chart() le graphique ci-dessus. Utilisez l'interface formule.
+
+```{r chartmap2, exercise = TRUE, exercise.lines = 2}
+___(___ = ___, ~ ___ %___% ___) +
+  ___()
+```
+
+```{r chartmap2-solution}
+chart(data = nld, ~ 0 %fill=% name) +
+  geom_sf()
+```
+
+```{r chartmap2-check}
+grade_code("C'est parfait tu as su réaliser ton second graphique première carte avec avec chart()")
+```
+
+```{r}
+chart(data = nld) +
+  geom_sf(aes(fill = population))
+```
+
+- Reproduisez avec chart() le graphique ci-dessus. N'utilisez l'interface formule.
+
+```{r chartmap3, exercise = TRUE, exercise.lines = 2}
+___(___ = ___) +
+  ___(___(___ = ___))
+```
+
+```{r chartmap3-solution}
+chart(data = nld) +
+  geom_sf(aes(fill = population))
+```
+
+```{r chartmap3-check}
+grade_code("C'est parfait tu as su réaliser ton troisième graphique avec chart()")
+```
+
+
+### R de base
+
+Vous avez pu vous rendre compte que chart/ggplot prend pas mal de temps pour r"aliser.La réalisation d'une carte pren
+Réalisez une carte des Pays-Bas avec les limites de chaque province.
+
+```{r}
+plot(st_geometry(nld))
+```
+
+- Utilisez le R de base afin de reproduire le graphique ci-dessus
+
+```{r basemap1, exercise = TRUE, exercise.lines = 1}
+___(___(___)) 
+```
+
+```{r basemap1-solution}
+plot(st_geometry(nld)) 
+```
+
+```{r basemap1-check}
+grade_code("C'est parfait tu as su réaliser ta première carte avec avec le R de base")
+```
+
+Le code R de base est bien plus rapide que les cartes réalisées avec ggplot. Cette remarque est valable pour tous les types de graphiques. 
+
+# tmap
+
+Le package tmap est un package très utile pour réaliser des cartes. Il est rapide comme le R de base et il suit la logique d'addition des couches de ggplot.
+
+```{r}
+qtm(nld)
+```
+
+Reproduisez le graphique ci-dessus en une seule instruction avec le package tmap.
+
+```{r tmap1, exercise = TRUE, exercise.lines = 1}
+___(___)
+```
+
+```{r tmap1-solution}
+qtm(nld)
+```
+
+```{r tmap1-check}
+grade_code("C'est parfait tu as su réaliser ta première carte avec avec le tmap")
+```
+
+
+```{r}
+tm_shape(nld) +
+  tm_fill("name", title = "Province")
+```
+
+Reproduisez le graphique ci-dessus en une seule instruction avec le package tmap.
+
+```{r tmap2, exercise = TRUE, exercise.lines = 2}
+tm_shape(___) +
+  tm_fill(___, title = ___)
+```
+
+```{r tmap2-solution}
+tm_shape(nld) +
+  tm_fill("name", title = "Province")
+```
+
+```{r tmap2-check}
+grade_code("C'est parfait tu as su réaliser ta seconde carte avec avec tmap")
+```
+
+```{r}
+tm_shape(nld) +
+  tm_fill("name", title = "Province") +
+  tm_compass() +
+  tm_scale_bar(position = c("left", "bottom"))
+```
+
+A présent, tentez de reproduire une carte un peu plus complexes en 4 fonctions avec le package tmap. Utilisez judicieusement les instructions employées pour l'exercice précédent.
+
+1. je prépare la carte
+2. j'affiche les provinces sur ma carte via les couleurs et je change le titre de ma légende
+3. j'ajoute le nord 
+4. j'ajoute l'échelle en bas à gauche 
+
+```{r tmap3, exercise = TRUE, exercise.lines = 4}
+___(___) +
+  ___(___, title = ___) +
+  ___(___) +
+  ___(position = c(___, ___))
+```
+
+
+```{r tmap3-solution}
+tm_shape(nld) +
+  tm_fill("name", title = "Province") +
+  tm_compass() +
+  tm_scale_bar(position = c("left", "bottom"))
+```
+
+```{r tmap3-check}
+grade_code("C'est parfait !!!")
+```
+
+
+## Conclusion
+
+```{r comm_noscore, echo=FALSE}
+question_text(
+  "Laissez-nous vos impressions sur cet outil pédagogique",
+  answer("", TRUE, message = "Pas de commentaires... C'est bien aussi."),
+  incorrect = "Vos commentaires sont enregistrés.",
+  placeholder = "Entrez vos commentaires ici...",
+  allow_retry = TRUE
+)
+```
