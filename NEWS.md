@@ -1,5 +1,9 @@
 # BioDataScience3 News
 
+## Changes in version 2020.5.0
+
+- New tutorial : C06La_map
+
 ## Changes in version 2020.3.0
 
 - New tutorial : C04La_stat_slide
