@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III : Module 6** Réalisation de cartes avec R"
 tutorial:
   id: "C06La_map"
-  version: 0.0.1/3
+  version: 1.0.0/7
 output:
   learnr::tutorial:
     progressive: true
@@ -17,7 +17,10 @@ BioDataScience3::learnr_setup()
 SciViews::R()
 library(sf)
 library(tmap)
-fr_sf <- sf::st_as_sf(maps::map("france", plot = FALSE, fill = TRUE))
+
+read("NLD_prov", package = "tmap") %>.%
+  select(., name, population, geometry) %>.%
+  st_as_sf(.) -> nld
 
 # function 
 chart.sf <- function(data, specif = aes(), formula = NULL, mapping = aes(), type = NULL, theme = theme_svmap, env = parent.frame()) {
@@ -76,7 +79,7 @@ BioDataScience3::learnr_server(input, output, session)
 
 ## Avant de débuter
 
-Les packages suivants sont chargé par défaut pour chaque exercice
+Les packages suivant sont chargés par défaut pour chaque exercice
 
 ```{r, eval=FALSE, echo=TRUE}
 SciViews::R()
@@ -84,7 +87,7 @@ library(sf)
 library(tmap)
 ```
 
-Ce code est exécuté par défaut avant de débuter votre séance d'exercices. Il permet de réaliser des cartes avec la fonctio chart().
+Ce code est exécuté par défaut avant de débuter votre séance d'exercices. Il permet de réaliser des cartes avec la fonction chart().
 
 ```{r, eval=FALSE, echo=TRUE}
 SciViews::R
@@ -128,7 +131,7 @@ chart.sf <- function(data, specif = aes(), formula = NULL, mapping = aes(), type
 
 ## Réalisation de cartes basiques
 
-```{r}
+```{r, echo=TRUE}
 read("NLD_prov", package = "tmap") %>.%
   select(., name, population, geometry) %>.%
   st_as_sf(.) -> nld
@@ -137,7 +140,7 @@ nld
 ```
 
 
-Vous avez à disposition l'objet nld qui représente les provinces au Pays-bas.
+Vous avez à disposition l'objet nld qui représente les provinces des Pays-bas.
 
 ### chart
 
@@ -182,7 +185,7 @@ chart(data = nld, ~ 0 %fill=% name) +
 ```
 
 ```{r chartmap2-check}
-grade_code("C'est parfait tu as su réaliser ton second graphique première carte avec avec chart()")
+grade_code("C'est parfait tu as su réaliser ton second graphique première carte  avec chart()")
 ```
 
 ```{r}
@@ -232,7 +235,7 @@ grade_code("C'est parfait tu as su réaliser ta première carte avec avec le R d
 
 Le code R de base est bien plus rapide que les cartes réalisées avec ggplot. Cette remarque est valable pour tous les types de graphiques. 
 
-# tmap
+### tmap
 
 Le package tmap est un package très utile pour réaliser des cartes. Il est rapide comme le R de base et il suit la logique d'addition des couches de ggplot.
 
@@ -254,21 +257,23 @@ qtm(nld)
 grade_code("C'est parfait tu as su réaliser ta première carte avec avec le tmap")
 ```
 
-
 ```{r}
 tm_shape(nld) +
+  tm_borders() +
   tm_fill("name", title = "Province")
 ```
 
-Reproduisez le graphique ci-dessus en une seule instruction avec le package tmap.
+Reproduisez le graphique ci-dessus avec le package tmap.
 
-```{r tmap2, exercise = TRUE, exercise.lines = 2}
+```{r tmap2, exercise = TRUE, exercise.lines = 3}
 tm_shape(___) +
+  tm_borders() +
   tm_fill(___, title = ___)
 ```
 
 ```{r tmap2-solution}
 tm_shape(nld) +
+  tm_borders() +
   tm_fill("name", title = "Province")
 ```
 
@@ -278,28 +283,31 @@ grade_code("C'est parfait tu as su réaliser ta seconde carte avec avec tmap")
 
 ```{r}
 tm_shape(nld) +
+  tm_borders() +
   tm_fill("name", title = "Province") +
   tm_compass() +
   tm_scale_bar(position = c("left", "bottom"))
 ```
 
-A présent, tentez de reproduire une carte un peu plus complexes en 4 fonctions avec le package tmap. Utilisez judicieusement les instructions employées pour l'exercice précédent.
+A présent, tentez de reproduire une carte un peu plus complexes en 5 fonctions avec le package tmap. Utilisez judicieusement les instructions employées pour l'exercice précédent.
 
-1. je prépare la carte
-2. j'affiche les provinces sur ma carte via les couleurs et je change le titre de ma légende
-3. j'ajoute le nord 
-4. j'ajoute l'échelle en bas à gauche 
+1. je définis le fond de carte
+2. j'ajoute les limite de chaque province au fond de carte
+3. j'affiche les provinces sur ma carte via les couleurs et je change le titre de ma légende
+4. j'ajoute le nord 
+5. j'ajoute l'échelle en bas à gauche 
 
-```{r tmap3, exercise = TRUE, exercise.lines = 4}
+```{r tmap3, exercise = TRUE, exercise.lines = 5}
 ___(___) +
+  ___() +
   ___(___, title = ___) +
-  ___(___) +
+  ___() +
   ___(position = c(___, ___))
 ```
 
-
 ```{r tmap3-solution}
 tm_shape(nld) +
+  tm_borders() +
   tm_fill("name", title = "Province") +
   tm_compass() +
   tm_scale_bar(position = c("left", "bottom"))
@@ -308,7 +316,6 @@ tm_shape(nld) +
 ```{r tmap3-check}
 grade_code("C'est parfait !!!")
 ```
-
 
 ## Conclusion
 
