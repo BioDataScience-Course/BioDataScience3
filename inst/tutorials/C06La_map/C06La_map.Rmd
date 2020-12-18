@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III : Module 6** Réalisation de cartes avec R"
 tutorial:
   id: "C06La_map"
-  version: 1.0.0/7
+  version: 1.1.0/7
 output:
   learnr::tutorial:
     progressive: true
@@ -193,7 +193,7 @@ chart(data = nld) +
   geom_sf(aes(fill = population))
 ```
 
-- Reproduisez avec chart() le graphique ci-dessus. N'utilisez l'interface formule.
+- Reproduisez avec chart() le graphique ci-dessus. N'utilisez pas l'interface formule.
 
 ```{r chartmap3, exercise = TRUE, exercise.lines = 2}
 ___(___ = ___) +
@@ -240,17 +240,20 @@ Le code R de base est bien plus rapide que les cartes réalisées avec ggplot. C
 Le package tmap est un package très utile pour réaliser des cartes. Il est rapide comme le R de base et il suit la logique d'addition des couches de ggplot.
 
 ```{r}
-qtm(nld)
+tm_shape(nld) +
+  tm_borders()
 ```
 
-Reproduisez le graphique ci-dessus en une seule instruction avec le package tmap.
+Reproduisez le graphique ci-dessus en deux instructions avec le package tmap.
 
-```{r tmap1, exercise = TRUE, exercise.lines = 1}
-___(___)
+```{r tmap1, exercise = TRUE, exercise.lines = 2}
+___(___) +
+  ___()
 ```
 
 ```{r tmap1-solution}
-qtm(nld)
+tm_shape(nld) +
+  tm_borders()
 ```
 
 ```{r tmap1-check}
