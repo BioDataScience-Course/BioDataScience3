@@ -1,6 +1,6 @@
 # BioDataScience3 - Learnr Documents
 
-A Series of Learnr Documents for Biological Data Science course 3. This package is linked to the book [Science des données biologiques 2](https://wp.sciviews.org/sdd-umons3/). 
+A Series of Learnr Documents for Biological Data Science course 3. This package is linked to the book [Science des données biologiques 3](https://wp.sciviews.org/sdd-umons3/). 
 
 ## Installation
 
