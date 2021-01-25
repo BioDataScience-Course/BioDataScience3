@@ -1,30 +1,32 @@
 # BioDataScience3 News
 
+## Changes in version 2020.5.2
+
+- devel/ directory for learnrs and Shiny apps in development
+
 ## Changes in version 2020.5.1
 
-- minor changes : C06La_map
+- Changes in C06La_map (version 1.1.0): `qtm(...)` is replaced by `tm_shape(...) + tm_borders()` in the exercises.
 
 ## Changes in version 2020.5.0
 
-- New tutorial : C06La_map
+- New tutorial C06La_map
 
 ## Changes in version 2020.3.0
 
-- New tutorial : C04La_stat_slide
-- New tutorial : C04Lb_ts_create
-- New tutorial : C04Lc_ts_manip
+- New tutorials C04La_stat_slide, C04Lb_ts_create, C04Lc_ts_manip.
 
 ## Changes in version 2020.3.0
 
-- New tutorial : C02La_cv
+- New tutorial C02La_cv.
 
 ## Changes in version 2020.2.1
 
-- New tutorial : C01Lb_lda
+- New tutorial C01Lb_lda.
 
 ## Changes in version 2020.1.0
 
-- New tutorial : C01La_confusion 
+- New tutorial C01La_confusion.
 
 ## Changes in version 2020.0.0
 
