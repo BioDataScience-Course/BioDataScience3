@@ -1,5 +1,9 @@
 # BioDataScience3 News
 
+## Change in version 2020.6.0
+
+- "Tutorial" C99La_avis added to get a quick feedback from the students.
+
 ## Changes in version 2020.5.2
 
 - devel/ directory for learnrs and Shiny apps in development
