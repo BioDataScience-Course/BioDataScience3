@@ -1,10 +1,10 @@
 ---
-title: "Les Statistiques glissantes"
+title: "Statistiques glissantes"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III Module 4** Les statistiques glissantes"
+description: "**SDD III Module 4** Statistiques glissantes"
 tutorial:
-  id: "C04La_stat_slide"
-  version: 1.0.0/3
+  id: "C04La_ts_stats"
+  version: 2.0.0/3
 output:
   learnr::tutorial:
     progressive: true
@@ -28,15 +28,15 @@ BioDataScience3::learnr_banner()
 BioDataScience3::learnr_server(input, output, session)
 ```
 
-----
+------------------------------------------------------------------------
 
 ## Objectifs
 
-- Utilisez les statistiques glissantes sur une série temporelle.
+-   Utilisez les statistiques glissantes sur une série temporelle.
 
 ## Température de l'air
 
-La température moyenne mensuelle en Fahrenheit de l'air est étudié entre 1920 et 1939 au château de Nottingham. 
+La température moyenne mensuelle en Fahrenheit de l'air est étudié entre 1920 et 1939 au château de Nottingham.
 
 ```{r, echo = TRUE}
 plot(nottem)
@@ -52,13 +52,13 @@ frequency(nottem) # fréquence
 
 ### Les statistiques glissantes
 
-Les statistiques glissantes (sliding statistics en anglais) permettent de calculer des descripteurs (moyenne, médiane, ...) pour des intervalles de temps précis le long de l’axe temporelle de notre série. Il s'agit de l'analyse de blocs successifs de données suivant un axe spatio-temporel. Dans {pastecs}, elles se calculent à l’aide de la fonction stat.slide()
+Les statistiques glissantes (*sliding statistics* en anglais) permettent de calculer des descripteurs (moyenne, médiane, ...) pour des intervalles de temps précis le long de l'axe temporelle de notre série. Il s'agit de l'analyse de blocs successifs de données suivant un axe spatio-temporel. Dans {pastecs}, elles se calculent à l'aide de la fonction `stat.slide()`.
 
 Cette fonction comprend de nombreux arguments qu'il est intéressant de connaître. N'hésitez pas à lire l'aide de la fonction. Nous n'utiliserons que quelques arguments dans ces exercices.
 
 #### Bloc annuel
 
-Réalisez des statistiques glissantes sur nottem. Vous devez réalisez un graphique qui montre les valeurs moyenne par bloc *annuel*. 
+Réalisez des statistiques glissantes sur nottem. Vous devez réalisez un graphique qui montre les valeurs moyenne par bloc *annuel*.
 
 ```{r statslide1_h3, exercise = TRUE}
 not.stat <- stat.slide(___, ___, xmin = ___, deltat = ___)
@@ -86,7 +86,7 @@ grade_code(" ")
 
 #### Bloc de 3 ans
 
-Réalisez de nouvelles statistiques glissantes sur nottem. Vous devez réalisez un graphique qui montre les valeurs médianes et moyennes par bloc de *3 ans*. 
+Réalisez de nouvelles statistiques glissantes sur nottem. Vous devez réalisez un graphique qui montre les valeurs médianes et moyennes par bloc de *3 ans*.
 
 ```{r statslide2_h3, exercise = TRUE}
 not.stat <- stat.slide(___, ___, xmin = ___, deltat = ___)
@@ -118,7 +118,7 @@ grade_code(" ")
 
 #### Bloc de 6 mois
 
-Réalisez de nouvelles statistiques glissantes sur nottem. Vous devez réalisez un graphique qui montre les valeurs moyennes par bloc de *6 mois*. 
+Réalisez de nouvelles statistiques glissantes sur nottem. Vous devez réalisez un graphique qui montre les valeurs moyennes par bloc de *6 mois*.
 
 ```{r statslide3_h3, exercise = TRUE}
 not.stat <- stat.slide(___, ___, xmin = ___, deltat = 1/___)
