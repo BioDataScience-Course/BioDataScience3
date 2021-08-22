@@ -47,7 +47,7 @@ run_addin <- function() {
   }
 
   # Update both BioDataScience & BioDataScience3
-  learndown::update_pkg("BioDataScience",
+  learnitdown::update_pkg("BioDataScience",
     github_repos = "BioDataScience-course/BioDataScience")
   update_pkg()
 

@@ -1,9 +1,9 @@
 # Histogram with variable classes
-learndown::learndownShinyVersion("1.0.0")
+learnitdown::learnitdownShinyVersion("1.0.0")
 conf <- BioDataScience::config()
 
 library(shiny)
-library(learndown)
+library(learnitdown)
 library(BioDataScience3)
 library(ggplot2)
 library(chart)
@@ -11,7 +11,7 @@ library(chart)
 geyser <- data.io::read("geyser", package = "MASS", lang = "fr")
 
 ui <- fluidPage(
-  learndownShiny("Choix des classes pour un histogramme"),
+  learnitdownShiny("Choix des classes pour un histogramme"),
 
   sidebarPanel(
     sliderInput(inputId = "bins", label = "Nombre de classes :",
