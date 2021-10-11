@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III Module 1** Exercices sur l'ADL"
 tutorial:
   id: "C01Lb_lda"
-  version: 1.2.0/5
+  version: 1.2.1/5
 output:
   learnr::tutorial:
     progressive: true
@@ -72,6 +72,16 @@ Ce tableau comprend `r ncol(bio)` variables. La variable `gender` est une variab
 - wrist : la circonférence du poignet en mm
 
 Cet tableau est divisé en un set d'apprentissage et un set de test. Le set d'apprentissage comprend 2/3 du tableau principal. Ce tableau nommé  `bio_learn` comprend `r nrow(bio_learn)` 
+
+L'objectif de ce tutoriel est de vous permettre de découvrir l'analyse discriminante linéaire. En pratique, avant de subdiviser votre tableau de données et de vous lancer dans l'apprentissage de votre modèle, vous devez 
+
+- visualiser vos données à l'aide de plusieurs graphiques
+- vérifier et corriger le type de chaque variable (surtout pour les variables facteurs)
+- calculer des variables supplémentaires pertinentes
+- traiter le problème des valeurs manquantes si votre modèle ne les gère pas.
+- éliminer des variables inutiles (e.g. le code d'identification d'un individu)
+
+Ces étapes vont faire partie d'une étape de préparation de vos données avant même de diviser votre tableau en set d'apprentissage et en set de test.
 
 ```{r, echo=TRUE}
 table(bio_learn$gender)
