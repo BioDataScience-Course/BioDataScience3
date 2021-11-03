@@ -1,5 +1,9 @@
 # BioDataScience3 News
 
+## Change in version 2021.0.1
+
+-   Updated wine challenge (C03Sa_challenge -> C03Ca_ml_wine).
+
 ## Change in version 2021.0.0
 
 -   Start of 2021 series.

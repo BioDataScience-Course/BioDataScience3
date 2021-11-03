@@ -4,7 +4,7 @@
 # cd /data1
 # sudo mkdir C03_challenge
 # sudo chown rstudio-connect: C03_challenge
-# Then, put wine2quality.rds (from sdd_preparation ) into that directory
+# Then, put wine2quality.rds (from sdd_preparation) into that directory
 # scp wine2quality.rds econum@sdd.umons.ac.be:.
 # sudo mv /home/econum/wine2quality.rds /data1/C03_challenge
 # sudo chown rstudio-connect:/data1/C03_challenge/wine2quality.rds
@@ -19,7 +19,9 @@ library(flipdownr)
 
 # Indicate title and deadline here
 title <- "Challenge vins"
-deadline <- "2020-11-16 20:00:00"
+# Note: define real deadline in environment variables in RStudio Connect
+deadline <- Sys.getenv("CHALLENGE_DEADLINE",
+  unset = "2020-01-01 00:00:00")
 
 # Read data from the SQLite database
 dir <- "/data1/C03_challenge"
@@ -32,6 +34,11 @@ wine2quality <- read$rds(file.path(dir, "wine2quality.rds"))$value
 # Is the countdown over?
 is_done <- function()
   as.POSIXct(deadline) < Sys.time()
+
+# If the time difference between current date and countdown
+# is more than 100 days, we consider the next challenge has not started yet
+not_started_yet <- function()
+  difftime(Sys.time(), as.POSIXct(deadline), units = "days") > 100
 
 # The function that calculates score and returns also a message
 score_model <- function(x, reference = wine2quality) {
@@ -60,7 +67,7 @@ score_model <- function(x, reference = wine2quality) {
         round(prec * 100, 1), "%. Votre proposition n'est pas retenue !")))
   # Le classement du modèle se fait sur base du rappel pour la classe "excellent"
   recall <- res["excellent", "Recall"]
-  score <- recall * 100 # In  percents
+  score <- recall * 100 # In percents
   structure(score,
     message = paste0("Votre proposition est accept\u00e9e. Son score est de ",
     round(score, 3), "."))
@@ -84,7 +91,7 @@ save_data <- function(data) {
     paste(data, collapse = "', '")
   )
   # Submit the update query and disconnect
-  dbGetQuery(db, query)
+  dbSendStatement(db, query)
   dbDisconnect(db)
 }
 
@@ -132,7 +139,11 @@ server <- function(input, output) {
     validate(need(ext == "rds", "Vous devez indiquer un fichier RDS"))
     # Check that there is still time remaining
     if (is_done()) {
-      "Ce challenge est fini, vous ne pouvez plus soumettre de proposition !"
+      if (not_started_yet()) {
+        "Ce challenge n'a pas encore commenc\u00e9, attendez le d\u00e9part !"
+      } else {
+        "Ce challenge est fini, vous ne pouvez plus soumettre de proposition !"
+      }
     } else {
       # Check that filename is correct (repos__model.rds)
       if (!grepl("^.+__.+\\.rds", file$name)) {
