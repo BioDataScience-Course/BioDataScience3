@@ -1,8 +1,12 @@
 # BioDataScience3 News
 
+## Change in version 2022.0.1
+
+-   New version for academic year 2022-2023.
+
 ## Change in version 2021.0.1
 
--   Updated wine challenge (C03Sa_challenge -> C03Ca_ml_wine).
+-   Updated wine challenge (C03Sa_challenge -\> C03Ca_ml_wine).
 
 ## Change in version 2021.0.0
 

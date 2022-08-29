@@ -170,14 +170,22 @@ server <- function(input, output) {
     if (!is.null(file$datapath) && grepl("^.+__.+\\.rds", file$name) &&
       !is_done()) {
       solution <- data.io::read$rds(file$datapath)$value
+      message("data read")
       score <- score_model(solution)
+      message("score is ", score)
       name <- file$name
+      message("name is ", name)
       project <- sub("(^.+)__.+$", "\\1", name)
       model <- sub(("^.+__(.+)\\.rds$"), "\\1", name)
+      if (project == name) {
+        message("Wrong name!")
+        score <- NA
+      }
     } else {
       score <- NA
     }
     ranking <- load_data()
+    message("Data loaded")
     # Record an entry in the mongoDB database
     # But we need the login of *all* members of the team, and we don't have them
     # right now => leave this to a post-process task instead!
@@ -198,6 +206,7 @@ server <- function(input, output) {
       ranking$date <- as.POSIXct(ranking$date, origin = "1960-01-01")
       ranking$date <- format(ranking$date, "%Y-%m-%d %H:%M:%S")
     }
+    message("Date reworked")
     # Add a column with medals for the three first results
     n <- NROW(ranking)
     if (n == 0) {
@@ -207,10 +216,11 @@ server <- function(input, output) {
       if (n < 4) {
         medals <- medals[1:n]
       } else {
-        medals <- c(medals, rep("", 1:(n - 3)))
+        medals <- c(medals, rep("", n - 3))
       }
     }
     ranking <- data.frame(rank = medals, ranking)
+    message("Ranking done")
     names(ranking) <- c("", "Projet", "Mod\u00e8le", "Date", "Score")
     ranking
   })
