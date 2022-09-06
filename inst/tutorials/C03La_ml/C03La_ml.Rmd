@@ -36,4 +36,4 @@ BioDataScience3::learnr_server(input, output, session)
 
 ## Classification supervisée avec ...
 
-TODO: ce tutoriel doit encore être écrit.
+TODO: ce tutoriel doit encore être écrit. Vous devez probablement penser à installer une version plus récente du package qui contient les exercices finalisés !
