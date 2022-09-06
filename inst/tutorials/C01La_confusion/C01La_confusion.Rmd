@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III Module 1** Exercices sur les matrices de confusion."
 tutorial:
   id: "C01La_confusion"
-  version: 1.1.1/4
+  version: 2.0.0/4
 output:
   learnr::tutorial:
     progressive: true
@@ -25,33 +25,34 @@ BioDataScience3::learnr_banner()
 BioDataScience3::learnr_server(input, output, session)
 ```
 
-----
+------------------------------------------------------------------------
 
 ## Objectifs
 
-- Appréhender les matrices de confusion.
+-   Appréhender les matrices de confusion.
+-   Être capable de calculer à la main les principales métriques à partir d'une matrice de confusion 2 x 2.
 
 ## Les métriques sur les matrice de confusion
 
 ### La taux de reconnaissance global
 
 ```{r, echo=FALSE, message=FALSE}
-data.frame(
-  "A" = c(250, 0, 10), 
-  "B" = c(0, 160, 90), 
-  "C" = c(0, 80, 180),  
-  row.names = c("A", "B", "C")) %>.%
-  knitr::kable(., caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
+mconf <- dtf(
+  A = c(250, 0, 10),
+  B = c(0, 160, 90),
+  C = c(0, 80, 180)) 
+rownames(mconf) <- c("A", "B", "C")
+knitr::kable(mconf, caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
 ```
 
 Sur base de la matrice de confusion ci-dessus, calculez le taux de reconnaissance global du groupe B.
 
 ```{r conf1_h2, exercise = TRUE}
-tp <- ___ # TRUE POSITIVE, vrai positif
+tp <- _)__ # TRUE POSITIVE, vrai positif
 fp <- ___ # FALSE POSITIVE, faux positif
 fn <- ___ # FALSE NEGATIVE, faux négatif
 tn <- ___ # TRUE NEGATIVE, vrai négatif
-# calcul de la matrice
+# calcul de la métrique
 conf <- ___
 conf
 ```
@@ -61,7 +62,7 @@ tp <- 160
 fp <- 90
 fn <- 80
 tn <- 440
-# calcul de la matrice
+# calcul de la métrique
 conf <- ___
 conf
 ## Attention, le prochain indice est la solution ##
@@ -73,36 +74,36 @@ tp <- 160
 fp <- 90
 fn <- 80
 tn <- 440
-# calcul de la matrice
-conf <- (tp+tn)/(tp+fp+fn+tn)
+# calcul de la métrique
+conf <- (tp + tn) / (tp + fp + fn + tn)
 conf
 ```
 
 ```{r conf1_h2-check}
 grade_result(
-  pass_if(~ identical(.result, ((160+440)/(160+90+80+440))), "Bien joué !")
+  pass_if(~ identical(.result, ((160+440)/(160+90+80+440))), "Oui, c'est la somme des vrais positifs et négatifs sur le total général.")
 )
 ```
 
 ### La taux de vrai positif
 
 ```{r, echo=FALSE, message=FALSE}
-data.frame(
-  "A" = c(90, 40, 10), 
-  "B" = c(0, 60, 90), 
-  "C" = c(0, 10, 140),  
-  row.names = c("A", "B", "C")) %>.%
-  knitr::kable(., caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
+mconf <- dtf(
+  A = c(90, 40, 10),
+  B = c(0, 60, 90),
+  C = c(0, 10, 140))
+rownames(mconf) <- c("A", "B", "C")
+knitr::kable(mconf, caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
 ```
 
-Sur base de la matrice de confusion ci-dessus, calculez le **taux de vrai positif** du groupe C.
+Sur base de la matrice de confusion ci-dessus, calculez le **taux de vrai positifs** du groupe C.
 
 ```{r conf2_h2, exercise = TRUE}
 tp <- ___
 fp <- ___
 fn <- ___
 tn <- ___
-# calcul de la matrice
+# calcul de la métrique
 conf <- ___
 conf
 ```
@@ -112,7 +113,7 @@ tp <- 140
 fp <- 10
 fn <- 100
 tn <- 190
-# calcul de la matrice
+# calcul de la métrique
 conf <- ___
 conf
 ## Attention, le prochain indice est la solution ##
@@ -124,26 +125,26 @@ tp <- 140
 fp <- 10
 fn <- 100
 tn <- 190
-# calcul de la matrice
-conf <- (tp)/(tp+fn)
+# calcul de la métrique
+conf <- tp / (tp + fn)
 conf
 ```
 
 ```{r conf2_h2-check}
 grade_result(
-  pass_if(~ identical(.result, (140/(140 + 100))), "Bien joué !")
+  pass_if(~ identical(.result, (140/(140 + 100))), "La référence est l'ensemble des positifs, soit les vrais positifs, mais aussi les faux négatifs.")
 )
 ```
 
 ### La spécificité
 
 ```{r, echo=FALSE, message=FALSE}
-data.frame(
-  "A" = c(90, 40, 10), 
-  "B" = c(0, 60, 90), 
-  "C" = c(0, 10, 140),  
-  row.names = c("A", "B", "C")) %>.%
-  knitr::kable(., caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
+mconf <- dtf(
+  A = c(90, 40, 10),
+  B = c(0, 60, 90),
+  C = c(0, 10, 140))
+rownames(mconf) <- c("A", "B", "C")
+knitr::kable(mconf, caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
 ```
 
 Sur base de la matrice de confusion ci-dessus, calculez la **spécificité** du groupe A.
@@ -153,7 +154,7 @@ tp <- ___
 fp <- ___
 fn <- ___
 tn <- ___
-# calcul de la matrice
+# calcul de la métrique
 conf <- ___
 conf
 ```
@@ -163,7 +164,7 @@ tp <- 90
 fp <- 50
 fn <- 0
 tn <- 300
-# calcul de la matrice
+# calcul de la métrique
 conf <- ___
 conf
 ## Attention, le prochain indice est la solution ##
@@ -175,26 +176,26 @@ tp <- 90
 fp <- 50
 fn <- 0
 tn <- 300
-# calcul de la matrice
-conf <- (tn)/(tn+fp)
+# calcul de la métrique
+conf <- tn / (tn + fp)
 conf
 ```
 
 ```{r conf3_h2-check}
 grade_result(
-  pass_if(~ identical(.result, (300/(300 + 50))), "Bien joué !")
+  pass_if(~ identical(.result, (300/(300 + 50))), "À l'inverse ici, on considère comme référence l'ensemble des négatifs qui ne sont pas du groupe A, donc les vrais négatifs mais aussi les faux positifs.")
 )
 ```
 
 ### La précision
 
 ```{r, echo=FALSE, message=FALSE}
-data.frame(
-  "A" = c(100, 30, 20), 
-  "B" = c(0, 10, 150), 
-  "C" = c(30, 20, 110),  
-  row.names = c("A", "B", "C")) %>.%
-  knitr::kable(., caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
+mconf <- dtf(
+  A = c(100, 30, 20),
+  B = c(0, 10, 150),
+  C = c(30, 20, 110))
+rownames(mconf) <- c("A", "B", "C")
+knitr::kable(mconf, caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
 ```
 
 Sur base de la matrice de confusion ci-dessus, calculez la **précision** du groupe B.
@@ -204,7 +205,7 @@ tp <- ___
 fp <- ___
 fn <- ___
 tn <- ___
-# calcul de la matrice
+# calcul de la métrique
 conf <- ___
 conf
 ```
@@ -214,7 +215,7 @@ tp <- 10
 fp <- 150
 fn <- 30
 tn <- 260
-# calcul de la matrice
+# calcul de la métrique
 conf <- ___
 conf
 ## Attention, le prochain indice est la solution ##
@@ -226,14 +227,14 @@ tp <- 10
 fp <- 150
 fn <- 30
 tn <- 260
-# calcul de la matrice
-conf <- (tp)/(tp+fp)
+# calcul de la métrique
+conf <- tp / (tp + fp)
 conf
 ```
 
 ```{r conf4_h2-check}
 grade_result(
-  pass_if(~ identical(.result, (10/(10+150))), "Bien joué !")
+  pass_if(~ identical(.result, (10/(10+150))), "Ne pas se tromper car cette fois la référence est l'ensemble des items classés par l'ordinateur comme B, soit les vrais et les faux positifs.")
 )
 ```
 

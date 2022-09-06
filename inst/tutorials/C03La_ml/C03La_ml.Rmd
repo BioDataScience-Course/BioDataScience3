@@ -1,0 +1,39 @@
+---
+title: "Machine learning"
+author: "Guyliann Engels & Philippe Grosjean"
+description: "**SDD III Module 3** Machine learning"
+tutorial:
+  id: "C03La_ml"
+version: 2.0.0/5
+output:
+  learnr::tutorial:
+  progressive: true
+allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+BioDataScience3::learnr_setup()
+SciViews::R()
+library(mlearning)
+
+# ...
+```
+
+```{r, echo=FALSE}
+BioDataScience3::learnr_banner()
+```
+
+```{r, context="server"}
+BioDataScience3::learnr_server(input, output, session)
+```
+
+------------------------------------------------------------------------
+
+## Objectifs
+
+-   ...
+
+## Classification supervisée avec ...
+
+TODO: ce tutoriel doit encore être écrit.

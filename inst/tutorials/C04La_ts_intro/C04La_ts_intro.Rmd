@@ -1,0 +1,226 @@
+---
+title: "Introduction aux séries temporelles"
+author: "Guyliann Engels & Philippe Grosjean"
+description: "**SDD III Module 4** Introduction séries temporelles"
+tutorial:
+  id: "C04La_ts_intro"
+  version: 2.0.0/6
+output:
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+BioDataScience3::learnr_setup()
+SciViews::R()
+library(pastecs)
+
+nottem <- read("nottem", package = "datasets")
+vec <- sin((1:100) / 6 * pi) + rnorm(100, sd = 5) + 10
+```
+
+```{r, echo=FALSE}
+BioDataScience3::learnr_banner()
+```
+
+```{r, context="server"}
+BioDataScience3::learnr_server(input, output, session)
+```
+
+------------------------------------------------------------------------
+
+## Objectifs
+
+-   Utilisez les statistiques glissantes pour décrire une série spatio-temporelle,
+
+-   Créer des séries spatio-temporelles dans R (objets de classe **ts**).
+
+## Température de l'air
+
+La température moyenne mensuelle de l'air est étudié entre 1920 et 1939 au château de Nottingham. Ètant en Angleterre, cette mesure est effectuée en degrés Fahrenheit.
+
+```{r, echo = TRUE}
+plot(nottem)
+```
+
+Voici quelques informations sur cette série :
+
+-   début de la série (unité = année) : `r start(nottem)`,
+-   fin de la série : `r end(nottem)`,
+-   fréquence des observations : `r frequency(nottem)`.
+
+### Statistiques glissantes
+
+Les statistiques glissantes (*sliding statistics* en anglais) permettent de calculer des descripteurs (moyenne, médiane, ...) pour des intervalles de temps précis le long de l'axe temporel de votre série. Avec le package {pastecs}, elles se calculent à l'aide de la fonction `stat.slide()`. Cette fonction expose de nombreux arguments qu'il est intéressant de connaître. N'hésitez pas à lire l'aide de la fonction (`?pastecs::stat.slide` dans la console R). Nous n'utiliserons que quelques uns de ces arguments dans le présent tutoriel, mais cela sera suffisant pour en comprendre la logique globale.
+
+#### Blocs annuels
+
+Réalisez des statistiques glissantes sur la série `nottem`. Vous devez produire un graphique qui montre les valeurs moyenne par blocs *annuels*.
+
+```{r statslide1_h3, exercise = TRUE}
+not.stat <- stat.slide(___, ___, xmin = ___, deltat = ___)
+plot(not.stat, stat = "___")
+```
+
+```{r statslide1_h3-hint-1}
+not.stat <- stat.slide(time(nottem), ___, xmin = ___, deltat = ___)
+plot(not.stat, stat = "___")
+```
+
+```{r statslide1_h3-hint-2}
+not.stat <- stat.slide(time(nottem), nottem, xmin = ___, deltat = ___)
+plot(not.stat, stat = "___")
+
+## Attention, le prochain indice est la solution ##
+```
+
+```{r statslide1_h3-solution}
+## Solution ##
+not.stat <- stat.slide(time(nottem), nottem, xmin = 1920, deltat = 1)
+plot(not.stat, stat = "mean")
+```
+
+```{r statslide1_h3-check}
+grade_code("Donc, le premier argument est le temps (obtenu à l'aide de `time(ma_serie)`. Le second aregument est la série elle-même. Les autres arguments précisent comment l'axe temporel est découpé. Ici, `xmin = 1920` indique que le découpage commence le 1er janvier 1920 et `deltat = 1` précise que l'intervalle de temps à considérer pour chaque bloc successif est de une unité qui est ici l'année")
+```
+
+#### Blocs de 3 ans
+
+Réalisez de nouvelles statistiques glissantes sur `nottem` et visualisez les valeurs moyennes et médianes par blocs de *3 ans*.
+
+```{r statslide2_h3, exercise = TRUE}
+not.stat <- stat.slide(___, ___, xmin = ___, deltat = ___)
+plot(not.stat, stat = "___") # Moyennes d'abord
+___(not.stat, stat = "___") # Médianes ensuite
+```
+
+```{r statslide2_h3-hint-1}
+not.stat <- stat.slide(time(nottem), ___, xmin = ___, deltat = ___)
+plot(not.stat, stat = "___") # Moyennes d'abord
+___(not.stat, stat = "___") # Médianes ensuite
+```
+
+```{r statslide2_h3-hint-2}
+not.stat <- stat.slide(time(nottem), nottem, xmin = ___, deltat = ___)
+plot(not.stat, stat = "___") # Moyennes d'abord
+lines(not.stat, stat = "___") # Médianes ensuite
+
+## Attention, le prochain indice est la solution ##
+```
+
+```{r statslide2_h3-solution}
+## Solution ##
+not.stat <- stat.slide(time(nottem), nottem, xmin = 1920, deltat = 3)
+plot(not.stat, stat = "mean") # Moyennes d'abord
+lines(not.stat, stat = "median") # Médianes ensuite
+```
+
+```{r statslide2_h3-check}
+grade_code("Par rapport à l'exercice précédent, nous utilisons `deltat = 3` (ans) et ajoutons une information supplémentaire sur le graphique à l'aide de `lines()` car c'est un graphique R de base réalisé avec `plot()`.")
+```
+
+#### Blocs de 6 mois
+
+Calculez une troisième fois les statistiques glissantes sur `nottem` et visualisez la moyenne, mais cette fois-ci avec des blocs de *6 mois*.
+
+```{r statslide3_h3, exercise = TRUE}
+not.stat <- stat.slide(___, ___, xmin = ___, deltat = ___)
+plot(not.stat, stat = "___")
+```
+
+```{r statslide3_h3-hint-1}
+not.stat <- stat.slide(time(nottem), ___, xmin = ___, deltat = 1/___)
+plot(not.stat, stat = "___")
+```
+
+```{r statslide3_h3-hint-2}
+not.stat <- stat.slide(time(nottem), nottem, xmin = ___, deltat = 1/___)
+plot(not.stat, stat = "___")
+
+## Attention, le prochain indice est la solution ##
+```
+
+```{r statslide3_h3-solution}
+## Solution ##
+not.stat <- stat.slide(time(nottem), nottem, xmin = 1920, deltat = 1/2)
+plot(not.stat, stat = "mean")
+```
+
+```{r statslide3_h3-check}
+grade_code("Lorsque la taille du bloc est une fraction de l'unité de mesure du temps, indiquez-le comme tel dans l'argument `deltat =`. Donc, ici, 6 mois = 1/2 années, d'où `deltat = 1/2`.")
+```
+
+## Construction d'un objet **ts**
+
+Avant de manipuler un objet **ts**, il faut être capable de le construire. La fonction `ts()` set à cela. Pour plus d'informations sur cedtte fonction et ses arguments, voyez `?ts` dans la console R. Nous n'utiliserons que les principaux arguments dans ce tutoriel.
+
+### Série 1
+
+Vous allez construire une série fictive qui débute au 1er janvier 2000. Une observation est réalisée chaque mois. Un vecteur de valeurs numériques correspondant aux observations de cette série est à votre disposition sous le nom `vec`. Transformez-le en un objet **ts** nommés `serie` en prenant soin de bien encoder le temps. Réalisez ensuite un graphique de cette série avec la fonction `plot()`.
+
+```{r ts1, exercise = TRUE}
+serie <- ts(vec, start = ___, frequency = ___)
+plot(___)
+```
+
+```{r ts1-solution}
+## Solution ##
+serie <- ts(vec, start = 2000, frequency = 12)
+plot(serie)
+```
+
+```{r ts1-check}
+grade_code("Pour spécifier le temps d'un objet **ts**, vous commencez par choisir l'unité de temps. Ici, l'unité la plus facile est l'année. Ensuite, vous spécifiez complètement l'axe du temps avec des observations réalisées à intervalle régulier à l'aide de deux paramètres parmi ces quatres : `start`, `end`, `deltat` ou `frequency`. Ici, nous avons utilisé `start = 2000` (premier jour de l'an 2000, sinon, on doit ajouter une décimale correspondant au nombre de jours écoulés, ou s'il s'agit de mois, on peut aussi indiquer par exemple `start = c(2000, 3)` pour le début du troisième mois, soit le 1er mars 2000) et `frequency=`, la fréquence des observations. Ici 12, puisqu'il y a une observation pa mois, donc 12 pas an.")
+```
+
+### Série 2
+
+Toujours à partir du vecteur des observations `vec`, vous allez maintenant considérer que votre série fictive débute le 1er juillet 2005. Faites le même exercice que ci-dessus avec cette nouvelle information.
+
+```{r ts2, exercise = TRUE}
+serie <- ts(vec, start = c(___,___), frequency = ___)
+plot(___)
+```
+
+```{r ts2-solution}
+## Solution ##
+serie <- ts(vec, start = c(2005, 7), frequency = 12)
+plot(serie)
+```
+
+```{r ts2-check}
+grade_code("Il est plus simple et plus parlant d'indiquer `c(2005, 7)` pour le 1er juillet 2005, plkutôt que d'écrire `2005 + 7/12`, bien que cette dernière forme convienne aussi (si on considère en première approximation que chaque mois est exactement 1/12 d'année, ce qui n'est pas parfaitement correct comme vous le savez).")
+```
+
+### Série 3
+
+Toujours à partir de vos observations dans `vec`, faite une troisième fois un exercice similaire, mais cette fois-ci, vous considérerez que vos observations commencent le premier jour du second trimestre de 1993 et que vous avez une observation par trimestre.
+
+```{r ts3, exercise = TRUE}
+serie <- ts(vec, start = c(___, ___), frequency = ___)
+plot(___)
+```
+
+```{r ts3-solution}
+## Solution ##
+serie <- ts(vec, start = c(1993, 4), frequency = 4)
+plot(serie)
+```
+
+```{r ts3-check}
+grade_code("Effectivement, la fréquence est de 4 ici. Le premier trimestre est constitué de janvier, février et mars. Le début du second trimestre de 1993 est donc le 1er avril, soit `c(1993, 4)`.")
+```
+
+## Conclusion
+
+```{r comm_noscore, echo=FALSE}
+question_text(
+  "Laissez-nous vos impressions sur cet outil pédagogique",
+  answer("", TRUE, message = "Pas de commentaires... C'est bien aussi."),
+  incorrect = "Vos commentaires sont enregistrés.",
+  placeholder = "Entrez vos commentaires ici...",
+  allow_retry = TRUE
+)
+```
