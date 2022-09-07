@@ -4,7 +4,7 @@
 
 -   Reworking of the learnrs: only two learnrs for module 4 (**C04La_ts_intro** et **C04Lb_tsd_manip**).
 
--   Additions of learnrs for modules 3 and 5: **C03La_ml** and **C05La_ts_decomp** even if they contain no exercises for now.
+-   Additions and reworking of learnrs: two learnrs for each module.
 
 # BioDataScience3 2022.0.1
 

@@ -18,7 +18,9 @@ SciViews::R()
 library(pastecs)
 
 nottem <- read("nottem", package = "datasets")
+set.seed(13313)
 vec <- sin((1:100) / 6 * pi) + rnorm(100, sd = 5) + 10
+serie <- ts(vec, end = c(2020, 10), frequency = 12)
 ```
 
 ```{r, echo=FALSE}
@@ -36,6 +38,8 @@ BioDataScience3::learnr_server(input, output, session)
 -   Utilisez les statistiques glissantes pour décrire une série spatio-temporelle,
 
 -   Créer des séries spatio-temporelles dans R (objets de classe **ts**).
+
+-   Manipuler des séries spatio-temporelles dans R à partir d'objets **ts**.
 
 ## Température de l'air
 
@@ -211,6 +215,67 @@ plot(serie)
 
 ```{r ts3-check}
 grade_code("Effectivement, la fréquence est de 4 ici. Le premier trimestre est constitué de janvier, février et mars. Le début du second trimestre de 1993 est donc le 1er avril, soit `c(1993, 4)`.")
+```
+
+## Manipulation d'un objet ts
+
+Vous avez à disposition une série spatio-temporelle sous forme d'objet **ts** et nommé `serie`. Nous ne vous en dévoilons pas plus !
+
+### Exercice 1
+
+Combien d'observations `serie` contient-elle par unité de temps ?
+
+```{r manip1, exercise = TRUE, exercise.lines=3}
+___(___)
+```
+
+```{r manip1-solution}
+## Solution ##
+frequency(serie)
+```
+
+```{r manip1-check}
+grade_code("Tout simplement `frenquency()` nous donne cette information.")
+```
+
+### Exercice 2
+
+Quand débute `serie`(sachant que son unité de temps ext l'année) ?
+
+```{r manip2, exercise = TRUE, exercise.lines=3}
+___(___)
+```
+
+```{r manip2-solution}
+## Solution ##
+start(serie)
+```
+
+```{r manip2-check}
+grade_code("Aussi simple, `start()` nous l'indique.")
+```
+
+### Exercice 3
+
+Voici un graphique qui représente un aspect intéressant de `serie`.
+
+```{r}
+boxplot(split(serie, cycle(serie)), col = "cornsilk")
+```
+
+Reproduisez-le par vous-même.
+
+```{r manip3, exercise = TRUE, exercise.lines=3}
+___(___(___,___(___)), col = "cornsilk")
+```
+
+```{r manip3-solution}
+## Solution ##
+boxplot(split(serie, cycle(serie)), col = "cornsilk")
+```
+
+```{r manip3-check}
+grade_code("Ici plusieurs traitements sont combinés pour obtenir le résultat. Tout d'abord `cycle()` indique l'ordre des observations selon un cycle d'une unité de temps. Pour l'année ici, les observations de janvier se voient toutes attribuer `1`, celles de février `2`, etc. Ensuite `split()` sépare la série initiale en 12 sous-série, ayant même valeurs pour le cycle. Autrement dit, on sépare les données de chaque mois dans sa série propre. Enfin, `boxplot()` est la fonction qui crée une boite de dispersion parallèle en R de base. On final, on compare la distribution des obervations pour chaque mois au cours des années.")
 ```
 
 ## Conclusion

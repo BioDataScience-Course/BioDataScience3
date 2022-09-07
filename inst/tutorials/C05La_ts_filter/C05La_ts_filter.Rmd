@@ -1,10 +1,10 @@
 ---
-title: "Machine learning"
+title: "Filtrage de séries spatio-temporelles"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III Module 3** Machine learning"
+description: "**SDD III Module 5** Filtrage de séries"
 tutorial:
-  id: "C03La_ml"
-version: 2.0.0/5
+  id: "C05La_ts_filter"
+version: 2.0.0/0
 output:
   learnr::tutorial:
   progressive: true
@@ -15,7 +15,7 @@ runtime: shiny_prerendered
 ```{r setup, include=FALSE}
 BioDataScience3::learnr_setup()
 SciViews::R()
-library(mlearning)
+library(pastecs)
 
 # ...
 ```
@@ -34,6 +34,6 @@ BioDataScience3::learnr_server(input, output, session)
 
 -   ...
 
-## Classification supervisée avec ...
+## Filtrage de ...
 
 TODO: ce tutoriel doit encore être écrit. Vous devez probablement penser à installer une version plus récente du package qui contient les exercices finalisés !

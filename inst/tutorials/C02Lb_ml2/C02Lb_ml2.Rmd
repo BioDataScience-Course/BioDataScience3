@@ -1,9 +1,9 @@
 ---
-title: "Décomposition de séries spatio-temporelles"
+title: "Machine learning (2)"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III Module 5** Décomposition de séries"
+description: "**SDD III Module 2** Machine learning (2)"
 tutorial:
-  id: "C05La_ts_decomp"
+  id: "C02Lb_ml2"
 version: 2.0.0/0
 output:
   learnr::tutorial:
@@ -15,7 +15,7 @@ runtime: shiny_prerendered
 ```{r setup, include=FALSE}
 BioDataScience3::learnr_setup()
 SciViews::R()
-library(pastecs)
+library(mlearning)
 
 # ...
 ```
@@ -34,6 +34,6 @@ BioDataScience3::learnr_server(input, output, session)
 
 -   ...
 
-## Décomposition de ...
+## Classification supervisée avec ...
 
 TODO: ce tutoriel doit encore être écrit. Vous devez probablement penser à installer une version plus récente du package qui contient les exercices finalisés !

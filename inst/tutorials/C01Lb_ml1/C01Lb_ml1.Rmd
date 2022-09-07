@@ -1,9 +1,9 @@
 ---
-title: "Analyse discriminante linéaire"
+title: "Machine learning (1)"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III Module 1** Exercices sur l'ADL"
+description: "**SDD III Module 1** Machine learning (1)"
 tutorial:
-  id: "C01Lb_lda"
+  id: "C01Lb_ml1"
   version: 2.0.0/5
 output:
   learnr::tutorial:
