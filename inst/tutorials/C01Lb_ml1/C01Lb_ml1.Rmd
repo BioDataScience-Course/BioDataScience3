@@ -1,7 +1,7 @@
 ---
 title: "Machine learning (1)"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III Module 1** Machine learning (1)"
+description: "**SDD III Module 1** Découverte de la classification supervisée avec l'ADL."
 tutorial:
   id: "C01Lb_ml1"
   version: 2.0.0/5

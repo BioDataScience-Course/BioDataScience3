@@ -1,7 +1,7 @@
 ---
 title: "Filtrage de séries spatio-temporelles"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III Module 5** Filtrage de séries"
+description: "**SDD III Module 5** Filtrage de séries avec moyennes et médianes mobiles ou par différence."
 tutorial:
   id: "C05La_ts_filter"
 version: 2.0.0/0

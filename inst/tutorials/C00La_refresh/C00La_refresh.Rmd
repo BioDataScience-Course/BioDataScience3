@@ -1,9 +1,9 @@
 ---
-title: "Analyse de séries"
+title: "Rappel de SDD I et II"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III Module 4** Analyse de séries"
+description: "**SDD III Module 0** Rappel des notions importantes des cours SDD I et II."
 tutorial:
-  id: "C04Lb_ts_analyse"
+  id: "C00La_refresh"
 version: 2.0.0/0
 output:
   learnr::tutorial:
@@ -34,6 +34,6 @@ BioDataScience3::learnr_server(input, output, session)
 
 -   ...
 
-## Autocorrélation
+## Rappel ...
 
 TODO: ce tutoriel doit encore être écrit. Vous devez probablement penser à installer une version plus récente du package qui contient les exercices finalisés !

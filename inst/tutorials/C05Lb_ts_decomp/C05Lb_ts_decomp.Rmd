@@ -1,7 +1,7 @@
 ---
 title: "Décomposition de séries spatio-temporelles"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III Module 5** Décomposition de séries"
+description: "**SDD III Module 5** Décomposition saisonnière de séries spatio-temporelles."
 tutorial:
   id: "C05Lb_ts_decomp"
 version: 2.0.0/0

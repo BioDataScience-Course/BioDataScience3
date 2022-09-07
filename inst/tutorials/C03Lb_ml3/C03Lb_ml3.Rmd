@@ -1,7 +1,7 @@
 ---
 title: "Machine learning (3)"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III Module 3** Machine learning (3)"
+description: "**SDD III Module 3** Machines à vecteurs supports et réseaux de neurones."
 tutorial:
   id: "C03Lb_ml3"
 version: 2.0.0/0

@@ -1,7 +1,7 @@
 ---
 title: "Introduction aux séries temporelles"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III Module 4** Introduction séries temporelles"
+description: "**SDD III Module 4** Statistiques glissantes, création et manipulation d'objets ts."
 tutorial:
   id: "C04La_ts_intro"
   version: 2.0.0/6

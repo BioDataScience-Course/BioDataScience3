@@ -1,7 +1,7 @@
 ---
 title: "Courbes ROC"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III Module 3** Courbes ROC"
+description: "**SDD III Module 3** Effet des proportions sur les métriques et courbes ROC."
 tutorial:
   id: "C03La_roc"
 version: 2.0.0/0

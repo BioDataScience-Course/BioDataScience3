@@ -1,7 +1,7 @@
 ---
 title: "Réalisation de cartes"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III : Module 6** Réalisation de cartes avec R"
+description: "**SDD III : Module 6** Réalisation de cartes dans R avec {chart} et {tmap}."
 tutorial:
   id: "C06La_map"
   version: 2.0.0/7
