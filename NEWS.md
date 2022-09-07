@@ -4,7 +4,7 @@
 
 -   Reworking of the learnrs: only two learnrs for module 4 (**C04La_ts_intro** et **C04Lb_tsd_manip**).
 
--   Additions and reworking of learnrs: two learnrs for each module + learnr **C00La_rappel**.
+-   Addition and reworking of learnrs: two learnrs for each module + learnr **C00La_rappel**.
 
 # BioDataScience3 2022.0.1
 
