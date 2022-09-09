@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III Module 0** Rappel des notions importantes des cours SDD I et II."
 tutorial:
   id: "C00La_refresh"
-version: 2.0.0/0
+version: 2.0.0/15
 output:
   learnr::tutorial:
   progressive: true
@@ -17,7 +17,232 @@ BioDataScience3::learnr_setup()
 SciViews::R()
 library(mlearning)
 
-# ...
+# datasets
+crabs <- read("crabs", package = "MASS", lang = "fr")
+
+# Code temporaire -----
+# Code pour le remaniement
+sselect <- collapse::fselect
+tselect <- dplyr::select
+
+sfilter <- function(.data, ...) {
+  filters <- match.call()[-(1:2)]
+  ffilter <- collapse::fsubset
+  for (i in 1:...length())
+    .data <- do.call(ffilter, list(.x = .data, filters[[i]]))
+  .data
+}
+
+tfilter <- dplyr::filter
+
+smutate <- collapse::fmutate
+tmutate <- dplyr::mutate
+
+sgroup_by <- collapse::fgroup_by
+tgroup_by <- dplyr::group_by
+
+sungroup <- collapse::fungroup
+tungroup <- dplyr::ungroup
+
+ssummarise <- collapse::fsummarise
+tsummarise <- function(.data, ..., .groups = "drop_last") {
+  dplyr::summarise(.data, ..., .groups = .groups)
+}
+
+## Code pour ACP
+## Ce code devrait pouvoir être enlevé
+SciViews::R()
+
+# broom implements only methods for prcomp objects, not princomp, while pcomp
+# is compatible with princomp... but prcomp is simpler. So, conversion is easy
+as.prcomp <- function(x, ...)
+  UseMethod("as.prcomp")
+
+as.prcomp.default <- function(x, ...)
+  stop("No method to convert this object into a 'prcomp'")
+
+as.prcomp.prcomp <- function(x, ...)
+  x
+
+as.prcomp.princomp <- function(x, ...)
+  structure(list(sdev = as.numeric(x$sdev), rotation = unclass(x$loadings),
+    center = x$center, scale = x$scale, x = as.matrix(x$scores)),
+    class = "prcomp")
+
+# Comparison of pcomp() -> as.prcomp() with prcomp() directly
+# Almost the same, only no rownames for x (is it important?)
+#iris_prcomp_pcomp <- as.prcomp(pcomp(iris[, -5], scale = TRUE))
+#iris_prcomp <- prcomp(iris[, -5], scale = TRUE)
+
+# Now, broom methods can be defined simply by converting into prcomp objects
+augment.princomp <- function(x, data = NULL, newdata, ...)
+  if (missing(newdata)) {
+  augment(as.prcomp(x), data = data, ...)
+  } else {
+    augment(as.prcomp(x), data = data, newdata = newdata, ...)
+  }
+
+tidy.princomp <- function(x, matrix = "u", ...)
+  tidy(as.prcomp(x), matrix = matrix, ...)
+
+# There is no glance.prcomp() method
+
+# There is a problem with pcomp() that returns a data.frame in scores,
+# while it is a matrix in the original princomp object. pca() corrects this
+pca <- function(x, ...) {
+  res <- SciViews::pcomp(x, ...)
+  # Change scores into a matrix
+  res$scores <- as.matrix(res$scores)
+  res
+}
+
+scale_axes <- function(data, aspect.ratio = 1) {
+  range_x <- range(data[, 1])
+  span_x <- abs(max(range_x) - min(range_x))
+  range_y <- range(data[, 2])
+  span_y <- abs(max(range_y) - min(range_y))
+  if ((span_y / aspect.ratio) > span_x) {
+    # Adjust range_x
+    span_x_2 <- span_y / aspect.ratio / 2
+    range_x_mid <- sum(range_x) / 2
+    range_x <- c(range_x_mid - span_x_2, range_x_mid + span_x_2)
+  } else {
+    # Adjust range_y
+    span_y_2 <- span_x * aspect.ratio / 2
+    range_y_mid <- sum(range_y) / 2
+    range_y <- c(range_y_mid - span_y_2, range_y_mid + span_y_2)
+  }
+  list(x = range_x, y = range_y)
+}
+
+autoplot.pcomp <- function(object,
+type = c("screeplot", "altscreeplot", "loadings", "correlations", "scores", "biplot"),
+choices = 1L:2L, name = deparse(substitute(object)), ar.length = 0.1,
+circle.col = "gray", col = "black", fill = "gray", scale = 1, aspect.ratio = 1,
+repel = FALSE, labels, title, xlab, ylab, ...) {
+  type = match.arg(type)
+
+  if (missing(title))
+    title <- paste(name, type, sep = " - ")
+
+  contribs <- paste0(names(object$sdev), " (",
+    round((object$sdev^2/object$totdev^2) * 100, digits = 1), "%)")[choices]
+
+  scores <- as.data.frame(object$scores[, choices])
+  names(scores) <- c("x", "y")
+  if (!missing(labels)) {
+    if (length(labels) != nrow(scores))
+      stop("You must provide a character vector of length ", nrow(scores),
+        " for 'labels'")
+    scores$labels <- labels
+  } else {# Default labels are row numbers
+    scores$labels <- 1:nrow(scores)
+  }
+
+  lims <- scale_axes(scores, aspect.ratio = aspect.ratio)
+
+  if (!missing(col)) {
+    if (length(col) != nrow(scores))
+      stop("You must provide a vector of length ", nrow(scores), " for 'col'")
+    scores$color <- col
+    scores_formula <- y ~ x %col=% color %label=% labels
+  } else {
+    if (missing(labels)) {
+      scores_formula <- y ~ x %label=% labels
+    } else {
+      scores_formula <- y ~ x %col=% labels %label=% labels
+    }
+  }
+
+  res <- switch(type,
+    screeplot = object %>.% # Classical screeplot
+      tidy(., "pcs") %>.%
+      chart(data = ., std.dev^2 ~ PC) +
+      geom_col(col = col, fill = fill) +
+      labs(y = "Variances", title = title),
+
+    altscreeplot = object %>.% # screeplot represented by dots and lines
+      tidy(., "pcs") %>.%
+      chart(data = ., std.dev^2 ~ PC) +
+      geom_line(col = col) +
+      geom_point(col = "white", fill = col, size = 2, shape = 21, stroke = 3) +
+      labs(y = "Variances", title = title),
+
+    loadings = object %>.% # Plots of the variables
+      tidy(., "variables") %>.%
+      spread(., key = PC, value = value) %>.%
+      #rename_if(., is.numeric, function(x) paste0("PC", x)) %>.%
+      select(., c(1, choices + 1)) %>.%
+      set_names(., c("labels", "x", "y")) %>.%
+      chart(data = ., y ~ x %xend=% 0 %yend=% 0 %label=% labels) +
+        annotate("path", col = circle.col,
+          x = cos(seq(0, 2*pi, length.out = 100)),
+          y = sin(seq(0, 2*pi, length.out = 100))) +
+        geom_hline(yintercept = 0, col = circle.col) +
+        geom_vline(xintercept = 0, col = circle.col) +
+        geom_segment(arrow = arrow(length = unit(ar.length, "inches"),
+          ends = "first")) +
+        ggrepel::geom_text_repel(hjust = "outward", vjust = "outward") +
+        coord_fixed(ratio = 1) +
+        labs(x = contribs[1], y = contribs[2], title = title),
+
+    correlations = object %>.% # Correlations plot
+      Correlation(.) %>.%
+      as_tibble(., rownames = "labels") %>.%
+      select(., c(1, choices + 1)) %>.%
+      set_names(., c("labels", "x", "y")) %>.%
+      chart(data = ., y ~ x %xend=% 0 %yend=% 0 %label=% labels) +
+      annotate("path", col = circle.col,
+        x = cos(seq(0, 2*pi, length.out = 100)),
+        y = sin(seq(0, 2*pi, length.out = 100))) +
+      geom_hline(yintercept = 0, col = circle.col) +
+      geom_vline(xintercept = 0, col = circle.col) +
+      geom_segment(arrow = arrow(length = unit(ar.length, "inches"),
+        ends = "first")) +
+      ggrepel::geom_text_repel(hjust = "outward", vjust = "outward") +
+      coord_fixed(ratio = 1) +
+      labs(x = contribs[1], y = contribs[2], title = title),
+
+    scores = scores %>.% # Plot of the individuals
+      chart(data = ., scores_formula) +
+      geom_hline(yintercept = 0, col = circle.col) +
+      geom_vline(xintercept = 0, col = circle.col) +
+      coord_fixed(ratio = 1, xlim = lims$x, ylim = lims$y, expand = TRUE) +
+      labs(x = contribs[1], y = contribs[2], title = title) +
+      theme(legend.position = "none"),
+
+    biplot = object %>.% # Biplot using ggfortify function
+      as.prcomp(.) %>.%
+      ggfortify:::autoplot.prcomp(., x = choices[1], y = choices[2],
+        scale = scale, size = -1, label = TRUE, loadings = TRUE,
+        loadings.label = TRUE) +
+      geom_hline(yintercept = 0, col = circle.col) +
+      geom_vline(xintercept = 0, col = circle.col) +
+      theme_sciviews() +
+      labs(x = contribs[1], y = contribs[2], title = title),
+
+    stop("Unrecognized type, must be 'screeplot', 'altscreeplot', loadings', 'correlations', 'scores' or 'biplot'")
+  )
+
+  if (type == "scores") {
+    if (isTRUE(repel)) {
+      res <- res + geom_point() + ggrepel::geom_text_repel()
+    } else {# Use text
+      res <- res + geom_text()
+    }
+  }
+
+  if (!missing(xlab))
+    res <- res + xlab(xlab)
+  if (!missing(ylab))
+    res <- res + ylab(ylab)
+  res
+}
+
+chart.pcomp <- function(data, choices = 1L:2L, name = deparse(substitute(data)),
+..., type = NULL, env = parent.frame())
+  autoplot.pcomp(data, choices = choices, name = name, ..., type = type, env = env)
+class(chart.pcomp) <- c("function", "subsettable_type")
 ```
 
 ```{r, echo=FALSE}
@@ -28,12 +253,937 @@ BioDataScience3::learnr_banner()
 BioDataScience3::learnr_server(input, output, session)
 ```
 
+```{r, include=FALSE}
+# Code pour les focntion speedy, tidy and fast
+# Code pour le remaniement
+sselect <- collapse::fselect
+tselect <- dplyr::select
+
+sfilter <- function(.data, ...) {
+  filters <- match.call()[-(1:2)]
+  ffilter <- collapse::fsubset
+  for (i in 1:...length())
+    .data <- do.call(ffilter, list(.x = .data, filters[[i]]))
+  .data
+}
+
+tfilter <- dplyr::filter
+
+smutate <- collapse::fmutate
+tmutate <- dplyr::mutate
+
+sgroup_by <- collapse::fgroup_by
+tgroup_by <- dplyr::group_by
+
+sungroup <- collapse::fungroup
+tungroup <- dplyr::ungroup
+
+ssummarise <- collapse::fsummarise
+tsummarise <- function(.data, ..., .groups = "drop_last") {
+  dplyr::summarise(.data, ..., .groups = .groups)
+}
+
+
+# Code pour ACP -----
+SciViews::R()
+
+# broom implements only methods for prcomp objects, not princomp, while pcomp
+# is compatible with princomp... but prcomp is simpler. So, conversion is easy
+as.prcomp <- function(x, ...)
+  UseMethod("as.prcomp")
+
+as.prcomp.default <- function(x, ...)
+  stop("No method to convert this object into a 'prcomp'")
+
+as.prcomp.prcomp <- function(x, ...)
+  x
+
+as.prcomp.princomp <- function(x, ...)
+  structure(list(sdev = as.numeric(x$sdev), rotation = unclass(x$loadings),
+    center = x$center, scale = x$scale, x = as.matrix(x$scores)),
+    class = "prcomp")
+
+# Comparison of pcomp() -> as.prcomp() with prcomp() directly
+# Almost the same, only no rownames for x (is it important?)
+#iris_prcomp_pcomp <- as.prcomp(pcomp(iris[, -5], scale = TRUE))
+#iris_prcomp <- prcomp(iris[, -5], scale = TRUE)
+
+# Now, broom methods can be defined simply by converting into prcomp objects
+augment.princomp <- function(x, data = NULL, newdata, ...)
+  if (missing(newdata)) {
+  augment(as.prcomp(x), data = data, ...)
+  } else {
+    augment(as.prcomp(x), data = data, newdata = newdata, ...)
+  }
+
+tidy.princomp <- function(x, matrix = "u", ...)
+  tidy(as.prcomp(x), matrix = matrix, ...)
+
+# There is no glance.prcomp() method
+
+# There is a problem with pcomp() that returns a data.frame in scores,
+# while it is a matrix in the original princomp object. pca() corrects this
+pca <- function(x, ...) {
+  res <- SciViews::pcomp(x, ...)
+  # Change scores into a matrix
+  res$scores <- as.matrix(res$scores)
+  res
+}
+
+scale_axes <- function(data, aspect.ratio = 1) {
+  range_x <- range(data[, 1])
+  span_x <- abs(max(range_x) - min(range_x))
+  range_y <- range(data[, 2])
+  span_y <- abs(max(range_y) - min(range_y))
+  if ((span_y / aspect.ratio) > span_x) {
+    # Adjust range_x
+    span_x_2 <- span_y / aspect.ratio / 2
+    range_x_mid <- sum(range_x) / 2
+    range_x <- c(range_x_mid - span_x_2, range_x_mid + span_x_2)
+  } else {
+    # Adjust range_y
+    span_y_2 <- span_x * aspect.ratio / 2
+    range_y_mid <- sum(range_y) / 2
+    range_y <- c(range_y_mid - span_y_2, range_y_mid + span_y_2)
+  }
+  list(x = range_x, y = range_y)
+}
+
+autoplot.pcomp <- function(object,
+type = c("screeplot", "altscreeplot", "loadings", "correlations", "scores", "biplot"),
+choices = 1L:2L, name = deparse(substitute(object)), ar.length = 0.1,
+circle.col = "gray", col = "black", fill = "gray", scale = 1, aspect.ratio = 1,
+repel = FALSE, labels, title, xlab, ylab, ...) {
+  type = match.arg(type)
+
+  if (missing(title))
+    title <- paste(name, type, sep = " - ")
+
+  contribs <- paste0(names(object$sdev), " (",
+    round((object$sdev^2/object$totdev^2) * 100, digits = 1), "%)")[choices]
+
+  scores <- as.data.frame(object$scores[, choices])
+  names(scores) <- c("x", "y")
+  if (!missing(labels)) {
+    if (length(labels) != nrow(scores))
+      stop("You must provide a character vector of length ", nrow(scores),
+        " for 'labels'")
+    scores$labels <- labels
+  } else {# Default labels are row numbers
+    scores$labels <- 1:nrow(scores)
+  }
+
+  lims <- scale_axes(scores, aspect.ratio = aspect.ratio)
+
+  if (!missing(col)) {
+    if (length(col) != nrow(scores))
+      stop("You must provide a vector of length ", nrow(scores), " for 'col'")
+    scores$color <- col
+    scores_formula <- y ~ x %col=% color %label=% labels
+  } else {
+    if (missing(labels)) {
+      scores_formula <- y ~ x %label=% labels
+    } else {
+      scores_formula <- y ~ x %col=% labels %label=% labels
+    }
+  }
+
+  res <- switch(type,
+    screeplot = object %>.% # Classical screeplot
+      tidy(., "pcs") %>.%
+      chart(data = ., std.dev^2 ~ PC) +
+      geom_col(col = col, fill = fill) +
+      labs(y = "Variances", title = title),
+
+    altscreeplot = object %>.% # screeplot represented by dots and lines
+      tidy(., "pcs") %>.%
+      chart(data = ., std.dev^2 ~ PC) +
+      geom_line(col = col) +
+      geom_point(col = "white", fill = col, size = 2, shape = 21, stroke = 3) +
+      labs(y = "Variances", title = title),
+
+    loadings = object %>.% # Plots of the variables
+      tidy(., "variables") %>.%
+      spread(., key = PC, value = value) %>.%
+      #rename_if(., is.numeric, function(x) paste0("PC", x)) %>.%
+      select(., c(1, choices + 1)) %>.%
+      set_names(., c("labels", "x", "y")) %>.%
+      chart(data = ., y ~ x %xend=% 0 %yend=% 0 %label=% labels) +
+        annotate("path", col = circle.col,
+          x = cos(seq(0, 2*pi, length.out = 100)),
+          y = sin(seq(0, 2*pi, length.out = 100))) +
+        geom_hline(yintercept = 0, col = circle.col) +
+        geom_vline(xintercept = 0, col = circle.col) +
+        geom_segment(arrow = arrow(length = unit(ar.length, "inches"),
+          ends = "first")) +
+        ggrepel::geom_text_repel(hjust = "outward", vjust = "outward") +
+        coord_fixed(ratio = 1) +
+        labs(x = contribs[1], y = contribs[2], title = title),
+
+    correlations = object %>.% # Correlations plot
+      Correlation(.) %>.%
+      as_tibble(., rownames = "labels") %>.%
+      select(., c(1, choices + 1)) %>.%
+      set_names(., c("labels", "x", "y")) %>.%
+      chart(data = ., y ~ x %xend=% 0 %yend=% 0 %label=% labels) +
+      annotate("path", col = circle.col,
+        x = cos(seq(0, 2*pi, length.out = 100)),
+        y = sin(seq(0, 2*pi, length.out = 100))) +
+      geom_hline(yintercept = 0, col = circle.col) +
+      geom_vline(xintercept = 0, col = circle.col) +
+      geom_segment(arrow = arrow(length = unit(ar.length, "inches"),
+        ends = "first")) +
+      ggrepel::geom_text_repel(hjust = "outward", vjust = "outward") +
+      coord_fixed(ratio = 1) +
+      labs(x = contribs[1], y = contribs[2], title = title),
+
+    scores = scores %>.% # Plot of the individuals
+      chart(data = ., scores_formula) +
+      geom_hline(yintercept = 0, col = circle.col) +
+      geom_vline(xintercept = 0, col = circle.col) +
+      coord_fixed(ratio = 1, xlim = lims$x, ylim = lims$y, expand = TRUE) +
+      labs(x = contribs[1], y = contribs[2], title = title) +
+      theme(legend.position = "none"),
+
+    biplot = object %>.% # Biplot using ggfortify function
+      as.prcomp(.) %>.%
+      ggfortify:::autoplot.prcomp(., x = choices[1], y = choices[2],
+        scale = scale, size = -1, label = TRUE, loadings = TRUE,
+        loadings.label = TRUE) +
+      geom_hline(yintercept = 0, col = circle.col) +
+      geom_vline(xintercept = 0, col = circle.col) +
+      theme_sciviews() +
+      labs(x = contribs[1], y = contribs[2], title = title),
+
+    stop("Unrecognized type, must be 'screeplot', 'altscreeplot', loadings', 'correlations', 'scores' or 'biplot'")
+  )
+
+  if (type == "scores") {
+    if (isTRUE(repel)) {
+      res <- res + geom_point() + ggrepel::geom_text_repel()
+    } else {# Use text
+      res <- res + geom_text()
+    }
+  }
+
+  if (!missing(xlab))
+    res <- res + xlab(xlab)
+  if (!missing(ylab))
+    res <- res + ylab(ylab)
+  res
+}
+
+chart.pcomp <- function(data, choices = 1L:2L, name = deparse(substitute(data)),
+..., type = NULL, env = parent.frame())
+  autoplot.pcomp(data, choices = choices, name = name, ..., type = type, env = env)
+class(chart.pcomp) <- c("function", "subsettable_type")
+```
+
 ------------------------------------------------------------------------
 
 ## Objectifs
 
--   ...
+**Ce learnr est en cours d'édition**
 
-## Rappel ...
+Ce cours de [Science des données III : exploration et prédiction](https://wp.sciviews.org/sdd-umons2/) fait suite aux cours de [Science des données I : visualisation et inférence](https://wp.sciviews.org/sdd-umons/) et [Science des données II : analyse et modélisation](https://wp.sciviews.org/sdd-umons2/). Ce tutoriel vise à :
 
-TODO: ce tutoriel doit encore être écrit. Vous devez probablement penser à installer une version plus récente du package qui contient les exercices finalisés !
+-   Réviser les notions essentielles du cours de Science des données I et II.
+-   Introduire les nouveautés dans la SciViews Box 2022
+
+Le cours de Science des données I se divise en deux parties. La première partie traite principalement de la réalisation de graphiques et du remaniement des données. La seconde partie s'intéresse aux probabilités, aux distributions statistiques les plus courantes en biologie ainsi qu'aux tests d'inférences (test t de Student, test de Wilcoxon, ANOVA, test de Kruskal-Wallis,...)
+
+Le cours de Science des données II se divise également en deux parties. La première partie porte sur la modélisation linéaire et non linéaire. La seconde partie se concentre sur les statistiques exploratoires avec des méthodes ayant pour objectif de réduire la dimensionnalité comme l'analyse en composante principale ou de regrouper des individus comme la classification hiérarchique ascendante. De nombreuses autres méthodes sont également vues.
+
+Ce tutoriel ne peut s'attarder sur chaque élément des 22 modules de cours précédemment. Nous vous proposons une synthèse dans ce tutoriel. N'hésitez pas à réviser ces modules, si vous en ressentez le besoin.
+
+## Chargement des packages
+
+La fonction`SciViews::R()` est employée afin de charger une série de packages cohérents. Nous l'utilisons en début de script R ou encore dans le premier chunk d'un rapport d'analyse au format R Markdown.
+
+Les packages chargés sont un ensemble cohérent qui permet d'importer, remanier et visualiser à l'aide de graphiques sans devoir employer en plus la fonction `library()`pour charger des packages en plus.
+
+Exécutez l'instruction `SciViews::R()` suivie de l'instruction `SciViews::SciViews_packages()` dans la console R ci-dessous et analysez le résultat proposé. Pour exécuter et tester votre code vous pouvez sélectionner le bouton `Run Code` et pour le soumettre, employez `Submit`.
+
+```{r sciviews-noscore, exercise = TRUE}
+
+```
+
+```{r sciviews-noscore-solution}
+SciViews::R()
+SciViews::SciViews_packages()
+```
+
+```{r sciviews-noscore-check}
+grade_code("Parfait ! Pour tester votre code vous pouvez employez `Run Code`et pour le soumettre, vous pouvez employez `Submit`")
+```
+
+```{r qu_sciviews}
+question("Sélectionnez parmi les propositions suivantes les packages chargés avec l'instruction `SciViews::R()`",
+  answer("chart", correct = TRUE),
+  answer("tidyverse"),
+  answer("data.table", correct = TRUE),
+  answer("data.io", correct = TRUE),
+  answer("collapse", correct = TRUE),
+  allow_retry = TRUE, random_answer_order = TRUE,
+  correct = "Bravo ! C'était une petite question d'échauffement liée à la lecture de sortie R.",
+  incorrect = "Attention, relisez attentivement la sortie proposée par la fonction SciViews::SciViews_packages(). Plusieurs éléments sont à sélectionner."
+    )
+```
+
+![](images/breaking_news.jpg){width="30%"}
+
+Des packages supplémentaires peuvent être chargés grâce à la fonction R() du package SciViews. Ces packages en plus vont être regroupés pour des tâches spécifiques comme`models` pour la modélisation.
+
+```{r, echo = TRUE, eval = FALSE}
+SciViews::R("models")
+```
+
+Nous attirons votre attention sur les objets par défaut pour les tableaux de données (*data frame*). Nous avons décidé de travailler avec des objets de type data.table par défaut. Il existe plusieurs types d'objets pour les tableaux de données dont `data.frame`, `tibble` ou `data.table`. La vitesse de traitements et la gestion en mémoire des data.table en font le choix idéal dans la gestion de large tableau de données. Ce changement de type d'objets aura des effets que nous découvrirons par la suite.
+
+## Importation des données
+
+Dans le SciViews-verse, nous vous proposons d'employer le package {data.io} afin d'importer vos tableaux de données dans R. Il faut retenir une seule fonction : read(). Elle permet de lire des données sur votre disque, depuis une URL ou encore d'un package.
+
+La fonction read() comprend de nombreux arguments. Consultez la page d'aide de la fonction pour connaitre le rôle de chaque argument.
+
+Importez le tableau nommé `crabs` qui provient du package {`MASS`} en spécifiant que la langue employée par défaut est le français (`fr`). \*\*note : Ne complétez que les zones demandées (\_\_\_). Les outils d'autocorrection sont très sensibles.\*\*
+
+```{r read_h2, exercise = TRUE}
+crabs <- read(___, package = ___, lang = ___)
+crabs
+```
+
+```{r read_h2-hint-1}
+# Consultez la page d'aide de read(). 
+# Elle est disponible en exécutant l'instruction `?` ou encore `.?` dans la console R.
+# Par exemple, vous pouvez essayer `?read()`
+#  Vous trouverez des exemples explicites sur la tableau iris ou encore trees.
+
+ #### ATTENTION: Hint suivant = solution !####
+```
+
+```{r read_h2-solution}
+crabs <- read("crabs", package = "MASS", lang = "fr")
+crabs
+```
+
+```{r read_h2-check}
+grade_code("Bravo ! Vous avez importé le tableau de données", "Il semble que la réponse n'est pas la bonne. Ne complète que les élèments manquants marqué ___. Consulte ensuite bien la page d'aide de la fonction.")
+```
+
+La fonction read() permet d'importer tous les formats suivants. Avec l'instruction suivante, vous pouvez retrouver tous les formats supportés par la fonction read() et write().
+
+```{r, echo=TRUE}
+getOption("read_write")
+```
+
+Vous venez d'importer un tableau de données provenant d'un package. Serez-vous à présent capable d'importer un tableau de données présent sur votre disque ?
+
+Analysez l'organisation des fichiers ci-dessous. Le dossier `sharks-GuyliannEngels` comprend tous les documents employés afin de réaliser une analyse sur le recensement des attaques de requins en Australie. Il s'agit d'un [projet RStudio](https://wp.sciviews.org/sdd-umons/?iframe=wp.sciviews.org/sdd-umons-2022/rs.html). Ce projet doit absolument être portable. Il faut donc employer uniquement des [chemins relatifs](https://wp.sciviews.org/sdd-umons/?iframe=wp.sciviews.org/sdd-umons-2022/rs.html). Par exemple, le document `sharks_report.Rmd` se trouve dans le dossier `docs/`.
+
+    /home
+      /sv
+        /shared
+          /projects
+            /sharks-GuyliannEngels          # Répertoire de base du projet
+              .gitignore                   # Fichier relatif à la gestion de version
+              /docs                        # Dossier qui comprend toutes les analyses
+                sharks_report.Rmd         # Fichier au format Rmd qui comprend le rapport
+              /data                        # Dossier qui comprend toutes les données
+                sharks.csv                # Fichier qui comprend les données
+              /R                           # Dossier qui comprend tous les scripts d'analyse
+                sharks_import.R            # Script R nommé sharks_import.R
+              sharks-GuyliannEngels.Rproj  # Fichier de configuration du projet créé par RStudio
+
+```{r qu_read}
+quiz(
+  question("Depuis le fichier sharks_report.Rmd, Sélectionnez l'insruction R correcte afin de lire le tableau `sharks.csv`.",
+    answer("sharks <- read(\"../data/sharks.csv\")", correct = TRUE),
+    answer("sharks <- read(\"sharks.csv\")"),
+    answer("sharks <- read(\"data/sharks.csv\")"),
+    answer("sharks <- read(\"../../data/sharks.csv\")"),
+    answer("sharks <- read(\"../data/sharks_import.R\")"),
+    allow_retry = TRUE, random_answer_order = TRUE,
+    correct = "Bravo ! Ce n'est pas évident de déterminer le chemin d'accès correct.",
+    incorrect = "Attention, les chemins d'accès ce n'est pas simple. Nous te conseillons de réviser l'annexe proposés ci-dessous."
+    ),
+  question("Depuis le fichier sharks_import.R, Sélectionnez l'insruction R correcte afin de lire le tableau `sharks.csv`.",
+    answer("sharks <- read(\"../data/sharks.csv\")"),
+    answer("sharks <- read(\"sharks.csv\")"),
+    answer("sharks <- read(\"data/sharks.csv\")", correct = TRUE),
+    answer("sharks <- read(\"../../data/sharks.csv\")"),
+    answer("sharks <- read(\"../data/sharks_import.R\")"),
+    allow_retry = TRUE, random_answer_order = TRUE,
+    correct = "Bravo ! Ce n'est pas évident de déterminer le chemin d'accès correct. Le script R utilise comme point de départ le projet RStudio alors que le Rmd est son propre point de départ",
+  incorrect = "Attention, les chemins d'accès ce n'est pas simple. Nous te conseillons de réviser l'annexe proposés ci-dessous."
+    )
+  )
+```
+
+La section 5.1 du cours de [SDD I](https://wp.sciviews.org/sdd-umons/) traite de l'importation des données dans R. Consultez cette dernière au besoin.
+
+## Visualisation des données
+
+La réalisation de graphiques dans R peut être réalisée à l'aide de plusieurs moteurs graphiques dans R comme avec le package {ggplot2}, le package {lattice} ou encore en utilisant les graphiques de base. Une comparaison des moteurs graphiques est réalisée dans la section 5.1 du cours de [SDD I](https://wp.sciviews.org/sdd-umons/)
+
+Dans le SciViews-verse, nous vous proposons d'employer le package {chart} afin de produire des graphiques scientifiques. La fonction centrale pour réaliser des graphiques est `chart()` à laquelle on va ajouter une série de couches avec un `+` comme explicité ci-dessous.
+
+```{r, echo = TRUE}
+# Importation des données
+crabs <- read("crabs", package = "MASS", lang = "fr")
+
+chart(data = crabs, length ~ width %col=% sex | species) +
+  geom_point()
+```
+
+![](images/breaking_news.jpg){width="30%"}
+
+Il n'est pas aisé de se souvenir du nom de chaque fonction que l'on peut employer avec chart() ou avec ggplot(). Nous te proposons pour ce faire une syntaxe alternative. La fonction `gg$` associée au pipe natif de R `|>` permet d'obtenir une liste de toutes les fonctions disponibles que l'on peut ajouter au graphique. Le pipe `|>` va remplacer le `+` et on ajoute avant `geom_point()` l'instruction. `gg$`
+
+```{r, echo = TRUE}
+chart(data = crabs, length ~ width %col=% sex | species) |>
+  gg$geom_point()
+```
+
+Attention, il n'est pas possible d'intervertir le `+` et `|>` dans chaque situation. Le pipe natif de R `|>` se combine uniquement avec `gg`.
+
+```{r, echo = TRUE, eval=FALSE}
+# Mauvaise forme 
+chart(data = crabs, length ~ width %col=% sex | species) |>
+  geom_point()
+```
+
+Reproduisez le graphique suivant. Il s'agit de boites de dispersion (*boxplot*, en anglais).
+
+```{r}
+# Importation des données
+crabs <- read("crabs", package = "MASS", lang = "fr")
+# Graphique
+chart(data = crabs, length ~ sex %fill=% species) +
+  geom_boxplot()
+```
+
+Les variables à votre disposition sont les suivantes : `r names(crabs)`
+
+```{r chart_h4, exercise = TRUE}
+# Importation des données
+crabs <- read("crabs", package = "MASS", lang = "fr")
+# Graphique
+chart(data = ___, ___ ~ ___ %___=% ___ ) ___
+  gg$___
+```
+
+```{r chart_h4-hint-1}
+# Importation des données
+crabs <- read("crabs", package = "MASS", lang = "fr")
+# Graphique
+chart(data = ___, ___ ~ ___ %___=% ___ ) |>
+  gg$geom____
+```
+
+```{r chart_h4-hint-2}
+# Importation des données
+crabs <- read("crabs", package = "MASS", lang = "fr")
+# Graphique
+chart(data = ___, ___ ~ ___ %___=% ___ ) |>
+  gg$geom_boxplot
+```
+
+```{r chart_h4-hint-3}
+# Importation des données
+crabs <- read("crabs", package = "MASS", lang = "fr")
+# Graphique
+chart(data = crabs, length ~ ___ %___=% ___ ) |>
+  gg$geom_boxplot
+
+ #### ATTENTION: Hint suivant = solution !####
+```
+
+```{r chart_h4-solution}
+# Importation des données
+crabs <- read("crabs", package = "MASS", lang = "fr")
+# Graphique
+chart(data = crabs, length ~ sex %fill=% species ) |>
+  gg$geom_boxplot()
+```
+
+```{r chart_h4-check}
+grade_code("Bien joué ! Tu es capable d'employer la formule dans chart ainsi que le bon geom_* afin d'obtenir des boites de dispersion.")
+```
+
+```{r qu_chart}
+question("Sélectionnez parmi les éléments suivants, les descriptions graphiques correctes. (Plusieurs éléments peuvent être cochés.",
+  answer("Les médianes des longueurs des carapaces des crabes orange sont supérieures aux crabes bleus.", correct = TRUE),
+  answer("Les moyennes des longueurs des carapaces des crabes orange sont supérieures aux crabes bleus."),
+  answer("Les espaces interquartiles sont similaires entre les 4 groupes.",correct = TRUE),
+  answer("Les écart-types sont similaires entre les 4 groupes."),
+  allow_retry = TRUE, random_answer_order = TRUE,
+  correct = "Bravo ! Tu as sélectionné les éléments correctes. Cependant, la description n'est pas compète. Elle peut être améliorée à l'aide de valeurs numériques par exemple.",
+  incorrect = "Attention, N'auriez vous pas mélanger les descripteurs paramétriques et les descripteurs non paramétriques. La boite de dispersion présente les descripteurs non paramétriques. La section 4.3 de SDDI traite spécifiquement des boites de dispersion.")
+```
+
+Les modules 2, 3 et 4 du cours [SDD I](https://wp.sciviews.org/sdd-umons) traitent de la réalisation des graphiques dans R avec le package {chart}. Consultez ces modules au besoin.
+
+## Remaniement des données
+
+Le remaniement de données est tout un art que vous devez maitriser à la perfection. Vous devez être capable de détecter les valeurs manquantes, de filtrer des observations, de sélectionner des colonnes d'intérêt, de calculer de nouvelles variables. Ces outils de remaniement sont cruciaux dans la classification supervisée que nous découvrirons ensemble dans ce cours de SDD III.
+
+Le changement de type d'objet pour nos tableaux de données va avoir un effet important dans le remaniement des données. Nous travaillons à présent avec un `data.table`.
+
+```{r, echo = TRUE}
+# Importation des données
+crabs <- read("crabs", package = "MASS", lang = "fr")
+class(crabs)
+```
+
+Afin de sélectionner les colonnes `species`, `sex`, `length` du tableau `crabs`, nous aurions employé
+
+```{r, echo = TRUE, eval = FALSE}
+crabs1 <- select(crabs, species, length)
+```
+
+![](images/breaking_news.jpg){width="30%"}
+
+L'utilisation d'objet de type `data.table` requiert quelques modifications présentées ci-dessous. Vous avez à votre disposition plusieurs alternatives.
+
+```{r, echo = TRUE, eval = FALSE}
+# Assignation classique => la version conseillée
+crabs1 <- sselect(crabs, species, length) 
+# Assignation alternative
+crabs1 %<-% tselect(crabs, species, length)
+#  Assignation classique avec collect_dtx()
+crabs1 <- tselect(crabs, species, length) |> collect_dtx()
+```
+
+Vous aurez remarqué que nous employons tout d'abord la fonction sselect() qui est similaire à la fonction tselect() et à la fonction select().
+
+**Les grandes familles de fonction** : Il est possible de réaliser des regroupements de fonctions dans R. Nous avons les fonctions associées au Tidyverse (que nous appellerons tidy par commodité) comme mutate(), select(), pivot_longer(),... Pour simplifier l'identification des fonctions tidy, nous les renommons tmutate(), tselect(), tpivot_longer(),...
+
+Enfin, nous avons les fonctions non-tidy. Le package {collapse} propose des fonctions ressemblantes aux fonctions du Tidyverse et parfaitement compatibles avec les objets `data.table`. Elles débutent par un `f` comme `fselect()`. Pour simplifier l'identification de ces fonctions, nous les renommons `sselect()`, `smutate()`, `sgroup_by()`,... Elles sont plus rapides que les fonctions tidy.
+
+En résumé, on retrouve un équivalent aux 5 fonctions principales du Tidyverse pour le remaniement de tableau. Les arguments des fonctions et les résultats proposés sont très similaires :
+
+-   sélectionner des colonnes au sein d'un jeu de données avec tselect()/sselect()
+-   filtrer des lignes dans un jeu de données avec tfilter()/sfilter()
+-   calculer de nouvelles variables dans un jeu de données avec tmutate()/smutate()
+-   regrouper les données au sein d'un tableau avec tgroup_by()/sgroup_by()
+-   résumer les variables d'un jeu de données avec tsummarise()/ssummarise()
+
+*Nous vous conseillons d'employer préférentiellement les fonctions `s...`. Malheureusement, il n'existe pas toujours d'équivalent aux fonctions tidy comme pour la fonction tpivot_longer().*
+
+Avec les fonctions tidy, il faut prendre soin de collecter les résultats à la fin si l'on travaille avec des objets de classe `data.table` comme c'est le cas par défaut avec SciViews::R (le package {dtplyr} gère alors les calculs en interne). Dans SciViews::R, on utilisera l'assignation alternative %\<-% ou %-\>%, ou alors, on utilisera explicitement collect_dtx() pour récupérer un data frame utilisable avec les fonctions non-tidy.
+
+**Les différents pipes** : Le pipe natif `|>` est un pipe proposée dans R de base depuis la version 4.1.0 de R. Vous connaissez déjà deux pipes que sont le pipe de {magrittr} `%>%` ou le pipe du package {flow} `%>.%`. L'objectif de ces trois pipes est le même. Ils permettent le chainage d'instruction afin de montrer de manière claire la suite des opérations. Les pipes améliorent grandement la lisibilité du code. Notez que le pipe `|>` ne requiert pas l'utilisation du `.` dans la fonction qui le suit alors que le pipe `%>.%` l'impose. Vous pouvez retrouver de plus amples informations sur le chainage dans la section 5.5 de [SDD I](https://wp.sciviews.org/sdd-umons).
+
+Nous vous proposons d'employer le pipe `%>.%` lorsque le tableau initial est modifié et d'employer le pipe `|>` lorsqu'il ne l'est pas.
+
+-   Si vous souhaitez filtrer des individus puis sélectionnez des colonnes d'intérêt, le tableau initial est modifié =\> `%>.%`
+
+-   Si vous réalisez un groupement (tgroup_by() ou sgroup_by()) suivi d'un résumé des observations (tsummarise() ou ssummarise()), le tableau initial n'est pas modifié =\> `|>`
+
+Sélectionnez les crabes ayant une longueur de carapace strictement supérieure à 32 mm et dont la largeur est inférieure ou égale à 42. Utilisez la fonction adéquate du package {collapse} (donc une fonction non-tidy)
+
+```{r filter_h3, exercise = TRUE}
+# Importation des données
+crabs <- read("crabs", package = "MASS", lang = "fr")
+# Réduction du tableau
+crabs_red <- ___(crabs, ___ ___ ___ & ___ <= 42)
+```
+
+```{r filter_h3-hint-1}
+# Importation des données
+crabs <- read("crabs", package = "MASS", lang = "fr")
+# Réduction du tableau
+crabs_red <- sfilter(crabs, ___ ___ ___ & ___ <= 42)
+```
+
+```{r filter_h3-hint-2}
+# Importation des données
+crabs <- read("crabs", package = "MASS", lang = "fr")
+# Réduction du tableau
+crabs_red <- sfilter(crabs, ___ ___ ___ & width <= 42)
+
+ #### ATTENTION: Hint suivant = solution !####
+```
+
+```{r filter_h3-solution}
+# Importation des données
+crabs <- read("crabs", package = "MASS", lang = "fr")
+# Réduction du tableau
+crabs_red <- sfilter(crabs, length > 32 & width <= 42)
+```
+
+```{r filter_h3-check}
+grade_code("Parfait ! Vous avez employé correctemetn la fonction sfilter().", "Il semble que vous avez commis une erreur. n'hésitez pas à revoir la section 5.4.2 de SDD I.")
+```
+
+Vous réaliserez régulièrement des tableaux de données afin de résumer l'information d'un tableau principal. Avec un tableau de données de type `data.frame` ou tibble (`tbl_df`), vous auriez pu employer les instructions suivantes.
+
+```{r, , echo = TRUE, eval=FALSE}
+crabs %>.%
+  group_by(., species, sex) %>.%
+  summarise(., 
+    length_mean = mean(length), length_sd = sd(length), n = n()) -> crabs_red
+```
+
+![](images/breaking_news.jpg){width="30%"}
+
+En appliquant les nouvelles conventions citées précédemment, nous vous proposons d'employer à présent l'une des deux formes suivantes (avec une préférence pour la première).
+
+```{r, echo = TRUE}
+# Utilisation des fonctions fast
+crabs %>.%
+  sgroup_by(., species, sex) |> ssummarise( 
+    length_mean = fmean(length), length_sd = fsd(length), n = fnobs(length)) ->
+  crabs_red
+
+# Utilisation des fonctions tidy
+crabs %>.%
+  tgroup_by(., species, sex) |> tsummarise( 
+    length_mean = fmean(length), length_sd = fsd(length), n = fnobs(length)) %->%
+  crabs_red
+```
+
+Nous pouvons observer l'utilisation :
+
+-   des fonctions `fast` du package {collapse}
+-   du pipe natif `|>` et du pipe de {flow}
+-   de l'assignation alternative `%->%` (uniquement avec la version tidy)
+
+Les fonctions en R de base peuvent être employées afin de réaliser des calculs comme la somme, la moyenne, la variance sur des vecteurs ou des matrices. Ces fonctions ont également une version équivalente dans l'ensemble des fonctions `fast` du package {collapse}:
+
+-   calculer la moyenne : mean()/fmean()
+-   calculer l'écart-type : sd()/fsd()
+-   déterminer le minimum : min()/fmin()
+-   déterminer le maximum : max()/fmax()
+-   calculer de la médiane : median()/fmedian()
+
+*Nous vous conseillons d'employer préférentiellement les fonctions `fast` qui sont plus rapides.*
+
+C'est à vous de jouer ! Proposez un tableau résumé proposant la médiane, la longueur minimale, la longueur maximale et le nombre d'observations de la longueur de la carapace des crabes groupée par espèce et par sexe. Utilisez les fonctions `speedy` et les fonctions `fast`. Utilisez de plus le pipe natif de R. Les variables de `crabs` à votre disposition sont : `r names(crabs)`
+
+```{r summarise_h3, exercise = TRUE}
+crabs %>.%
+  ___(., species, ___) ___ ___(
+    lenght_med = ___(___), length_min = ___(___), 
+    length_max = ___(___), n = ___(___)) -> crabs_red
+crabs_red
+```
+
+```{r summarise_h3-hint-1}
+crabs %>.%
+  ___(., species, sex) ___ ___(
+    lenght_med = ___(___), length_min = ___(___), 
+    length_max = ___(___), n = ___(___)) -> crabs_red
+crabs_red
+```
+
+```{r summarise_h3-hint-2}
+crabs %>.%
+  sgroup_by(., species, sex) |> ssummarise(
+    lenght_med = fmedian(___), length_min = ___(___), 
+    length_max = ___(___), n = ___(___)) -> crabs_red
+crabs_red
+ #### ATTENTION: Hint suivant = solution !####
+```
+
+```{r summarise_h3-solution}
+crabs %>.%
+  sgroup_by(., species, sex) |> ssummarise(
+    lenght_med = fmedian(length), length_min = fmin(length), 
+    length_max = fmax(length), n = fnobs(length)) -> crabs_red
+crabs_red
+```
+
+```{r summarise_h3-check}
+grade_code("Bien joué ! Vous avez compris la nouvelle syntaxe que nous vous proposons avec l'utilisation des fonctions du package collapse et le pipe natif.", "Il semble que vous avez commis une erreur. Nous vous conseillons de revoir le module 5 de SDD I.")
+```
+
+## Analyse de variances
+
+L'analyse de variances permet de comparer une variable numérique en fonction d'une variable facteur (ou plusieurs variables facteurs). Nous allons nous intéresser à l'épaisseur des crabes.
+
+Continuons notre analyse sur le tableau de données `crabs`. Nous souhaitons nous intéresser à l'épaisseur des crabes. Il est évident qu'un crabe plus grand sera plus épais. Nous allons diviser l'épaisseur par la longueur de la carapace afin de neutraliser cet effet lié à taille.
+
+```{r, echo = TRUE}
+crabs <- smutate(crabs,
+  depth_std = depth/length, # Epaisseur/Longueur de la carapace
+  depth_std3 = depth_std^3) # Réduction de la variance
+
+chart(data = crabs, depth_std3 ~ sex %fill=% species) +
+  geom_boxplot()
+```
+
+Proposez la meilleure anova afin d'étudier la différence du rapport de l'épaisseur du crabe divisé par la longueur de la carapace élevé au cube en fonction de l'espèce et du sexe. Nous avons donc comme point de départ une ANOVA à 2 facteurs. Il est utile de simplifier un modèle si des variables sont non significatives.
+
+Il faut impérativement vérifier l'homoscédasticité ainsi que la distribution normale des résidus lors de la réalisation d'une ANOVA.
+
+```{r anova_prep}
+crabs <- read("crabs", package = "MASS", lang = "fr")
+crabs <- smutate(crabs,
+  depth_std = depth/length, # Epaisseur/Longueur de la carapace
+  depth_std3 = depth_std^3) # Réduction de la variance
+```
+
+```{r anova_h3, exercise = TRUE, exercise.setup = "anova_prep"}
+# Réalisation de l'anova
+anova(lm. <-lm(data = ___, ___ ~ ___))
+# Vérification de l'homoscédasticité
+bartlett.test(data = ___, ___ ~ ___)
+# Vérification de la ditribution normale des résidus
+plot(___, which = 2)
+```
+
+```{r anova_h3-hint-1}
+# Réalisation de l'anova
+anova(lm. <-lm(data = crabs, depth_std3 ~ species*sex))
+# Vérification de l'homoscédasticité
+bartlett.test(data = ___, ___ ~ ___)
+# Vérification de la ditribution normale des résidus
+plot(___, which = 2)
+```
+
+```{r anova_h3-hint-2}
+# Réalisation de l'anova
+anova(lm. <-lm(data = crabs, depth_std3 ~ species + sex + species:sex))
+# Vérification de l'homoscédasticité
+bartlett.test(data = ___, ___ ~ ___)
+# Vérification de la ditribution normale des résidus
+plot(___, which = 2)
+
+ #### ATTENTION: Hint suivant = solution !####
+```
+
+```{r anova_h3-solution}
+# Réalisation de l'anova
+anova(lm. <-lm(data = crabs, depth_std3 ~ species))
+# Vérification de l'homoscédasticité
+bartlett.test(data = crabs, depth_std3 ~ species)
+# Vérification de la ditribution normale des résidus
+plot(lm., which = 2)
+```
+
+```{r anova_h3-check}
+grade_code("Bravo ! Tu as trouvé l'ANOVA la plus adaptée à la situation proposée. Cette anova à 2 facteurs pouvaient se résoudre avec un anova à un facteur. La variable lié à l'espèce ne comprends que deux niveaux. Il n'est donc pas utile de faire les tests post hoc. Assurez de bien maitriser ces tests complémentaires:)", "Essayez de décomposer l'ANOVA à 2 facteurs afin de trouver la meilleure ANOVA :(")
+```
+
+## Modèle linéaire
+
+La modélisation est une part importante de la science des données. La modélisation permet de représenter de manière simplifiée un mécanisme responsable de la distribution d'observations. On peut modéliser afin de comprendre des mécanismes sous-jacents, afin de réaliser des prédictions ou encore afin d'explorer des relations entre variables. Nous ne revenons pas sur la différence entre corrélation, relation et causalité. Si vous avez une hésitation sur la différence entre ces termes, consultez la section 1.1.2 du [SDD2](https://wp.sciviews.org/sdd-umons2).
+
+La fonction de base afin de réaliser un modèle linéaire est fonction `lm()` afin de réaliser un modèle linéaire. Votre objectif est d'étudier la relation entre l'épaisseur du corps et la longueur de la carapace.
+
+```{r, echo = TRUE}
+chart(data = crabs, depth ~ length %col=% species) +
+  geom_point()
+```
+
+Le nuage de point de l'épaisseur du corps en fonction de la longueur de la carapace met une distribution des observations linéaire. Les crabes orange ont un rapport épaisseur/longueur un peu plus élevé.
+
+C'est à vous de jouer ! Débutez votre analyse par un modèle complet de l'épaisseur du crabe en fonction de la longueur de la carapace et de l'espèce. Simplifiez ensuite ce modèle si cela est nécessaire en analysant le résumé de votre modèle. La section 3.4.2 du cours de [SDD2](https://wp.sciviews.org/sdd-umons2) détaille le choix du modèle à utiliser. Voici les noms des variables du tableau `crabs` : `species`, `length`, `depth`.
+
+```{r lm_h3, exercise = TRUE}
+lm. <- ___(data = ___, ___ ~ ___)
+summary(lm.)
+```
+
+```{r lm_h3-hint-1}
+lm. <- lm(data = crabs, length ~ ___)
+summary(lm.)
+```
+
+```{r lm_h3-hint-2}
+lm. <- lm(data = crabs, depth ~ length + species + length:species)
+summary(lm.)
+
+ #### ATTENTION: Hint suivant = solution !####
+```
+
+```{r lm_h3-solution}
+lm. <- lm(data = crabs, depth ~ length + length:species)
+summary(lm.)
+```
+
+```{r lm_h3-check}
+grade_code("Bravo ! Vous avez réussi à simplifier le modèle.", "Il semble que vous avez commis une erreur. Analysez le résumé de votre modèle.")
+```
+
+Intéressons-nous à présent aux premiers graphiques permettant d'analyser les résidus du modèle généré ci-dessus.
+
+```{r}
+crabs_lm <- lm(data = crabs, depth ~ length + length:species )
+#plot(lm1, which = 1)
+crabs_lm %>.%
+  augment(.) %>.%
+  chart(., .resid ~ .fitted) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  geom_smooth(se = FALSE, method = "loess", formula = y ~ x) +
+  labs(x = "Fitted values", y = "Residuals") 
+```
+
+```{r qu_resid}
+question("Analysez la distribution homogène des résidus. Sélectionnez les éléments corrects.",
+    answer("On observe autant de résidus positif que négatif.", correct = TRUE),
+    answer("La courbe de tendance général indiquant l'influence général des résidus reste proche de 0 tout au long de l'axe X.", correct = TRUE),
+    answer("Les valeurs des résidus restent homogène tout le long de l'axe X.", correct = TRUE),
+  allow_retry = TRUE, random_answer_order = TRUE,
+  correct = "Bravo ! Tu as sélectionné tous les éléments correctes proposés.",
+  incorrect = "Attention, N'auriez vous pas oublié un élément important dans la liste proposée ?"
+  )
+```
+
+Plusieurs autres graphiques diagnostiques sont disponibles et très utiles pour qualifier la qualité d'un modèle. Assurez-vous de les maitriser.
+
+Consultez les modules 1, 2, 3, 4 et 5 de [SDD II](https://wp.sciviews.org/sdd-umons2/) pour réviser les notions liées à la modélisation.
+
+## Analyse en composante principale
+
+L'une des méthodes les plus employées dans l'analyse multivariée est l'analyse en composantes principales. Cette dernière est la base de nombreuses autres méthodes. Il est de ce fait indispensable de la maitriser.
+
+Utilisons à nouveau notre tableau `crabs` pour réaliser cette analyse. Avant de débuter cette analyse, il est important de repérer les variables quantitatives d'intérêt, et synthétiser les corrélations linéaires (coefficients de corrélation de Pearson) entre ces variables.
+
+```{r, echo = TRUE}
+plot(correlation(fselect(crabs, front:depth)), type = "upper")
+```
+
+Les quatre variables ont une forte corrélation linéaire. La fonction employée afin de réaliser cette analyse est la fonction `pca()`. La formule spécifiée dans la fonction comprend toutes les variables que nous souhaitons employer dans l'ACP. Ces variables ne peuvent être que des variables numériques.
+
+```{r, echo = TRUE}
+crabs_pca <- pca(data = crabs, ~ front + rear + length + width + depth)
+summary(crabs_pca)
+```
+
+Le graphique des éboulis suivant permet de mettre en évidence la chute de variance d'un axe principal à l'autre. Un effet saturant est observé du premier axe de l'ACP qui comprend la quasi-totalité de la variance.
+
+On peut préciser `chart(mon_acp, type = "\_\_\_")` ou bien on spécifie le type de graphique que l'on souhaite à la suite du dollar `chart$___(...)` :
+
+-   `scree` = le graphique des éboulis
+-   `loadings` = la représentation des variables dans l'espace
+-   `scores` = la représentation des individus dans l'espace
+
+```{r, echo = TRUE}
+# chart$scree(crabs_pca)
+chart(crabs_pca, type = "scree")
+```
+
+C'est à vous de jouer ! Vous allez tenter de réduire cet effet de saturation en divisant chaque variable numérique d'intérêt par la largueur de la carapace `width` et réaliser à nouveau une ACP sur ces variables calculées.
+
+```{r acp_h3, exercise = TRUE}
+# Calcul des nouvelles variables
+crabs_red <- smutate(___, front = ___/___, length = ___/___, 
+    rear = ___/___, depth = ___/___, sp_sex = paste0(species, sex))
+# Réalisation de l'ACP (respectez l'ordre de création des variables)
+crabs_pca <- pca(data = ___, ~ ___ + ___ + ___ + ___)
+# Résumé de l'ACP
+___(___)
+```
+
+```{r acp_h3-hint-1}
+# Calcul des nouvelles variables
+crabs_red <- smutate(crabs, front = ___/width, length = ___/width, 
+    rear = ___/width, depth = ___/width, sp_sex = paste0(species, sex))
+# Réalisation de l'ACP (respectez l'ordre de création des variables)
+crabs_pca <- pca(data = crabs_red, ~ ___ + ___ + ___ + ___)
+# Résumé de l'ACP
+___(crabs_pca)
+```
+
+```{r acp_h3-hint-2}
+# Calcul des nouvelles variables
+crabs_red <- smutate(crabs, front = front/width, length = length/width, 
+    rear = rear/width, depth = depth/width, sp_sex = paste0(species, sex))
+# Réalisation de l'ACP (respectez l'ordre de création des variables)
+crabs_pca <- pca(data = crabs_red, ~ ___ + ___ + ___ + ___)
+# Résumé de l'ACP
+summary(crabs_pca)
+
+ #### ATTENTION: Hint suivant = solution !####
+```
+
+```{r acp_h3-solution}
+# Calcul des nouvelles variables
+crabs_red <- smutate(crabs, front = front/width, length = length/width, 
+    rear = rear/width, depth = depth/width, sp_sex = paste0(species, sex))
+# Réalisation de l'ACP (respectez l'ordre de création des variables)
+crabs_pca <- pca(data = crabs_red, ~ front + length + rear + depth)
+# Résumé de l'ACP
+summary(crabs_pca)
+```
+
+```{r acp_h3-check}
+grade_code("Bien joué ! , vous venez d'obtenir l'objet crabs_pca. Vous avez su sélectionner les variables les plus intéressantes.", "Il semble que vous avez commis un erreur. Vérifiez la formule donnée dans l'ACP.")
+```
+
+À présent, réalisez le graphique des éboulis, la représentation dans l'espace des variables et la représentation dans l'espace des individus. Discriminez les individus grâce à la variable `sp_sex`.
+
+```{r crabs_acp_prep}
+# Calcul des nouvelles variables
+crabs_red <- fmutate(crabs, front = front/width, length = length/width, 
+    rear = rear/width, depth = depth/width, sp_sex = paste0(species, sex))
+# Réalisation de l'ACP
+crabs_pca <- pca(data = crabs_red, ~ front + length + rear + depth)
+```
+
+```{r acp_graph_h2, exercise = TRUE, exercise.setup = "crabs_acp_prep"}
+# Graphique des éboulis
+chart(___, type = ___)
+# Représentation dans l’espace des variables
+chart(___, type = ___)
+# Représentation dans l’espace des individus
+chart(___, type = ___, labels = ___$___) +
+  stat_ellipse()
+```
+
+```{r acp_graph_h2-hint-1}
+# Graphique des éboulis
+chart(crabs_pca, type = "scree")
+# Représentation dans l’espace des variables
+chart(___, type = ___)
+# Représentation dans l’espace des individus
+chart(___, type = ___,labels = crabs_red$___) +
+  stat_ellipse()
+
+ #### ATTENTION: Hint suivant = solution !####
+```
+
+```{r acp_graph_h2-solution}
+# Graphique des éboulis
+chart(crabs_pca, type = "scree")
+# Représentation dans l’espace des variables
+chart(crabs_pca, type = "loadings")
+# Représentation dans l’espace des individus
+chart(crabs_pca, type = "scores", labels = crabs_red$sp_sex) +
+  stat_ellipse()
+```
+
+```{r acp_graph_h2-check}
+grade_code("Bravo ! Vous avez correctement réalisé les 3 graphiques demandés. Répondez à la question suivante afin de vérifier que vous êtes capable de les interpréter.", "Il semble que tu as commis une erreur, relis attentivement ton code.")
+```
+
+```{r qu_acp}
+question("Sélectionnez parmi les éléments suivants, les éléments qui décrivent l'ACP réalisée sur les variables calculées (Plusieurs éléments peuvent être cochés).",
+  answer("L'ACP permet de séparer les 4 groupes (crabes bleus males, crabes bleus femelles, crabes oranges males et les crabes bleus femelles). Les médianes des longueurs des carapaces des crabes orange sont supérieures aux crabes bleus.", correct = TRUE),
+  answer("Le premier axe reprend 63.5% de la variance totale. Cet axe est correlée avec la longueur de la carapace, la profondeur de la carapace et la taille du lobe frontale.", correct = TRUE),
+  answer("Le second axe représente 27.7% de la variance totale. Cet axe est fortement correlée avec la largueur à l'arrière de la carapace.",correct = TRUE),
+  answer("La longueur et l'épaisseur des carapaces sont fortement correlées ensemble.", correct = TRUE),
+  answer("L'épaisseur de la carapace n'est pas correlée avec la largeur à l'arrière de la carapace.", correct = TRUE),
+  answer( "La largeur à l'arrière de la carapace permet de distingue les individus male des femelles. Les crabes oranges ont une carapaces plus épaisse et plus grandes que les crabes bleus.", correct = TRUE),
+  allow_retry = TRUE, random_answer_order = TRUE,
+  correct = "Bravo ! Tous les éléments sont corrects. La description d'une ACP est une tâche complexe. De tres nombreux éléments doivent être décris.",
+  incorrect = "Attention, N'auriez vous pas oublié un élément de cette description ?")
+```
+
+## Conclusion
+
+Vous venez de réviser les éléments essentiels des cours de sciences de données I et II. Vous avez les éléments minimaux pour débuter ce cours de science des données III.
+
+```{r comm_noscore, echo=FALSE}
+question_text(
+  "Laissez-nous vos impressions sur ce learnr",
+  answer("", TRUE, message = "Pas de commentaires... C'est bien aussi."),
+  incorrect = "Vos commentaires sont enregistrés.",
+  placeholder = "Entrez vos commentaires ici...",
+  allow_retry = TRUE
+)
+```
