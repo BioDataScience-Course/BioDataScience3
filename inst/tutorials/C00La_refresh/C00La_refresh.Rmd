@@ -20,35 +20,7 @@ library(mlearning)
 # datasets
 crabs <- read("crabs", package = "MASS", lang = "fr")
 
-# Code temporaire -----
-# Code pour le remaniement
-sselect <- collapse::fselect
-tselect <- dplyr::select
-
-sfilter <- function(.data, ...) {
-  filters <- match.call()[-(1:2)]
-  ffilter <- collapse::fsubset
-  for (i in 1:...length())
-    .data <- do.call(ffilter, list(.x = .data, filters[[i]]))
-  .data
-}
-
-tfilter <- dplyr::filter
-
-smutate <- collapse::fmutate
-tmutate <- dplyr::mutate
-
-sgroup_by <- collapse::fgroup_by
-tgroup_by <- dplyr::group_by
-
-sungroup <- collapse::fungroup
-tungroup <- dplyr::ungroup
-
-ssummarise <- collapse::fsummarise
-tsummarise <- function(.data, ..., .groups = "drop_last") {
-  dplyr::summarise(.data, ..., .groups = .groups)
-}
-
+# Code temporaire ----
 ## Code pour ACP
 ## Ce code devrait pouvoir être enlevé
 SciViews::R()
@@ -571,7 +543,7 @@ crabs
 grade_code("Bravo ! Vous avez importé le tableau de données", "Il semble que la réponse n'est pas la bonne. Ne complète que les élèments manquants marqué ___. Consulte ensuite bien la page d'aide de la fonction.")
 ```
 
-La fonction read() permet d'importer tous les formats suivants. Avec l'instruction suivante, vous pouvez retrouver tous les formats supportés par la fonction read() et write().
+La fonction `read()` permet d'importer tous les formats suivants. Avec l'instruction suivante, vous pouvez retrouver tous les formats supportés par la fonction `read()` et `write()`.
 
 ```{r, echo=TRUE}
 getOption("read_write")
@@ -750,24 +722,32 @@ L'utilisation d'objet de type `data.table` requiert quelques modifications prés
 # Assignation classique => la version conseillée
 crabs1 <- sselect(crabs, species, length) 
 # Assignation alternative
-crabs1 %<-% tselect(crabs, species, length)
+crabs1 %<-% select(crabs, species, length)
 #  Assignation classique avec collect_dtx()
-crabs1 <- tselect(crabs, species, length) |> collect_dtx()
+crabs1 <- select(crabs, species, length) |> collect_dtx()
 ```
 
-Vous aurez remarqué que nous employons tout d'abord la fonction sselect() qui est similaire à la fonction tselect() et à la fonction select().
+Vous aurez remarqué que nous employons tout d'abord la fonction sselect() qui est similaire à la fonction select().
 
-**Les grandes familles de fonction** : Il est possible de réaliser des regroupements de fonctions dans R. Nous avons les fonctions associées au Tidyverse (que nous appellerons tidy par commodité) comme mutate(), select(), pivot_longer(),... Pour simplifier l'identification des fonctions tidy, nous les renommons tmutate(), tselect(), tpivot_longer(),...
+**Les grandes familles de fonction** : Il est possible de réaliser des regroupements de fonctions dans R. Nous avons les fonctions associées au Tidyverse (que nous appellerons tidy par commodité) comme mutate(), select(), pivot_longer(),...
 
-Enfin, nous avons les fonctions non-tidy. Le package {collapse} propose des fonctions ressemblantes aux fonctions du Tidyverse et parfaitement compatibles avec les objets `data.table`. Elles débutent par un `f` comme `fselect()`. Pour simplifier l'identification de ces fonctions, nous les renommons `sselect()`, `smutate()`, `sgroup_by()`,... Elles sont plus rapides que les fonctions tidy.
+```{r, echo=TRUE}
+list_tidy_functions()
+```
 
-En résumé, on retrouve un équivalent aux 5 fonctions principales du Tidyverse pour le remaniement de tableau. Les arguments des fonctions et les résultats proposés sont très similaires :
+Enfin, nous avons les fonctions non-tidy. Nous parlerons de fonction `speedy`. Plusieurs fonctions proviennet du package {collapse}. Il propose des fonctions ressemblantes aux fonctions du Tidyverse et parfaitement compatibles avec les objets `data.table`. Elles débutent par un `f` comme `fselect()`. Pour simplifier l'identification de ces fonctions, nous les renommons `sselect()`, `smutate()`, `sgroup_by()`,... Elles sont plus rapides que les fonctions tidy.
 
--   sélectionner des colonnes au sein d'un jeu de données avec tselect()/sselect()
--   filtrer des lignes dans un jeu de données avec tfilter()/sfilter()
--   calculer de nouvelles variables dans un jeu de données avec tmutate()/smutate()
--   regrouper les données au sein d'un tableau avec tgroup_by()/sgroup_by()
--   résumer les variables d'un jeu de données avec tsummarise()/ssummarise()
+```{r, echo=TRUE}
+list_speedy_functions()
+```
+
+En résumé, on retrouve un équivalent aux 5 fonctions principales du Tidyverse pour le remaniement de tableau dans la famille des fonction `speedy`. Les arguments des fonctions et les résultats proposés sont très similaires :
+
+-   sélectionner des colonnes au sein d'un jeu de données avec select()/sselect()
+-   filtrer des lignes dans un jeu de données avec filter()/sfilter()
+-   calculer de nouvelles variables dans un jeu de données avec mutate()/smutate()
+-   regrouper les données au sein d'un tableau avec group_by()/sgroup_by()
+-   résumer les variables d'un jeu de données avec summarise()/ssummarise()
 
 *Nous vous conseillons d'employer préférentiellement les fonctions `s...`. Malheureusement, il n'existe pas toujours d'équivalent aux fonctions tidy comme pour la fonction tpivot_longer().*
 
@@ -834,23 +814,23 @@ En appliquant les nouvelles conventions citées précédemment, nous vous propos
 # Utilisation des fonctions fast
 crabs %>.%
   sgroup_by(., species, sex) |> ssummarise( 
-    length_mean = fmean(length), length_sd = fsd(length), n = fnobs(length)) ->
+    length_mean = fmean(length), length_sd = fsd(length), n = fn(length)) ->
   crabs_red
 
 # Utilisation des fonctions tidy
 crabs %>.%
   tgroup_by(., species, sex) |> tsummarise( 
-    length_mean = fmean(length), length_sd = fsd(length), n = fnobs(length)) %->%
+    length_mean = fmean(length), length_sd = fsd(length), n = fn(length)) %->%
   crabs_red
 ```
 
 Nous pouvons observer l'utilisation :
 
--   des fonctions `fast` du package {collapse}
+-   des fonctions `fast` du package {collapse} (essentiellement)
 -   du pipe natif `|>` et du pipe de {flow}
 -   de l'assignation alternative `%->%` (uniquement avec la version tidy)
 
-Les fonctions en R de base peuvent être employées afin de réaliser des calculs comme la somme, la moyenne, la variance sur des vecteurs ou des matrices. Ces fonctions ont également une version équivalente dans l'ensemble des fonctions `fast` du package {collapse}:
+Les fonctions en R de base peuvent être employées afin de réaliser des calculs comme la somme, la moyenne, la variance sur des vecteurs ou des matrices. Ces fonctions ont une version équivalente dans l'ensemble des fonctions `fast` du package {collapse}:
 
 -   calculer la moyenne : mean()/fmean()
 -   calculer l'écart-type : sd()/fsd()
@@ -859,6 +839,10 @@ Les fonctions en R de base peuvent être employées afin de réaliser des calcul
 -   calculer de la médiane : median()/fmedian()
 
 *Nous vous conseillons d'employer préférentiellement les fonctions `fast` qui sont plus rapides.*
+
+```{r, echo=TRUE}
+list_fstat_functions()
+```
 
 C'est à vous de jouer ! Proposez un tableau résumé proposant la médiane, la longueur minimale, la longueur maximale et le nombre d'observations de la longueur de la carapace des crabes groupée par espèce et par sexe. Utilisez les fonctions `speedy` et les fonctions `fast`. Utilisez de plus le pipe natif de R. Les variables de `crabs` à votre disposition sont : `r names(crabs)`
 
