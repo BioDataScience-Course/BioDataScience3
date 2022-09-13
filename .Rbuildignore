@@ -40,3 +40,5 @@ devel
 rsconnect/*
 rsconnect
 
+data-raw
+data-raw/*
