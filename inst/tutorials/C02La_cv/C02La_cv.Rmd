@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III Module 2** Utilisation de la validation croisée sur une ADL."
 tutorial:
   id: "C02La_cv"
-  version: 2.0.0/5
+  version: 2.1.0/8
 output:
   learnr::tutorial:
     progressive: true
@@ -16,17 +16,24 @@ runtime: shiny_prerendered
 BioDataScience3::learnr_setup()
 SciViews::R()
 library(mlearning)
+library(rsample)
 
-read("biometry", package = "BioDataScience") %>.%
-  select(., gender, weight, height, wrist) %>.%
-  drop_na(.) %->%
-  bio
-
-bio_lda <- mlLda(data = bio, gender ~ .)
-
-set.seed(634)
-bio_conf <- confusion(cvpredict(bio_lda, cv.k = 10), bio$gender)
-conf_tab <- summary(bio_conf)
+# Import dataset ----
+rice <- read("rice", package = "BioDataScience3", lang = "fr")
+# genrateur de nombre pseudo aléatoire
+set.seed(8888)
+# Training and test set ----
+rice_split <- rsample::initial_split(rice, 0.8, strata = class)
+rice_train <- rsample::training(rice_split)
+rice_test <- rsample::testing(rice_split)
+# mlda
+rice_lda <- mlLda(data = rice_train, class ~ .)
+rice_conf <- confusion(predict(rice_lda, rice_test), rice_test$class)
+rice_tab <- summary(rice_conf)
+# mlda with cv 10 times
+rice_lda_cv <- mlLda(data = rice, class ~ .)
+rice_conf_cv <- confusion(cvpredict(rice_lda_cv, cv.k = 10), rice$class)
+rice_tab_cv <- summary(rice_conf_cv)
 ```
 
 ```{r, echo=FALSE}
@@ -37,127 +44,464 @@ BioDataScience3::learnr_banner()
 BioDataScience3::learnr_server(input, output, session)
 ```
 
+```{r}
+# Code temporaire pour réaliser une ACP 
+as.prcomp <- function(x, ...)
+  UseMethod("as.prcomp")
+
+as.prcomp.default <- function(x, ...)
+  stop("No method to convert this object into a 'prcomp'")
+
+as.prcomp.prcomp <- function(x, ...)
+  x
+
+as.prcomp.princomp <- function(x, ...)
+  structure(list(sdev = as.numeric(x$sdev), rotation = unclass(x$loadings),
+    center = x$center, scale = x$scale, x = as.matrix(x$scores)),
+    class = "prcomp")
+
+# Comparison of pcomp() -> as.prcomp() with prcomp() directly
+# Almost the same, only no rownames for x (is it important?)
+#iris_prcomp_pcomp <- as.prcomp(pcomp(iris[, -5], scale = TRUE))
+#iris_prcomp <- prcomp(iris[, -5], scale = TRUE)
+
+# Now, broom methods can be defined simply by converting into prcomp objects
+augment.princomp <- function(x, data = NULL, newdata, ...)
+  if (missing(newdata)) {
+  augment(as.prcomp(x), data = data, ...)
+  } else {
+    augment(as.prcomp(x), data = data, newdata = newdata, ...)
+  }
+
+tidy.princomp <- function(x, matrix = "u", ...)
+  tidy(as.prcomp(x), matrix = matrix, ...)
+
+# There is no glance.prcomp() method
+
+# There is a problem with pcomp() that returns a data.frame in scores,
+# while it is a matrix in the original princomp object. pca() corrects this
+pca <- function(x, ...) {
+  res <- SciViews::pcomp(x, ...)
+  # Change scores into a matrix
+  res$scores <- as.matrix(res$scores)
+  res
+}
+
+scale_axes <- function(data, aspect.ratio = 1) {
+  range_x <- range(data[, 1])
+  span_x <- abs(max(range_x) - min(range_x))
+  range_y <- range(data[, 2])
+  span_y <- abs(max(range_y) - min(range_y))
+  if ((span_y / aspect.ratio) > span_x) {
+    # Adjust range_x
+    span_x_2 <- span_y / aspect.ratio / 2
+    range_x_mid <- sum(range_x) / 2
+    range_x <- c(range_x_mid - span_x_2, range_x_mid + span_x_2)
+  } else {
+    # Adjust range_y
+    span_y_2 <- span_x * aspect.ratio / 2
+    range_y_mid <- sum(range_y) / 2
+    range_y <- c(range_y_mid - span_y_2, range_y_mid + span_y_2)
+  }
+  list(x = range_x, y = range_y)
+}
+
+autoplot.pcomp <- function(object,
+type = c("screeplot", "altscreeplot", "loadings", "correlations", "scores", "biplot"),
+choices = 1L:2L, name = deparse(substitute(object)), ar.length = 0.1,
+circle.col = "gray", col = "black", fill = "gray", scale = 1, aspect.ratio = 1,
+repel = FALSE, labels, title, xlab, ylab, ...) {
+  type = match.arg(type)
+
+  if (missing(title))
+    title <- paste(name, type, sep = " - ")
+
+  contribs <- paste0(names(object$sdev), " (",
+    round((object$sdev^2/object$totdev^2) * 100, digits = 1), "%)")[choices]
+
+  scores <- as.data.frame(object$scores[, choices])
+  names(scores) <- c("x", "y")
+  if (!missing(labels)) {
+    if (length(labels) != nrow(scores))
+      stop("You must provide a character vector of length ", nrow(scores),
+        " for 'labels'")
+    scores$labels <- labels
+  } else {# Default labels are row numbers
+    scores$labels <- 1:nrow(scores)
+  }
+
+  lims <- scale_axes(scores, aspect.ratio = aspect.ratio)
+
+  if (!missing(col)) {
+    if (length(col) != nrow(scores))
+      stop("You must provide a vector of length ", nrow(scores), " for 'col'")
+    scores$color <- col
+    scores_formula <- y ~ x %col=% color %label=% labels
+  } else {
+    if (missing(labels)) {
+      scores_formula <- y ~ x %label=% labels
+    } else {
+      scores_formula <- y ~ x %col=% labels %label=% labels
+    }
+  }
+
+  res <- switch(type,
+    screeplot = object %>.% # Classical screeplot
+      tidy(., "pcs") %>.%
+      chart(data = ., std.dev^2 ~ PC) +
+      geom_col(col = col, fill = fill) +
+      labs(y = "Variances", title = title),
+
+    altscreeplot = object %>.% # screeplot represented by dots and lines
+      tidy(., "pcs") %>.%
+      chart(data = ., std.dev^2 ~ PC) +
+      geom_line(col = col) +
+      geom_point(col = "white", fill = col, size = 2, shape = 21, stroke = 3) +
+      labs(y = "Variances", title = title),
+
+    loadings = object %>.% # Plots of the variables
+      tidy(., "variables") %>.%
+      spread(., key = PC, value = value) %>.%
+      #rename_if(., is.numeric, function(x) paste0("PC", x)) %>.%
+      select(., c(1, choices + 1)) %>.%
+      set_names(., c("labels", "x", "y")) %>.%
+      chart(data = ., y ~ x %xend=% 0 %yend=% 0 %label=% labels) +
+        annotate("path", col = circle.col,
+          x = cos(seq(0, 2*pi, length.out = 100)),
+          y = sin(seq(0, 2*pi, length.out = 100))) +
+        geom_hline(yintercept = 0, col = circle.col) +
+        geom_vline(xintercept = 0, col = circle.col) +
+        geom_segment(arrow = arrow(length = unit(ar.length, "inches"),
+          ends = "first")) +
+        ggrepel::geom_text_repel(hjust = "outward", vjust = "outward") +
+        coord_fixed(ratio = 1) +
+        labs(x = contribs[1], y = contribs[2], title = title),
+
+    correlations = object %>.% # Correlations plot
+      Correlation(.) %>.%
+      as_tibble(., rownames = "labels") %>.%
+      select(., c(1, choices + 1)) %>.%
+      set_names(., c("labels", "x", "y")) %>.%
+      chart(data = ., y ~ x %xend=% 0 %yend=% 0 %label=% labels) +
+      annotate("path", col = circle.col,
+        x = cos(seq(0, 2*pi, length.out = 100)),
+        y = sin(seq(0, 2*pi, length.out = 100))) +
+      geom_hline(yintercept = 0, col = circle.col) +
+      geom_vline(xintercept = 0, col = circle.col) +
+      geom_segment(arrow = arrow(length = unit(ar.length, "inches"),
+        ends = "first")) +
+      ggrepel::geom_text_repel(hjust = "outward", vjust = "outward") +
+      coord_fixed(ratio = 1) +
+      labs(x = contribs[1], y = contribs[2], title = title),
+
+    scores = scores %>.% # Plot of the individuals
+      chart(data = ., scores_formula) +
+      geom_hline(yintercept = 0, col = circle.col) +
+      geom_vline(xintercept = 0, col = circle.col) +
+      coord_fixed(ratio = 1, xlim = lims$x, ylim = lims$y, expand = TRUE) +
+      labs(x = contribs[1], y = contribs[2], title = title) +
+      theme(legend.position = "none"),
+
+    biplot = object %>.% # Biplot using ggfortify function
+      as.prcomp(.) %>.%
+      ggfortify:::autoplot.prcomp(., x = choices[1], y = choices[2],
+        scale = scale, size = -1, label = TRUE, loadings = TRUE,
+        loadings.label = TRUE) +
+      geom_hline(yintercept = 0, col = circle.col) +
+      geom_vline(xintercept = 0, col = circle.col) +
+      theme_sciviews() +
+      labs(x = contribs[1], y = contribs[2], title = title),
+
+    stop("Unrecognized type, must be 'screeplot', 'altscreeplot', loadings', 'correlations', 'scores' or 'biplot'")
+  )
+
+  if (type == "scores") {
+    if (isTRUE(repel)) {
+      res <- res + geom_point() + ggrepel::geom_text_repel()
+    } else {# Use text
+      res <- res + geom_text()
+    }
+  }
+
+  if (!missing(xlab))
+    res <- res + xlab(xlab)
+  if (!missing(ylab))
+    res <- res + ylab(ylab)
+  res
+}
+
+chart.pcomp <- function(data, choices = 1L:2L, name = deparse(substitute(data)),
+..., type = NULL, env = parent.frame())
+  autoplot.pcomp(data, choices = choices, name = name, ..., type = type, env = env)
+class(chart.pcomp) <- c("function", "subsettable_type")
+```
+
 ------------------------------------------------------------------------
 
 ## Objectifs
 
--   Comprendre la validation croisée et l'appliquer en pratique dans le cas d'une analyse discriminante linéaire,
+Lors de la création d'un classifieur, on va définir un set d'apprentissage et un set de test. Il est évident qu'il ne faut jamais employer les mêmes individus en apprentissage et en test. Cela aurait pour conséquence de surévaluer la capacité d'un classifieur à reconnaitre les niveaux de la variable facteur d'intérêt.
 
--   Ètre capable d'écrire le code en R poiur l'analyse précédente, en s'aidant du package {mlearning}.
+La validation croisée est une méthode particulière qui permet d'employer tous les objets, à la fois dans le set d'apprentissage et dans le set de test, mais jamais simultanément.
 
-## Création du classifieur
+L'objectif de ce tutoriel est de comprendre la validation croisée et de l'appliquer en pratique dans le cas d'une analyse discriminante linéaire.
 
-Vous avez à votre disposition le jeu de données `bio` dont un résumé est proposé ci-dessous.
+## Exploration des données
+
+Les données employées dans cette séance d'exercice sont associées à l'article : ["Classification of Rice Varieties Using Artificial Intelligence Methods"](https://doi.org/10.18201/ijisae.2019355381). N'hésitez pas à consulter cet article pour en apprendre davantage sur ces données.
+
+```{r, echo=TRUE}
+rice <- read("rice", package = "BioDataScience3", lang = "fr")
+```
+
+Le tableau `rice` comprend `r nrow(rice)` observations. Deux espèces de riz sont étudiées : `Cammeo` et `Osmancik`. Sur base d'analyse d'image, sept variables morphologiques sont extraites comme le périmètre, l'aire ou encore la longueur de l'axe majeur.
+
+Les résultats ci-dessous vous renseignent sur les variables.
 
 ```{r, echo = TRUE}
-skimr::skim(bio)
+skimr::skim(rice)
 ```
 
-Ce jeu de données contient `r ncol(bio)` variables. La variable `gender` est une variable facteur à deux niveaux : M (men), W (Women). De plus, trois variables numérique caractérisent les individus de l'échantillon :
+Étant donné que vous allez employer l'analyse discriminante linéaire afin d'entrainer vos classifieurs. Une ACP est réalisée ci-dessous vu que ces deux méthodes se basent sur les mêmes principes.
 
--   weight : la masse en kg
--   height : la taille en cm
--   wrist : la circonférence du poignet en mm
-
-Réalisez un classifieur en utilisant l"analyse discriminante linéaire (ADL) entraîné avec le jeu de données `bio` tout entier. Prédisez la variable `gender` à partir des trois variables numériques via la validation croisée dix fois. Commencez par créer votre objet `bio_lda`, et imprimez-en un résumé :
-
-*Attention : la formule doit être écrite sous sa forme condensée.*
-
-```{r lda1_h2, exercise = TRUE}
-bio_lda <- mlLda(data = ___, ___ ~ ___)
-summary(bio_lda)
+```{r, echo=TRUE}
+rice_pca <- pca(data = sselect(rice, -class), ~., scale = TRUE)
+summary(rice_pca)
 ```
 
-```{r lda1_h2-hint-1}
-bio_lda <- mlLda(data = bio, ___ ~ ___)
-summary(bio_lda)
+Le graphique des éboulis est proposé ci-dessous
+
+```{r, echo=TRUE}
+chart(rice_pca, type = "scree")
+```
+
+La représentation dans l'espace des variables est proposée ci-dessous
+
+```{r, echo=TRUE}
+chart(rice_pca, type = "loadings")
+```
+
+La représentation dans l'espace des individus est proposée ci-dessous
+
+```{r, echo=TRUE}
+chart(rice_pca, type = "scores", labels = rice$class)
+```
+
+L'exploration des données a été réalisée pour vous. Avant de passer à la section suivante, explorer les tableaux et les graphiques proposés ci-dessus.
+
+## Préparation du set d'apprentissage et de test
+
+Utilisez les fonctions `initial_split()`, `training()` et `testing()` du package `rsamples` afin de définir votre set d'apprentissage et votre set de test. Votre set d'apprentissage se nomme `rice_train` et votre set de test se nomme `rice_test`. Il vous est demandé de réaliser un set d'entrainement contenant 0.8 des observations. Cet échantillonnage doit être stratifié grâce à la variable `class`.
+
+```{r rice_split_h2, exercise = TRUE}
+set.seed(888) # Fixer le début du générateur de nombres pseudo-aléatoires
+rice_split <- initial_split(___, prop = ___, strata = ___)
+rice_split
+# Diviser le tableau
+___ <- training(___)
+rice_test <- testing(___)
+```
+
+```{r rice_split_h2-hint-1}
+set.seed(8888) # Fixer le début du générateur de nombres pseudo-aléatoires
+rice_split <- initial_split(rice, prop = 0.8, strata = ___)
+rice_split
+# Diviser le tableau
+___ <- training(___)
+rice_test <- testing(___)
 
 ## Attention, le prochain indice est la solution ##
 ```
 
-```{r lda1_h2-solution}
-## Solution ##
-bio_lda <- mlLda(data = bio, gender ~ .)
-summary(bio_lda)
+```{r rice_split_h2-solution}
+set.seed(8888) # Fixer le début du générateur de nombres pseudo-aléatoires
+rice_split <- initial_split(rice, prop = 0.8, strata = class)
+rice_split
+# Diviser le tableau
+rice_train <- training(rice_split)
+rice_test <- testing(rice_split)
 ```
 
-```{r lda1_h2-check}
-grade_code("Votre modèle est entraîné, c'est la première étape... passons à la suite..")
+```{r rice_split_h2-check}
+grade_code("Parfait ! Vous avez réalisez votre set d'apprentissage et votre set d'évaluation avec les proportions demandées.", "Avez vous bien respectée les consignes ? Il ne faut compléter que les éléments signalés par ___.")
 ```
 
-## Performance du classifieur
+## Création des classifieurs
 
-Vous allez maintenant tester les performances de votre classifieur à l'aide d'une validation croisée dix fois.
+### Analyse discriminante linéaire
 
-```{r lda2_h2, exercise = TRUE}
-set.seed(634)
-bio_pred <- cvpredict(___, cv.k = ___)
-bio_conf <- confusion(___, ___$___)
-bio_conf
-summary(bio_conf)
+Il vous est demandé de réaliser un classifieur utilisant l'analyse discriminante linéaire. C'est à vous de définir le tableau de données à employer entre `rice`, `rice_train` et `rice_test`.
+
+Entrainez un modèle de type discriminant linéaire avec le set d'apprentissage. Votre objectif est de prédire la variable `class` à l'aide des sept variable. Assignez le classifieur n'utilisant pas la validation croisée à `rice_lda` et assignez le classifieur utilisant la validation croisée à rice_cv_lda.
+
+```{r lda_h2, exercise = TRUE}
+set.seed(8888)
+rice_lda <- mlLda(data = ___, ___ ~ ___)
+summary(rice_lda)
 ```
 
-```{r lda2_h2-hint-1}
-set.seed(634)
-bio_pred <- cvpredict(bio_lda, cv.k = ___)
-bio_conf <- confusion(bio_pred, bio$___)
-bio_conf
-summary(bio_conf)
+```{r lda_h2-hint-1}
+set.seed(8888)
+rice_lda <- mlLda(data = rice_train, ___ ~ ___)
+summary(rice_lda)
 
 ## Attention, le prochain indice est la solution ##
 ```
 
-```{r lda2_h2-solution}
+```{r lda_h2-solution}
 ## Solution ##
-set.seed(634)
-bio_pred <- cvpredict(bio_lda, cv.k = 10)
-bio_conf <- confusion(bio_pred, bio$gender)
-bio_conf
-summary(bio_conf)
+set.seed(8888)
+rice_lda <- mlLda(data = rice_train, class ~ .)
+summary(rice_lda)
 ```
 
-```{r lda2_h2-check}
-grade_code("La fonction `cvpredict()` simplifie énormément le code, mais en interne, la validation croisée dix fois crée en réalité dix sets d'apprentissage et de test séparés. Ensuite, elle entraine `mlLda()` également dix fois et mesure la performance sur le set de test correspondant. Les dix résultats partiels sont joints dans la matrice de confusion finale (somme des effectifs partiels) pour obtenir le résultat final à l'aide de la fonction `confusion()`.")
+```{r lda_h2-check}
+grade_code("Votre LDA est entrainé. Il faut encore mesuré ces performances.", "Avez vous bien proposé la formule écrites sous sa forme condensée ? ")
 ```
 
-Inspectez les résultats obtenus et répondez aux questions suivantes :
+*La formule doit être écrite sous sa forme condensée*
 
-```{r lda_qu}
+### Analyse discriminante linéaire avec validation croisée
+
+```{r lda_cv_h2, exercise = TRUE}
+set.seed(8888)
+rice_lda_cv <- mlLda(data = ___, ___ ~ ___)
+summary(rice_lda_cv)
+```
+
+```{r lda_cv_h2-hint-1}
+set.seed(8888)
+rice_lda_cv <- mlLda(data = rice, ___ ~ ___)
+summary(rice_lda_cv)
+
+## Attention, le prochain indice est la solution ##
+```
+
+```{r lda_cv_h2-solution}
+## Solution ##
+set.seed(8888)
+rice_lda_cv <- mlLda(data = rice, class ~ .)
+summary(rice_lda_cv)
+```
+
+```{r lda_cv_h2-check}
+grade_code("Votre LDA avec validation croisée est entrainée. Il faut encore mesuré ces performances.", "Avez vous bien proposé la formule écrites sous sa forme condensée ?")
+```
+
+*La formule doit être écrite sous sa forme condensée*
+
+## Évaluation des classifieurs
+
+Vous avez réalisé deux classifieurs `rice_lda` et `rice_lda_cv`. Le premier n'utilise pas la validation croisée alors que le second l'utilise.
+
+Les tableaux de données disponibles sont les suivants : `rice`, `rice_train`, `rice_test`
+
+Évaluez les performances du premier classifieur `rice_lda`
+
+```{r pred_lda_h2, exercise = TRUE}
+# prédiction 
+rice_pred <- ___(___, ___)
+# matrice de confusion
+rice_conf <- confusion(___, ___$___)
+rice_conf
+summary(rice_conf)
+```
+
+```{r pred_lda_h2-hint-1}
+rice_pred <- predict(rice_lda, rice_test)
+rice_conf <- confusion(rice_pred, ___$___)
+rice_conf
+summary(rice_conf)
+
+## Attention, le prochain indice est la solution ##
+```
+
+```{r pred_lda_h2-solution}
+## Solution ##
+rice_pred <- predict(rice_lda, rice_test)
+rice_conf <- confusion(rice_pred, rice_test$class)
+rice_conf
+summary(rice_conf)
+```
+
+```{r pred_lda_h2-check}
+grade_code("Vous venez les analyses des performances du premier classifieur. Prenez un peu de temps pour analyser votre matrice de confusion et les métriques qui en découlent.")
+```
+
+Évaluez les performances du second classifieur `rice_lda_cv` à l'aide d'une validation croisée dix fois.
+
+```{r lda_pred_cv_h2, exercise = TRUE}
+set.seed(8888)
+# prédiction 
+rice_pred_cv <- ___(___, cv.k = ___)
+# matrice de confusion
+rice_conf_cv <- confusion(___, ___$___)
+rice_conf_cv
+summary(rice_conf_cv)
+```
+
+```{r lda_pred_cv_h2-hint-1}
+set.seed(8888)
+rice_pred_cv <- ___(rice_lda_cv, cv.k = ___)
+rice_conf_cv <- confusion(rice_pred_cv, ___$___)
+bio_conf_cv
+summary(rice_conf_cv)
+
+## Attention, le prochain indice est la solution ##
+```
+
+```{r lda_pred_cv_h2-solution}
+## Solution ##
+set.seed(8888)
+rice_pred_cv <- cvpredict(rice_lda_cv, cv.k = 10)
+rice_conf_cv <- confusion(rice_pred_cv, rice$class)
+rice_conf_cv
+summary(rice_conf_cv)
+```
+
+```{r lda_pred_cv_h2-check}
+grade_code("Vous venez de réaliser les analyses des performances du second classifieur. Prenez un peu de temps pour analyser votre matrice de confusion et les métriques qui en découlent.")
+```
+
+Répondez aux questions ci-dessous. Ces questions portent sur l'évaluation des deux classifieurs.
+
+```{r qu_lda_cv}
 quiz(
-  question("Combien d'items sont correctement classés ?",
-    answer(sprintf("%1.f", sum(conf_tab$TP)), correct = TRUE),
-    answer(sprintf("%1.f", sum(conf_tab$Auto))),
-    answer(sprintf("%1.f", conf_tab$Manu[1])),
-    answer(sprintf("%1.f", conf_tab$TN[2])),
-    answer("Aucune des réponses proposées"),
-    allow_retry = TRUE,
+  question("Quel classifieur permet d'avoir le taux d'erreur globale le plus bas ?",
+    answer("L'analyse discriminante linéaire sans validation croisée"),
+    answer("L'analyse discriminante linéaire avec validation croisée 10 fois", correct = TRUE),
+    allow_retry = TRUE, 
+    submit_button = "Soumettre une réponse",
+    try_again_button = "Resoumettre une réponse",
     incorrect = "Mauvaise réponse. Recommencez afin de trouver la bonne réponse",
-    correct = "Bravo, c'est correct !"
-    ),
-  question("Quel est le taux d'erreur global (en %) ?",
-    answer(sprintf("%.1f", 100 * (1 - (sum(conf_tab$TP) / sum(conf_tab$Auto)))), correct = TRUE),
-    answer(sprintf("%.1f", 100 * (sum(conf_tab$TP) / sum(conf_tab$Auto)))),
-  answer(sprintf("%3.f", sum(conf_tab$Auto) - sum(conf_tab$TP))),
-    answer(sprintf("%3.f", conf_tab$TN[2])),
-    answer("Aucune des réponses proposées"),
-    allow_retry = TRUE,
+    correct = "Bravo, c'est correct !"),
+  question("Combien d'items sont employé afin de déterminer les performances du classifieur avec validation croisée ?",
+    answer(sprintf("%1.f", nrow(rice)), correct = TRUE),
+    answer(sprintf("%1.f", nrow(rice_train))),
+    answer(sprintf("%1.f", nrow(rice_test))),
+    answer(sprintf("%1.f", sum(rice_tab_cv$TP))),
+    allow_retry = TRUE, random_answer_order = TRUE,
+    submit_button = "Soumettre une réponse",
+    try_again_button = "Resoumettre une réponse",
     incorrect = "Mauvaise réponse. Recommencez afin de trouver la bonne réponse",
-    correct = "Bravo, c'est correct !"
-    ),
-  question("Quel est la spécificité pour les femmes (W) ?",
-    answer(sprintf("%.3f", conf_tab[row.names(conf_tab) == "W", ]$Specificity), correct = TRUE),
-    answer(sprintf("%.3f", conf_tab[row.names(conf_tab) == "M", ]$Fscore)),
-    answer(sprintf("%3.f", sum(conf_tab$Auto) - sum(conf_tab$TP))),
-    answer(sprintf("%.3f", conf_tab[row.names(conf_tab) == "W", ]$Recall)),
+    correct = "Bravo, c'est correct ! On utilise l'ensemble des données disponibles."),
+  question("Quel est le taux de vrai positif pour la classe `Osmancik` avec le classifieurs `rice_lda_cv` ?",
+    answer(sprintf("%.3f", rice_tab_cv[row.names(rice_tab_cv) == "Osmancik", ]$Recall), correct = TRUE),
+    answer(sprintf("%.3f", rice_tab_cv[row.names(rice_tab_cv) == "Osmancik", ]$Fscore)),
+    answer(sprintf("%3.f", sum(rice_tab_cv$Auto) - sum(rice_tab_cv$TP))),
+    answer(sprintf("%.3f", rice_tab_cv[row.names(rice_tab_cv) == "Cammeo", ]$Recall)),
     answer("Aucune des réponses proposées"),
-    allow_retry = TRUE,
+    allow_retry = TRUE, random_answer_order = TRUE,
+    submit_button = "Soumettre une réponse",
+    try_again_button = "Resoumettre une réponse",
     incorrect = "Mauvaise réponse. Recommencez afin de trouver la bonne réponse",
-    correct = "Bravo, c'est correct !"
-    )
+    correct = "Bravo, c'est correct ! Vous avez analysé correctement les résulatats de votre analyse.")
   )
 ```
 
 ## Conclusion
+
+Ce tutoriel vous a permis de découvrir la validation croisée appliquée sur une analyse discriminante linéaire. L'avantage de la validation croisée est de pouvoir employer plus de données pour entrainer votre classifieur.
 
 ```{r comm_noscore, echo=FALSE}
 question_text(
