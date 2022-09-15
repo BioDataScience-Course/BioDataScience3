@@ -196,6 +196,8 @@ predict(pumpkins_knn, pumpkins_test) |> confusion(___$class) |> summary()
 predict(___, ___) |> confusion(___$___) |> summary()
 # forêt aléatoire
 predict(___, ____) |> confusion(___$___) |> summary()
+
+## Attention, le prochain indice est la solution ##
 ```
 
 ```{r predict_h2-solution}
