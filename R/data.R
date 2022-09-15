@@ -40,3 +40,50 @@
 #' }
 #' @source {KOKLU, M., SARIGIL, S. and OZBEK, O. (2021). The use of machine learning methods in classification of pumpkin seeds (Cucurbita pepo L.). Genetic Resources and Crop Evolution, 68(7), 2713-2726. doi:10.1007/s10722-021-01226-0}
 "pumpkins"
+
+#' Dermatology Dataset
+#'
+#' 34 attributes are studied on 366 patients to determine the type of Eryhemato-Squamous Disease.
+#' 12 attributes are the clinical attributes and 22 attributes are the Histopathological attributes.
+#'
+#' @format A data frame with 35 variables and 366 observations:
+#' \describe{
+#'   \item{\code{erythema}}{Clinical attributes: erythema}
+#'   \item{\code{scaling}}{Clinical attribute: scaling}
+#'   \item{\code{definite_borders}}{Clinical attribute: definite borders}
+#'   \item{\code{itching}}{Clinical attribute: itching}
+#'   \item{\code{koebner_phenomenon}}{Clinical attribute: koebner phenomenon}
+#'   \item{\code{polygonal_papules}}{Clinical attribute: polygonal papules}
+#'   \item{\code{follicular_papules}}{Clinical attribute: follicular papules}
+#'   \item{\code{oral_mucosal_involvement}}{Clinical attribute: oral mucosal involvement}
+#'   \item{\code{knee_elbow_involvement}}{Clinical attribute: knee and elbow involvement}
+#'   \item{\code{scalp_involvement}}{Clinical attribute: scalp involvement}
+#'   \item{\code{family_history}}{Clinical attribute: family history}
+#'   \item{\code{melanin_incontinence}}{Histopathological attribute: melanin incontinence}
+#'   \item{\code{eosinophils_infiltrate}}{Histopathological attribute: eosinophils in the infiltrate}
+#'   \item{\code{pnl_infiltrate}}{Histopathological attribute: PNL infiltrate}
+#'   \item{\code{fibrosis_papillary_dermis}}{Histopathological attribute: fibrosis of the papillary dermis}
+#'   \item{\code{exocytosis}}{Histopathological attribute: exocytosis}
+#'   \item{\code{acanthosis}}{Histopathological attribute: acanthosis}
+#'   \item{\code{hyperkeratosis}}{Histopathological attribute: hyperkeratosis}
+#'   \item{\code{parakeratosis}}{Histopathological attribute: parakeratosis}
+#'   \item{\code{clubbing_rete_ridges}}{Histopathological attribute: clubbing of the rete ridges}
+#'   \item{\code{elongation_rete_ridges}}{Histopathological attribute: elongation of the rete ridges}
+#'   \item{\code{thinning_suprapapillary_epidermis}}{Histopathological attribute: thinning of the suprapapillary epidermis}
+#'   \item{\code{spongiform_pustule}}{Histopathological attribute: spongiform pustule}
+#'   \item{\code{munro_microabcess}}{Histopathological attribute: munro microabcess}
+#'   \item{\code{focal_hypergranulosis}}{Histopathological attribute: focal hypergranulosis}
+#'   \item{\code{disappearance_granular_layer}}{Histopathological attribute: disappearance of the granular layer}
+#'   \item{\code{vacuolisation_damage_basal_layer}}{Histopathological attribute: vacuolisation and damage of basal layer}
+#'   \item{\code{spongiosis}}{Histopathological attribute: spongiosis}
+#'   \item{\code{saw_tooth_appearance_retes}}{Histopathological attribute: saw-tooth appearance of retes}
+#'   \item{\code{follicular_horn_plug}}{Histopathological attribute: follicular horn plug}
+#'   \item{\code{perifollicular_parakeratosis}}{Histopathological attribute: perifollicular parakeratosis}
+#'   \item{\code{inflammatory_monoluclear_inflitrate}}{Histopathological attribute: inflammatory monoluclear inflitrate}
+#'   \item{\code{band_like_infiltrate}}{Histopathological attribute: band-like infiltrate}
+#'   \item{\code{age}}{Histopathological attribute: age}
+#'   \item{\code{class}}{A **factor** with six levels: psoriasis, seboreic dermatitis, lichen planus, pityriasis rosea, cronic dermatitis, pityriasis rubra pilaris.}
+#'}
+#'
+#' @source {Ilter, Nilsel & Guvenir, H.. (1998). Dermatology. UCI Machine Learning Repository.}
+"dermatology"
