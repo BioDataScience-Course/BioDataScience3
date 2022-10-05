@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III Module 0** Rappel des notions importantes des cours SDD I et II."
 tutorial:
   id: "C00La_refresh"
-version: 2.0.0/15
+version: 2.0.1/15
 output:
   learnr::tutorial:
   progressive: true
@@ -14,10 +14,7 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 BioDataScience3::learnr_setup()
-SciViews::R()
-library(mlearning)
-library(modelit)
-library(exploreit)
+SciViews::R("model", "explore", "ml")
 
 # dataset
 crabs <- read("crabs", package = "MASS", lang = "fr")
@@ -35,28 +32,26 @@ BioDataScience3::learnr_server(input, output, session)
 
 ## Objectifs
 
-**Ce learnr est en cours d'édition**
-
-Ce cours de [Science des données III : exploration et prédiction](https://wp.sciviews.org/sdd-umons2/) fait suite aux cours de [Science des données I : visualisation et inférence](https://wp.sciviews.org/sdd-umons/) et [Science des données II : analyse et modélisation](https://wp.sciviews.org/sdd-umons2/). Ce tutoriel vise à :
+Ce cours de [Science des données III : exploration et prédiction](https://wp.sciviews.org/sdd-umons3/) fait suite aux cours de [Science des données I : visualisation et inférence](https://wp.sciviews.org/sdd-umons/) et [Science des données II : analyse et modélisation](https://wp.sciviews.org/sdd-umons2/). Ce tutoriel vise à :
 
 -   Réviser les notions essentielles du cours de Science des données I et II.
 -   Introduire les nouveautés dans la SciViews Box 2022
 
-Le cours de Science des données I se divise en deux parties. La première partie traite principalement de la réalisation de graphiques et du remaniement des données. La seconde partie s'intéresse aux probabilités, aux distributions statistiques les plus courantes en biologie ainsi qu'aux tests d'inférences (test t de Student, test de Wilcoxon, ANOVA, test de Kruskal-Wallis,...)
+Le cours de Science des données I se divise en deux parties. La première partie traite principalement de la réalisation de graphiques et du remaniement des données. La seconde partie s'intéresse aux probabilités, aux distributions statistiques les plus courantes en biologie ainsi qu'aux tests d'inférence (test *t* de Student, test de Wilcoxon, ANOVA, test de Kruskal-Wallis,...)
 
-Le cours de Science des données II se divise également en deux parties. La première partie porte sur la modélisation linéaire et non linéaire. La seconde partie se concentre sur les statistiques exploratoires avec des méthodes ayant pour objectif de réduire la dimensionnalité comme l'analyse en composante principale ou de regrouper des individus comme la classification hiérarchique ascendante. De nombreuses autres méthodes sont également vues.
+Le cours de Science des données II se divise également en deux parties. La première partie porte sur la modélisation linéaire et non linéaire. La seconde partie se concentre sur les statistiques exploratoires avec des méthodes ayant pour objectif de réduire la dimensionnalité comme l'analyse en composante principale ou de regrouper des individus comme la classification hiérarchique ascendante. D'autres méthodes sont également abordées.
 
-Ce tutoriel ne peut s'attarder sur chaque élément des 22 modules de cours précédemment. Nous vous proposons une synthèse dans ce tutoriel. N'hésitez pas à réviser ces modules, si vous en ressentez le besoin.
+Ce tutoriel ne peut s'attarder sur chaque aspect des 22 modules des deux cours précédent. Il est nécessairement une synthèse, mais son utilité réside dans une auto-évaluation de vos connaissances de ces cours avant d'aborder la matière du troisième. Si vous n'arrivez pas à répondre aux questions de ce tutoriel, une révision des cours précédents est indispensable.
 
-## Chargement des packages
+## Chargement de packages
 
-La fonction`SciViews::R()` est employée afin de charger une série de packages cohérents. Nous l'utilisons en début de script R ou encore dans le premier chunk d'un rapport d'analyse au format R Markdown.
+La fonction`SciViews::R()` est employée afin de charger une série cohérente de packages R. Nous l'utilisons en début de script R ou encore dans le premier chunk d'un rapport d'analyse au format R Markdown.
 
-Les packages chargés sont un ensemble cohérent qui permet d'importer, remanier et visualiser à l'aide de graphiques sans devoir employer en plus la fonction `library()`pour charger des packages en plus.
+Les packages R ainsi chargés permettent d'importer, remanier et visualiser à l'aide de graphiques sans devoir employer en plus la fonction `library()` pour charger d'autres packages en plus (mais elle reste disponible, bien sûr).
 
-Exécutez l'instruction `SciViews::R()` suivie de l'instruction `SciViews::SciViews_packages()` dans la console R ci-dessous et analysez le résultat proposé. Pour exécuter et tester votre code vous pouvez sélectionner le bouton `Run Code` et pour le soumettre, employez `Submit`.
+Exécutez l'instruction `SciViews::R()` suivie de l'instruction `SciViews::SciViews_packages()` dans la console R ci-dessous et analysez le résultat obtenu. Rappelez-vous que pour exécuter et tester votre code vous cliquez sur le bouton `Run Code` et pour soumettre votre résultat (il faut que le code soit correct naturellement), vous cliquez sur le bouton `Submit`.
 
-```{r sciviews-noscore, exercise = TRUE}
+```{r sciviews-noscore, exercise=TRUE}
 
 ```
 
@@ -66,41 +61,41 @@ SciViews::SciViews_packages()
 ```
 
 ```{r sciviews-noscore-check}
-grade_code("Parfait ! Pour tester votre code vous pouvez employez `Run Code`et pour le soumettre, vous pouvez employez `Submit`")
+grade_code("Vous voyez qu'un certain nombre de packages R sont chargés.")
 ```
 
 ```{r qu_sciviews}
-question("Sélectionnez parmi les propositions suivantes les packages chargés avec l'instruction `SciViews::R()`",
+question("Parmi ces packages R, lesquels sont chargés avec l'instruction `SciViews::R()`",
   answer("chart", correct = TRUE),
   answer("tidyverse"),
   answer("data.table", correct = TRUE),
   answer("data.io", correct = TRUE),
   answer("collapse", correct = TRUE),
   allow_retry = TRUE, random_answer_order = TRUE,
-  correct = "Bravo ! C'était une petite question d'échauffement liée à la lecture de sortie R.",
-  incorrect = "Attention, relisez attentivement la sortie proposée par la fonction SciViews::SciViews_packages(). Plusieurs éléments sont à sélectionner."
+  correct = "C'était une petite question d'échauffement liée à la lecture de sortie R.",
+  incorrect = "Attention, relisez attentivement ce que renvoie la fonction SciViews::SciViews_packages(). Plusieurs éléments sont à sélectionner."
     )
 ```
 
 ![](images/breaking_news.jpg){width="30%"}
 
-Des packages supplémentaires peuvent être chargés grâce à la fonction R() du package SciViews. Ces packages en plus vont être regroupés pour des tâches spécifiques comme`models` pour la modélisation.
+Des packages supplémentaires peuvent être chargés grâce à la fonction `SciViews::R()`. Ces packages additionnels vont être regroupés pour des tâches spécifiques comme `"model"` pour la modélisation, `"ml"` pour le machine learning, `"ts"` pour les séries spatio-temporelles, `"explore"` pour l'exploration multivariée, ...
 
-```{r, echo = TRUE, eval = FALSE}
-SciViews::R("models")
+```{r, echo=TRUE, eval=FALSE}
+SciViews::R("model")
 ```
 
-Nous attirons votre attention sur les objets par défaut pour les tableaux de données (*data frame*). Nous avons décidé de travailler avec des objets de type data.table par défaut. Il existe plusieurs types d'objets pour les tableaux de données dont `data.frame`, `tibble` ou `data.table`. La vitesse de traitements et la gestion en mémoire des data.table en font le choix idéal dans la gestion de large tableau de données. Ce changement de type d'objets aura des effets que nous découvrirons par la suite.
+Nous attirons votre attention sur les objets par défaut pour les tableaux de données (*data frame*). Nous avons décidé de travailler avec des objets de type **data.table** par défaut. Il existe plusieurs types d'objets pour les tableaux de données dont **data.frame**, **tibble** ou **data.table**. La vitesse de traitements et la gestion en mémoire des objets **data.table** en font le choix idéal dans la gestion de gros jeux de données. Ce changement de type d'objets data frame aura des effets que nous découvrirons par la suite.
+
+Suite à ce traitement différent des trois type d'objets data frame (**data.frame**, **data.table** et **tbl_df** de {tibble}), nous éviterons de créer de tels objets avec les fonctions classiques `data.frame()`, `data.table()` ou `tibble()`, mais nous préférerons utiliser `dtx()` qui va créer un data frame dans le format par défaut choisi (mais comme expliqué plus haut, nous resterons sur un **data.table** dans le cadre de ce cours). Les fonctions `dtf()`, `dtt()` et `dtbl()` créent respectivement un **data.frame**, un **data.table** et un **tbl_df** d'un manière compatible avec `dtx()`. Pour les conversions, nous utiliserons `as_dtx()`, `as_dtf()`, `as_dtt()` et `as_dtbl()`. Enfin, nous remplacerons `tribble()` par `dtx_rows()`.
 
 ## Importation des données
 
-Dans le SciViews-verse, nous vous proposons d'employer le package {data.io} afin d'importer vos tableaux de données dans R. Il faut retenir une seule fonction : read(). Elle permet de lire des données sur votre disque, depuis une URL ou encore d'un package.
+Avec le dialecte `SciViews::R` le package {data.io} est utilisé pour importer des jeux de données dans R. Il faut retenir une seule fonction : `read()`. Elle permet de lire des données sur votre disque, depuis une URL ou encore; à partir d'un package R. La fonction `read()` expose divers arguments. Consultez la page d'aide de la fonction pour connaitre le rôle de chaque argument.
 
-La fonction read() comprend de nombreux arguments. Consultez la page d'aide de la fonction pour connaitre le rôle de chaque argument.
+Importez le tableau nommé `crabs` qui provient du package {MASS} en spécifiant que la langue employée par défaut est le français (`fr`). \*\*Note : ne complétez que les zones demandées (\_\_\_). Les outils d'autocorrection sont très sensibles.\*\*
 
-Importez le tableau nommé `crabs` qui provient du package {`MASS`} en spécifiant que la langue employée par défaut est le français (`fr`). \*\*note : Ne complétez que les zones demandées (\_\_\_). Les outils d'autocorrection sont très sensibles.\*\*
-
-```{r read_h2, exercise = TRUE}
+```{r read_h2, exercise=TRUE}
 crabs <- read(___, package = ___, lang = ___)
 crabs
 ```
@@ -115,72 +110,71 @@ crabs
 ```
 
 ```{r read_h2-solution}
+## Solution ##
 crabs <- read("crabs", package = "MASS", lang = "fr")
 crabs
 ```
 
 ```{r read_h2-check}
-grade_code("Bravo ! Vous avez importé le tableau de données", "Il semble que la réponse n'est pas la bonne. Ne complète que les élèments manquants marqué ___. Consulte ensuite bien la page d'aide de la fonction.")
+grade_code("Vous avez importé le jeu de données dans R.", "Il semble que la réponse ne soit pas la bonne. Ne complétez que les élèments manquants marqué ___. Consultez la page d'aide de la fonction read() si nécessaire.")
 ```
 
-La fonction `read()` permet d'importer tous les formats suivants. Avec l'instruction suivante, vous pouvez retrouver tous les formats supportés par la fonction `read()` et `write()`.
+La fonction `read()` permet d'importer des données depuis de nombreux formats de fichiers différents. Avec l'instruction suivante, vous pouvez retrouver tous les formats supportés par la fonction `read()` et `write()`.
 
 ```{r, echo=TRUE}
-getOption("read_write")
+data_types(view = FALSE)
 ```
 
-Vous venez d'importer un tableau de données provenant d'un package. Serez-vous à présent capable d'importer un tableau de données présent sur votre disque ?
-
-Analysez l'organisation des fichiers ci-dessous. Le dossier `sharks-GuyliannEngels` comprend tous les documents employés afin de réaliser une analyse sur le recensement des attaques de requins en Australie. Il s'agit d'un [projet RStudio](https://wp.sciviews.org/sdd-umons/?iframe=wp.sciviews.org/sdd-umons-2022/rs.html). Ce projet doit absolument être portable. Il faut donc employer uniquement des [chemins relatifs](https://wp.sciviews.org/sdd-umons/?iframe=wp.sciviews.org/sdd-umons-2022/rs.html). Par exemple, le document `sharks_report.Rmd` se trouve dans le dossier `docs/`.
+À présent, vous allez utiliser la même fonction pour importer un jeu de données présent sur votre disque. Analysez l'organisation des fichiers ci-dessous. Le dossier `sharks-GuyliannEngels` contient tous les documents employés afin de réaliser une analyse sur le recensement des attaques de requins en Australie. Il s'agit d'un [projet RStudio](https://wp.sciviews.org/sdd-umons/?iframe=wp.sciviews.org/sdd-umons-2022/rs.html). Ce projet doit absolument être portable. Il faut donc employer uniquement des [chemins relatifs](https://wp.sciviews.org/sdd-umons/?iframe=wp.sciviews.org/sdd-umons-2022/rs.html%23chemins-relatifs). Par exemple, le document `sharks_report.Rmd` se trouve dans le sous-dossier `docs/`.
 
     /home
       /sv
         /shared
           /projects
-            /sharks-GuyliannEngels          # Répertoire de base du projet
-              .gitignore                   # Fichier relatif à la gestion de version
-              /docs                        # Dossier qui comprend toutes les analyses
-                sharks_report.Rmd         # Fichier au format Rmd qui comprend le rapport
-              /data                        # Dossier qui comprend toutes les données
-                sharks.csv                # Fichier qui comprend les données
-              /R                           # Dossier qui comprend tous les scripts d'analyse
-                sharks_import.R            # Script R nommé sharks_import.R
-              sharks-GuyliannEngels.Rproj  # Fichier de configuration du projet créé par RStudio
+            /sharks-GuyliannEngels        # Répertoire de base du projet
+              .gitignore                  # Fichier relatif à la gestion de version
+              /docs                       # Dossier rassemblant les analyses
+                sharks_report.Rmd         # Fichier au format Rmd pour le rapport
+              /data                       # Dossier pour les jeux de données
+                sharks.csv                # Fichier qui contient les données
+              /R                          # Dossier avec les scripts d'analyse
+                sharks_import.R           # Script R nommé sharks_import.R
+              sharks-GuyliannEngels.Rproj # Fichier de configuration du projet
 
 ```{r qu_read}
 quiz(
-  question("Depuis le fichier sharks_report.Rmd, Sélectionnez l'insruction R correcte afin de lire le tableau `sharks.csv`.",
+  question("Depuis le fichier sharks_report.Rmd, sélectionnez l'instruction R correcte afin de lire le je de données `sharks.csv`.",
     answer("sharks <- read(\"../data/sharks.csv\")", correct = TRUE),
     answer("sharks <- read(\"sharks.csv\")"),
     answer("sharks <- read(\"data/sharks.csv\")"),
     answer("sharks <- read(\"../../data/sharks.csv\")"),
     answer("sharks <- read(\"../data/sharks_import.R\")"),
     allow_retry = TRUE, random_answer_order = TRUE,
-    correct = "Bravo ! Ce n'est pas évident de déterminer le chemin d'accès correct.",
-    incorrect = "Attention, les chemins d'accès ce n'est pas simple. Nous te conseillons de réviser l'annexe proposés ci-dessous."
+    correct = "Le chemin d'accès relatif part du dossier contenant le fichier .Rmd.",
+    incorrect = "Attention, il faudrait peut-être réviser la partie relative aux chemins relatifs (voir lien plus haut)."
     ),
-  question("Depuis le fichier sharks_import.R, Sélectionnez l'insruction R correcte afin de lire le tableau `sharks.csv`.",
+  question("Depuis le fichier sharks_import.R, sélectionnez l'instruction R correcte afin de lire le jeu de données `sharks.csv`.",
     answer("sharks <- read(\"../data/sharks.csv\")"),
     answer("sharks <- read(\"sharks.csv\")"),
     answer("sharks <- read(\"data/sharks.csv\")", correct = TRUE),
     answer("sharks <- read(\"../../data/sharks.csv\")"),
     answer("sharks <- read(\"../data/sharks_import.R\")"),
     allow_retry = TRUE, random_answer_order = TRUE,
-    correct = "Bravo ! Ce n'est pas évident de déterminer le chemin d'accès correct. Le script R utilise comme point de départ le projet RStudio alors que le Rmd est son propre point de départ",
-  incorrect = "Attention, les chemins d'accès ce n'est pas simple. Nous te conseillons de réviser l'annexe proposés ci-dessous."
+    correct = "Le script R utilise comme point de départ le dossier de base contenant le projet RStudio, alors que le .Rmd part du dossier qui l'héberge.",
+  incorrect = "Vous devez, semble-t-il, réviser le cours en ce qui concerne les projets RStudio et les chemins relatifs."
     )
   )
 ```
 
-La section 5.1 du cours de [SDD I](https://wp.sciviews.org/sdd-umons/) traite de l'importation des données dans R. Consultez cette dernière au besoin.
+La [section 5.1 du cours de SDD I](https://wp.sciviews.org/sdd-umons/?iframe=wp.sciviews.org/sdd-umons-2022/importation-des-donn%25C3%25A9es.html) traite de l'importation des données dans R. Consultez également cette dernière au besoin.
 
 ## Visualisation des données
 
-La réalisation de graphiques dans R peut être réalisée à l'aide de plusieurs moteurs graphiques dans R comme avec le package {ggplot2}, le package {lattice} ou encore en utilisant les graphiques de base. Une comparaison des moteurs graphiques est réalisée dans la section 5.1 du cours de [SDD I](https://wp.sciviews.org/sdd-umons/)
+Plusieurs moteurs graphiques sont utilisables dans R pour réaliser vos graphiques : {ggplot2}, {lattice} ou encore, avec les graphiques de base de R. Une comparaison des moteurs graphiques est réalisée dans la [section 4.5 du cours de SDD I](https://wp.sciviews.org/sdd-umons/?iframe=wp.sciviews.org/sdd-umons-2022/diff%25C3%25A9rents-moteurs-graphiques.html)
 
-Dans le SciViews-verse, nous vous proposons d'employer le package {chart} afin de produire des graphiques scientifiques. La fonction centrale pour réaliser des graphiques est `chart()` à laquelle on va ajouter une série de couches avec un `+` comme explicité ci-dessous.
+Avec le dialect `SciViews::R`, la fonction centrale pour réaliser des graphiques est `chart()` à laquelle on va ajouter une série de couches avec un `+` comme illustré ci-dessous.
 
-```{r, echo = TRUE}
+```{r, echo=TRUE}
 # Importation des données
 crabs <- read("crabs", package = "MASS", lang = "fr")
 
@@ -190,22 +184,22 @@ chart(data = crabs, length ~ width %col=% sex | species) +
 
 ![](images/breaking_news.jpg){width="30%"}
 
-Il n'est pas aisé de se souvenir du nom de chaque fonction que l'on peut employer avec chart() ou avec ggplot(). Nous te proposons pour ce faire une syntaxe alternative. La fonction `gg$` associée au pipe natif de R `|>` permet d'obtenir une liste de toutes les fonctions disponibles que l'on peut ajouter au graphique. Le pipe `|>` va remplacer le `+` et on ajoute avant `geom_point()` l'instruction. `gg$`
+Il n'est pas aisé de se souvenir du nom de chaque fonction que l'on peut employer avec `chart()` ou avec `ggplot()`. Nous vous proposons pour ce faire une syntaxe alternative. La fonction `gg$` associée au pipe natif de R `|>` permet d'obtenir une liste de toutes les fonctions disponibles que l'on peut ajouter au graphique. Le pipe `|>` va remplacer le `+` et on ajoute avant `geom_point()` l'instruction. `gg$`
 
 ```{r, echo = TRUE}
 chart(data = crabs, length ~ width %col=% sex | species) |>
   gg$geom_point()
 ```
 
-Attention, il n'est pas possible d'intervertir le `+` et `|>` dans chaque situation. Le pipe natif de R `|>` se combine uniquement avec `gg`.
+Attention, il n'est pas possible d'intervertir le `+` et `|>` dans chaque situation. Le pipe natif de R `|>` se combine uniquement avec `gg`. L'avantage ici, c'est que lorsque vous entrez `gg$` dans RStudio, une liste de complétion apparaît et vous pouvez sélectionner la fonction recherchée dans la liste.
 
-```{r, echo = TRUE, eval=FALSE}
+```{r, echo=TRUE, eval=FALSE}
 # Mauvaise forme 
 chart(data = crabs, length ~ width %col=% sex | species) |>
   geom_point()
 ```
 
-Reproduisez le graphique suivant. Il s'agit de boites de dispersion (*boxplot*, en anglais).
+Reproduisez le graphique suivant.
 
 ```{r}
 # Importation des données
@@ -217,7 +211,7 @@ chart(data = crabs, length ~ sex %fill=% species) +
 
 Les variables à votre disposition sont les suivantes : `r names(crabs)`
 
-```{r chart_h4, exercise = TRUE}
+```{r chart_h4, exercise=TRUE}
 # Importation des données
 crabs <- read("crabs", package = "MASS", lang = "fr")
 # Graphique
@@ -252,6 +246,7 @@ chart(data = crabs, length ~ ___ %___=% ___ ) |>
 ```
 
 ```{r chart_h4-solution}
+## Solution ##
 # Importation des données
 crabs <- read("crabs", package = "MASS", lang = "fr")
 # Graphique
@@ -260,90 +255,87 @@ chart(data = crabs, length ~ sex %fill=% species ) |>
 ```
 
 ```{r chart_h4-check}
-grade_code("Bien joué ! Tu es capable d'employer la formule dans chart ainsi que le bon geom_* afin d'obtenir des boites de dispersion.")
+grade_code("Vous êtes capable d'employer la formule dans `chart()`, ainsi que le bon `geom_*()` afin d'obtenir des boites de dispersion.")
 ```
 
 ```{r qu_chart}
-question("Sélectionnez parmi les éléments suivants, les descriptions graphiques correctes. (Plusieurs éléments peuvent être cochés.",
-  answer("Les médianes des longueurs des carapaces des crabes orange sont supérieures aux crabes bleus.", correct = TRUE),
-  answer("Les moyennes des longueurs des carapaces des crabes orange sont supérieures aux crabes bleus."),
-  answer("Les espaces interquartiles sont similaires entre les 4 groupes.",correct = TRUE),
-  answer("Les écart-types sont similaires entre les 4 groupes."),
+question("Sélectionnez parmi les éléments suivants, les descriptions graphiques correctes (plusieurs éléments peuvent être cochés).",
+  answer("Les médianes des longueurs des carapaces des crabes oranges sont supérieures aux crabes bleus.", correct = TRUE),
+  answer("Les moyennes des longueurs des carapaces des crabes oranges sont supérieures aux crabes bleus."),
+  answer("Les espaces interquartiles sont similaires entre les quatre groupes.",correct = TRUE),
+  answer("Les écart-types sont similaires entre les quatre groupes."),
   allow_retry = TRUE, random_answer_order = TRUE,
-  correct = "Bravo ! Tu as sélectionné les éléments correctes. Cependant, la description n'est pas compète. Elle peut être améliorée à l'aide de valeurs numériques par exemple.",
-  incorrect = "Attention, N'auriez vous pas mélanger les descripteurs paramétriques et les descripteurs non paramétriques. La boite de dispersion présente les descripteurs non paramétriques. La section 4.3 de SDDI traite spécifiquement des boites de dispersion.")
+  correct = "Bonne interprétation du graphique. Notez ici que les couleurs par défaut sont trompeuses : l'orange pour les crabes bleus et le bleu-vert pour les crabes oranges... ce n'est franchement pas idéal du tout. Nous verrons un peu pluys loin comment corriger cela.",
+  incorrect = "Attention, n'auriez vous pas mélangé les descripteurs paramétriques et les descripteurs non paramétriques ? La boite de dispersion présente les descripteurs non paramétriques. La section 4.3 de SDD I traite spécifiquement des boites de dispersion.")
 ```
 
-Les modules 2, 3 et 4 du cours [SDD I](https://wp.sciviews.org/sdd-umons) traitent de la réalisation des graphiques dans R avec le package {chart}. Consultez ces modules au besoin.
+Les modules 2, 3 et 4 du cours [SDD I](https://wp.sciviews.org/sdd-umons) traitent de la réalisation des graphiques dans R avec le package {chart}. Révisez ces modules au besoin.
 
 ## Remaniement des données
 
-Le remaniement de données est tout un art que vous devez maitriser à la perfection. Vous devez être capable de détecter les valeurs manquantes, de filtrer des observations, de sélectionner des colonnes d'intérêt, de calculer de nouvelles variables. Ces outils de remaniement sont cruciaux dans la classification supervisée que nous découvrirons ensemble dans ce cours de SDD III.
+Le remaniement de données est tout un art que vous devez maîtriser à la perfection. Vous devez être capable de détecter les valeurs manquantes, de filtrer des observations, de sélectionner des colonnes d'intérêt, de calculer de nouvelles variables. Ces outils de remaniement sont cruciaux dans la classification supervisée que nous découvrirons ensemble dans ce cours de SDD III.
 
-Le changement de type d'objet pour nos tableaux de données va avoir un effet important dans le remaniement des données. Nous travaillons à présent avec un `data.table`.
+Le changement de type d'objet pour nos tableaux de données va avoir un effet important dans le remaniement des données. Nous travaillons à présent la plupart du temps avec un objet **data.table**.
 
-```{r, echo = TRUE}
-# Importation des données
+```{r, echo=TRUE}
 crabs <- read("crabs", package = "MASS", lang = "fr")
 class(crabs)
 ```
 
-Afin de sélectionner les colonnes `species`, `sex`, `length` du tableau `crabs`, nous aurions employé
+Afin de sélectionner les colonnes `species`, `sex` et `length` du tableau `crabs`, nous aurions employé l'an dernier...
 
-```{r, echo = TRUE, eval = FALSE}
-crabs1 <- select(crabs, species, length)
+```{r, echo=TRUE, eval=FALSE}
+crabs1 <- select(crabs, species, sex, length)
 ```
 
 ![](images/breaking_news.jpg){width="30%"}
 
-L'utilisation d'objet de type `data.table` requiert quelques modifications présentées ci-dessous. Vous avez à votre disposition plusieurs alternatives.
+L'utilisation d'objets **data.table** requiert quelques modifications présentées ci-dessous. Vous avez à votre disposition plusieurs alternatives :
+
+-   Soit vous continuez à utiliser les fonctions "tidy" (`select()`, `mutate()`, `group_by()`, `summarise()`, ...), et alors vous devez **collecter** les résultats soit avec la fonction `collect_dtx()`, soit avec l'opérateur d'assignation alternatif `%<-%` ou `%->%`.
+
+-   Soit vous utilisez une autre famille de fonctions, appelées "speedy" et qui portent le même nom que les fonctions "tidy" et avec une syntaxe similaire la plupart du temps, mais préfixées d'un "s"? comme `sselect()`, `smutate()`, `sgroup_by()`, `ssummarise()`...
 
 ```{r, echo = TRUE, eval = FALSE}
-# Assignation classique => la version conseillée
-crabs1 <- sselect(crabs, species, length) 
-# Assignation alternative
-crabs1 %<-% select(crabs, species, length)
-#  Assignation classique avec collect_dtx()
+# Assignation classique avec fonctions "speedy" => version conseillée
+crabs1 <- sselect(crabs, species, sex, length) 
+# Assignation alternative avec fonctions "tidy"
+crabs1 %<-% select(crabs, species, sex, length)
+#  Assignation classique avec collect_dtx() (plus lourd)
 crabs1 <- select(crabs, species, length) |> collect_dtx()
 ```
 
-Vous aurez remarqué que nous employons tout d'abord la fonction sselect() qui est similaire à la fonction select().
-
-**Les grandes familles de fonction** : Il est possible de réaliser des regroupements de fonctions dans R. Nous avons les fonctions associées au Tidyverse (que nous appellerons tidy par commodité) comme mutate(), select(), pivot_longer(),...
+**Les grandes familles de fonction** : Il est possible de réaliser des regroupements de fonctions dans R. Nous avons donc les fonctions associées au [Tidyverse](https://www.tidyverse.org) que nous appellerons "tidy" ici. Vous pouvez en lister les principales à l'aide de `list_tidy_functions()`.
 
 ```{r, echo=TRUE}
 list_tidy_functions()
 ```
 
-Enfin, nous avons les fonctions non-tidy. Nous parlerons de fonction `speedy`. Plusieurs fonctions proviennet du package {collapse}. Il propose des fonctions ressemblantes aux fonctions du Tidyverse et parfaitement compatibles avec les objets `data.table`. Elles débutent par un `f` comme `fselect()`. Pour simplifier l'identification de ces fonctions, nous les renommons `sselect()`, `smutate()`, `sgroup_by()`,... Elles sont plus rapides que les fonctions tidy.
+Enfin, nous avons les fonctions "speedy" élaborées dans le nouveau package {svBase} sur base de travail réalisé dans un autre package : {collapse} qui vise à accélérer le traitement de telles fonctions dans R. Ces fonctions speedy sont compatibles avec les objets **data.table**. Elles sont préfixées avec un "s" pour les reconnaître facilement.
 
 ```{r, echo=TRUE}
 list_speedy_functions()
 ```
 
-En résumé, on retrouve un équivalent aux 5 fonctions principales du Tidyverse pour le remaniement de tableau dans la famille des fonction `speedy`. Les arguments des fonctions et les résultats proposés sont très similaires :
+En résumé, on retrouve un équivalent aux cinq fonctions "tidy" principales du package {dplyr} mais sous forme "speedy". Les arguments des fonctions et les résultats renvoyés sont très similaires :
 
--   sélectionner des colonnes au sein d'un jeu de données avec select()/sselect()
--   filtrer des lignes dans un jeu de données avec filter()/sfilter()
--   calculer de nouvelles variables dans un jeu de données avec mutate()/smutate()
--   regrouper les données au sein d'un tableau avec group_by()/sgroup_by()
--   résumer les variables d'un jeu de données avec summarise()/ssummarise()
+-   sélectionner des colonnes au sein d'un jeu de données avec `select()`/`sselect()`
+-   filtrer des lignes dans un jeu de données avec `filter()`/`sfilter()`
+-   calculer de nouvelles variables dans un jeu de données avec `mutate()`/`smutate()`
+-   indiquer les variables de regroupement à utiliser dans un tableau avec `group_by()`/`sgroup_by()`
+-   résumer les variables d'un jeu de données avec `summarise()`/`ssummarise()`
 
-*Nous vous conseillons d'employer préférentiellement les fonctions `s...`. Malheureusement, il n'existe pas toujours d'équivalent aux fonctions tidy comme pour la fonction tpivot_longer().*
+*Nous vous conseillons d'employer préférentiellement les fonctions speedy.*
 
-Avec les fonctions tidy, il faut prendre soin de collecter les résultats à la fin si l'on travaille avec des objets de classe `data.table` comme c'est le cas par défaut avec SciViews::R (le package {dtplyr} gère alors les calculs en interne). Dans SciViews::R, on utilisera l'assignation alternative %\<-% ou %-\>%, ou alors, on utilisera explicitement collect_dtx() pour récupérer un data frame utilisable avec les fonctions non-tidy.
+Si vous continuez à utiliser les fonctions tidy dans `SciViews::R`, il faut prendre soin de collecter les résultats à la fin si l'on travaille avec des objets de classe **data.table**. C'est le package {dtplyr} qui gère les calculs en interne. Utilisez l'assignation alternative `%<-%` ou `%->%`, ou alors, explicitement `collect_dtx()` pour récupérer un data frame utilisable ensuite avec les fonctions non-tidy. Par contre, vous pouvez continuer à chaîner des fonctions tidy les unes après les autres dans un "pipeline" à l'aide de l'opérateur `%>.%` comme avant **mais ne mélangez pas les fonctions tidy et speedy dans le même pipeline !**
 
-**Les différents pipes** : Le pipe natif `|>` est un pipe proposée dans R de base depuis la version 4.1.0 de R. Vous connaissez déjà deux pipes que sont le pipe de {magrittr} `%>%` ou le pipe du package {flow} `%>.%`. L'objectif de ces trois pipes est le même. Ils permettent le chainage d'instruction afin de montrer de manière claire la suite des opérations. Les pipes améliorent grandement la lisibilité du code. Notez que le pipe `|>` ne requiert pas l'utilisation du `.` dans la fonction qui le suit alors que le pipe `%>.%` l'impose. Vous pouvez retrouver de plus amples informations sur le chainage dans la section 5.5 de [SDD I](https://wp.sciviews.org/sdd-umons).
+**Les différents pipes** : Le pipe natif de R, `|>` est apparu dans sa version 4.1 (la Sciviews Box 2021 étant basée sur R 4.0.5, vous le découvrez ici avec la version 4.1.3 de la SciViews Box 2022). Vous connaissez déjà deux opérateur de pipe que sont le pipe de {magrittr} `%>%` et le pipe du package {svFlow} `%>.%`. L'objectif de ces trois pipes est le même. Ils permettent le chaînage d'instruction afin de montrer de manière claire la suite des opérations. Les pipes améliorent grandement la lisibilité du code. Notez que le pipe `|>` ne permet pas l'utilisation du `.` dans la fonction qui le suit alors que le pipe `%>.%` l'impose. Vous pouvez retrouver de plus amples informations sur le chaînage des instructions dans des pipelines dans la [section 5.5 de SDD I](https://wp.sciviews.org/sdd-umons/?iframe=wp.sciviews.org/sdd-umons-2022/cha%25C3%25AEnage-des-instructions.html).
 
-Nous vous proposons d'employer le pipe `%>.%` lorsque le tableau initial est modifié et d'employer le pipe `|>` lorsqu'il ne l'est pas.
+Nous vous suggérons d'employer l'opérateur de pipe `%>.%` dans quasiment tous les cas, sauf si les deux instructions ne font qu'une seule étape logique. Alors, nous utiliserons le nouveau pipe R de base `|>`, en laissant l'ensemble sur une même ligne pour indiquer encore plus clairement que c'est une seule et même étape. Typiquement, vous allez rencontrer ce cas avec `group_by()` ou `sgroup_by()`. En effet, cette fonction ne modifie en rien le tableau de données, mais elle indique à la fonction suivante qu'il faudra travailler groupe par groupe pour telle ou telle variable. L'ensemble des deux, par exemple, `group_by(...) |> summarise(...)` ne forment donc, en réalité qu'une seule étape : un résumé des données par groupe. Et donc, nous le rendons plus clair de cette manière.
 
--   Si vous souhaitez filtrer des individus puis sélectionnez des colonnes d'intérêt, le tableau initial est modifié =\> `%>.%`
+Sélectionnez les crabes ayant une longueur de carapace strictement supérieure à 32 mm et dont la largeur est inférieure ou égale à 42. Utilisez la fonction "speedy" adéquate.
 
--   Si vous réalisez un groupement (group_by() ou sgroup_by()) suivi d'un résumé des observations (summarise() ou ssummarise()), le tableau initial n'est pas modifié =\> `|>`
-
-Sélectionnez les crabes ayant une longueur de carapace strictement supérieure à 32 mm et dont la largeur est inférieure ou égale à 42. Utilisez la fonction adéquate du package {collapse} (donc une fonction non-tidy)
-
-```{r filter_h3, exercise = TRUE}
+```{r filter_h3, exercise=TRUE}
 # Importation des données
 crabs <- read("crabs", package = "MASS", lang = "fr")
 # Réduction du tableau
@@ -367,6 +359,7 @@ crabs_red <- sfilter(crabs, ___ ___ ___ & width <= 42)
 ```
 
 ```{r filter_h3-solution}
+## Solution ##
 # Importation des données
 crabs <- read("crabs", package = "MASS", lang = "fr")
 # Réduction du tableau
@@ -374,12 +367,12 @@ crabs_red <- sfilter(crabs, length > 32 & width <= 42)
 ```
 
 ```{r filter_h3-check}
-grade_code("Parfait ! Vous avez employé correctement la fonction sfilter().", "Il semble que vous avez commis une erreur. n'hésitez pas à revoir la section 5.4.2 de SDD I.")
+grade_code("Vous avez employé correctement la fonction sfilter().", "Il semble que vous avez commis une erreur. N'hésitez pas à revoir la section 5.4.2 de SDD I.")
 ```
 
-Vous réaliserez régulièrement des tableaux de données afin de résumer l'information d'un tableau principal. Avec un tableau de données de type `data.frame` ou tibble (`tbl_df`), vous auriez pu employer les instructions suivantes.
+Vous allez maintenant résumer les données par espèce et par sexe. Avant, avec un tableau de données de type **data.frame** ou tibble (**tbl_df**) dans la Sciviews Box 2021, vous auriez pu employer les instructions suivantes :
 
-```{r, , echo = TRUE, eval=FALSE}
+```{r, , echo=TRUE, eval=FALSE}
 crabs %>.%
   group_by(., species, sex) %>.%
   summarise(., 
@@ -388,13 +381,13 @@ crabs %>.%
 
 ![](images/breaking_news.jpg){width="30%"}
 
-En appliquant les nouvelles conventions citées précédemment, nous vous proposons d'employer à présent l'une des deux formes suivantes (avec une préférence pour la première).
+En appliquant les nouvelles conventions expliquées précédemment, vous écrirez dorénavant :
 
-```{r, echo = TRUE}
-# Utilisation des fonctions fast
+```{r, echo=TRUE}
+# Utilisation des fonctions speedy
 crabs %>.%
   sgroup_by(., species, sex) |> ssummarise( 
-    length_mean = fmean(length), length_sd = fsd(length), n = fn(length)) ->
+    length_mean = fmean(length), length_sd = fsd(length), n = fn(length)) %->%
   crabs_red
 
 # Utilisation des fonctions tidy
@@ -406,351 +399,361 @@ crabs %>.%
 
 Nous pouvons observer l'utilisation :
 
--   des fonctions `fast` du package {collapse} (essentiellement)
--   du pipe natif `|>` et du pipe de {flow}
--   de l'assignation alternative `%->%` (uniquement avec la version tidy)
+-   du pipe natif `|>` et du pipe de {svFlow} `%>.%` judicieusement utilisés
+-   de l'assignation alternative `%->%` (uniquement obligatoire avec la version tidy, mais conseillée dans tous les cas à la fin du pipeline)
+-   des fonctions "fast" du package {collapse} dont le nom est préfixé par un "f" et que nous explicitons ci-dessous.
 
-Les fonctions en R de base peuvent être employées afin de réaliser des calculs comme la somme, la moyenne, la variance sur des vecteurs ou des matrices. Ces fonctions ont une version équivalente dans l'ensemble des fonctions `fast` du package {collapse}:
+Les fonctions en R de base peuvent être employées afin de réaliser des calculs comme la somme, la moyenne, la variance sur des vecteurs ou des matrices. Ces fonctions ont une version équivalente dans troisièpme famille de fonctions que nous vous faisons découvrir ici : les fonctions "fast" :
 
--   calculer la moyenne : mean()/fmean()
--   calculer l'écart-type : sd()/fsd()
--   déterminer le minimum : min()/fmin()
--   déterminer le maximum : max()/fmax()
--   calculer de la médiane : median()/fmedian()
+-   calculer la moyenne : `mean()`/`fmean()`
+-   calculer l'écart-type : `sd()`/`fsd()`
+-   déterminer le minimum : `min()`/`fmin()`
+-   déterminer le maximum : `max()`/`fmax()`
+-   calculer de la médiane : `median()`/`fmedian()`
 
-*Nous vous conseillons d'employer préférentiellement les fonctions `fast` qui sont plus rapides.*
+*Nous vous conseillons d'employer préférentiellement les fonctions "fast" qui sont plus rapides comme leur nom le suggère, mais qui ont également d'autres qualités intéressantes, notamment de s'appliquer directement et intelligemment sur des data frames.*
 
 ```{r, echo=TRUE}
 list_fstat_functions()
 ```
 
-C'est à vous de jouer ! Proposez un tableau résumé proposant la médiane, la longueur minimale, la longueur maximale et le nombre d'observations de la longueur de la carapace des crabes groupée par espèce et par sexe. Utilisez les fonctions `speedy` et les fonctions `fast`. Utilisez de plus le pipe natif de R. Les variables de `crabs` à votre disposition sont : `r names(crabs)`
+Complétez maintenant le code ci-dessous pour calculer un tableau résumé reprenant la médiane, la longueur minimale, la longueur maximale et le nombre d'observations de la longueur de la carapace des crabes regroupés par espèce et par sexe. Utilisez les fonctions "speedy" et les fonctions "fast" dans votre code. Utilisez de plus le pipe natif de R là où cela est pertinent. Les variables de `crabs` sont : `r names(crabs)`
 
-```{r summarise_h3, exercise = TRUE}
+```{r summarise_h3, exercise=TRUE, exercise.lines=7}
 crabs %>.%
   ___(., species, ___) ___ ___(
-    lenght_med = ___(___), length_min = ___(___), 
-    length_max = ___(___), n = ___(___)) -> crabs_red
+    length_med = ___(___), length_min = ___(___), 
+    length_max = ___(___), n = ___(___)) %->%
+  crabs_red
 crabs_red
 ```
 
 ```{r summarise_h3-hint-1}
 crabs %>.%
   ___(., species, sex) ___ ___(
-    lenght_med = ___(___), length_min = ___(___), 
-    length_max = ___(___), n = ___(___)) -> crabs_red
+    length_med = ___(___), length_min = ___(___), 
+    length_max = ___(___), n = ___(___)) %->%
+  crabs_red
 crabs_red
 ```
 
 ```{r summarise_h3-hint-2}
 crabs %>.%
   sgroup_by(., species, sex) |> ssummarise(
-    lenght_med = fmedian(___), length_min = ___(___), 
-    length_max = ___(___), n = ___(___)) -> crabs_red
+    length_med = fmedian(___), length_min = ___(___), 
+    length_max = ___(___), n = ___(___)) %->%
+  crabs_red
 crabs_red
  #### ATTENTION: Hint suivant = solution !####
 ```
 
 ```{r summarise_h3-solution}
+## Solution ##
 crabs %>.%
   sgroup_by(., species, sex) |> ssummarise(
-    lenght_med = fmedian(length), length_min = fmin(length), 
-    length_max = fmax(length), n = fnobs(length)) -> crabs_red
+    length_med = fmedian(length), length_min = fmin(length), 
+    length_max = fmax(length), n = fnobs(length)) %->%
+  crabs_red
 crabs_red
 ```
 
 ```{r summarise_h3-check}
-grade_code("Bien joué ! Vous avez compris la nouvelle syntaxe que nous vous proposons avec l'utilisation des fonctions du package collapse et le pipe natif.", "Il semble que vous avez commis une erreur. Nous vous conseillons de revoir le module 5 de SDD I.")
+grade_code("Vous avez compris la nouvelle syntaxe de la SciViews Box 2022.", "Il semble que vous avez commis une erreur. Nous vous conseillons de revoir le module 5 de SDD I ainsi que les explications ci-dessus.")
 ```
 
-## Analyse de variances
+## Analyse de variance
 
-L'analyse de variances permet de comparer une variable numérique en fonction d'une variable facteur (ou plusieurs variables facteurs). Nous allons nous intéresser à l'épaisseur des crabes.
+L'analyse de variance (ANOVA) permet de déterminer si la valeur moyenne d'une variable numérique (variable réponse) est significativement différente dans au moins une des sous-populations étudiées. Ces sous-populations sont définies par une ou plusieurs variables qualitatives (variables de classe **factor** ou **ordered**). Nous allons nous intéresser à l'épaisseur des crabes. Il est évident qu'un crabe plus grand sera aussi plus épais. Nous allons diviser l'épaisseur par la longueur de la carapace afin de considérer un facteur de forme (ratio) plutôt qu'une dimension absolue. Ensuite, nous considérerons la puissance cinq de ce ratio comme transformation qui normalise au mieux les données (suite à différents essais non présentés ici par soucis de concision).
 
-Continuons notre analyse sur le tableau de données `crabs`. Nous souhaitons nous intéresser à l'épaisseur des crabes. Il est évident qu'un crabe plus grand sera plus épais. Nous allons diviser l'épaisseur par la longueur de la carapace afin de neutraliser cet effet lié à taille.
+```{r, echo=TRUE}
+crabs2 <- smutate(crabs, depth_len5 = (depth/length)^5 |> labelise("(épaisseur / longueur)^5", units = ""))
 
-```{r, echo = TRUE}
-crabs <- smutate(crabs,
-  depth_std = depth/length, # Epaisseur/Longueur de la carapace
-  depth_std3 = depth_std^3) # Réduction de la variance
-
-chart(data = crabs, depth_std3 ~ sex %fill=% species) +
+chart(data = crabs2, depth_len5 ~ sex %fill=% species) +
   geom_boxplot()
 ```
 
-Proposez la meilleure anova afin d'étudier la différence du rapport de l'épaisseur du crabe divisé par la longueur de la carapace élevé au cube en fonction de l'espèce et du sexe. Nous avons donc comme point de départ une ANOVA à 2 facteurs. Il est utile de simplifier un modèle si des variables sont non significatives.
+Construisez un modèle ANOVA complet pour étudier cette variable `depth_len5` à la fois en fonction de l'espèce et du sexe. Normalement, il est utile de simplifier un modèle si des paramètres sont non significatifs, mais ici, vous conserverez le modèle complet.
 
 ![](images/breaking_news.jpg){width="30%"}
 
-Des graphiques génériques `chart()` sont disponible dans le package {modelit} afin d'analyser la distribution normale des résidus d'un objet de type `lm`. Consultez la page d'aide chart.lm du package modelit afin de découvrir tous les graphiques disponibles.
+Des graphiques génériques `chart()` sont disponible dans le package {modelit} afin d'analyser la distribution normale des résidus d'un objet de classe **lm**. Consultez la page d'aide `?chart.lm` afin de découvrir tous ces nouveaux graphiques.
 
-```{r, echo = TRUE, eval=FALSE}
+```{r, echo=TRUE, eval=FALSE}
 # un objet de type `lm`
 lm1
 # Graphique générique en R de base
 plot(lm1, which = 2)
-# Graphique générique en chart avec `modelit`
-chart$qq(lm1)
+# Graphique chart() équivalent avec le package {modelit}
+chart$qqplot(lm1)
 ```
 
-C'est à vous de jouer ! Il faut impérativement vérifier l'homoscédasticité ainsi que la distribution normale des résidus lors de la réalisation d'une ANOVA.
+N'oubliez pas que dans les conditions d'application de l'ANOVA, il faut que les résidus aient une distribution Normale et que la variance soit constante d'une sous-population à l'autre (homoscédasticité). En pratique, il faut naturellement suffisamment de points de mesure (une trentaine minimum pour donner un ordre de grandeur) pour pouvoir le vérifier. Par ailleurs, ce test est relativement robuste à des petites dérives à ce niveau.
 
 ```{r anova_prep}
 crabs <- read("crabs", package = "MASS", lang = "fr")
-crabs <- smutate(crabs,
-  depth_std = depth/length, # Epaisseur/Longueur de la carapace
-  depth_std3 = depth_std^3) # Réduction de la variance
+crabs2 <- smutate(crabs, depth_len5 = (depth/length)^5)
 ```
 
 ```{r anova_h3, exercise = TRUE, exercise.setup = "anova_prep"}
-# Réalisation de l'anova
-anova(lm. <-lm(data = ___, ___ ~ ___))
+# Réalisation de l'ANOVA
+anova(crabs_lm <- lm(data = ___, ___ ~ ___))
 # Vérification de l'homoscédasticité
-bartlett.test(data = ___, ___ ~ ___)
-# Vérification de la ditribution normale des résidus
-chart$qq(___)
+bartlett.test(data = ___, ___ ~ interaction(___, ___))
+# Vérification de la distribution normale des résidus
+chart$___(___)
 ```
 
 ```{r anova_h3-hint-1}
-# Réalisation de l'anova
-anova(lm. <-lm(data = crabs, depth_std3 ~ species*sex))
+# Réalisation de l'ANOVA
+anova(crabs_lm <- lm(data = crabs2, depth_len5 ~ ___))
 # Vérification de l'homoscédasticité
-bartlett.test(data = ___, ___ ~ ___)
-# Vérification de la ditribution normale des résidus
-chart$qq(___)
+bartlett.test(data = ___, ___ ~ interaction(___, ___))
+# Vérification de la distribution normale des résidus
+chart$qqplot(___)
 ```
 
 ```{r anova_h3-hint-2}
-# Réalisation de l'anova
-anova(lm. <-lm(data = crabs, depth_std3 ~ species + sex + species:sex))
+# Réalisation de l'ANOVA
+anova(crabs_lm <- lm(data = crabs2, depth_len5 ~ ___ * ___))
 # Vérification de l'homoscédasticité
-bartlett.test(data = ___, ___ ~ ___)
-# Vérification de la ditribution normale des résidus
-chart$qq(___)
+bartlett.test(data = ___, ___ ~ interaction(___, sex))
+# Vérification de la distribution normale des résidus
+chart$qqplot(___)
 
  #### ATTENTION: Hint suivant = solution !####
 ```
 
 ```{r anova_h3-solution}
-# Réalisation de l'anova
-anova(lm. <-lm(data = crabs, depth_std3 ~ species))
+## Solution ##
+# Réalisation de l'ANOVA
+anova(crabs_lm <- lm(data = crabs2, depth_len5 ~ species * sex))
 # Vérification de l'homoscédasticité
-bartlett.test(data = crabs, depth_std3 ~ species)
-# Vérification de la ditribution normale des résidus
-chart$qq(lm.)
+bartlett.test(data = crabs2, depth_len5 ~ interaction(species, sex))
+# Vérification de la distribution normale des résidus
+chart$qqplot(crabs_lm)
 ```
 
 ```{r anova_h3-check}
-grade_code("Bravo ! Tu as trouvé l'ANOVA la plus adaptée à la situation proposée. Cette anova à 2 facteurs pouvaient se résoudre avec un anova à un facteur. La variable lié à l'espèce ne comprends que deux niveaux. Il n'est donc pas utile de faire les tests post hoc. Assurez de bien maitriser ces tests complémentaires:)", "Essayez de décomposer l'ANOVA à 2 facteurs afin de trouver la meilleure ANOVA :(")
+grade_code("Cette ANOVA à deux facteurs peut se simplifier parce que l'effet 'sex' n'est pas significatif au seuil alpha de 5%. Néanmoins, les interactions sont très légèrement significatives au même seuil. Avec notre transformation puissance cinq, les résidus ont une distribution Normale et une variance constante, atestée par une valeur p du test de Batlett supérieur au seuil alpha de 5%. Ici, comme nous avons deux sous-populations, les tests pot hoc ne sont pas nécessaires, mais assurez-vous de bien les maîtriser également.", "Votre code n'est pas correct. Respecter l'ordre des variables, species avant sex et le noms des autres objets.")
 ```
 
 ## Modèle linéaire
 
-La modélisation est une part importante de la science des données. La modélisation permet de représenter de manière simplifiée un mécanisme responsable de la distribution d'observations. On peut modéliser afin de comprendre des mécanismes sous-jacents, afin de réaliser des prédictions ou encore afin d'explorer des relations entre variables. Nous ne revenons pas sur la différence entre corrélation, relation et causalité. Si vous avez une hésitation sur la différence entre ces termes, consultez la section 1.1.2 du [SDD2](https://wp.sciviews.org/sdd-umons2).
+La modélisation permet de créer une représentation mathématique simplifiée de la relation entre deux ou plusieurs variables numériques sous forme d'une fonction mathématique. Nous ne revenons pas sur la différence entre corrélation, relation et causalité. Si vous avez une hésitation sur la différence entre ces termes, consultez la [section 1.1.2 de SDD II](https://wp.sciviews.org/sdd-umons2/?iframe=https://wp.sciviews.org/sdd-umons2-2022/modèle.html%23quand-modéliser). La fonction utilisée pour ajuster un modèle linéaire est `lm()`.
 
-La fonction de base afin de réaliser un modèle linéaire est fonction `lm()` afin de réaliser un modèle linéaire. Votre objectif est d'étudier la relation entre l'épaisseur du corps et la longueur de la carapace.
+Votre objectif est d'étudier la relation entre l'épaisseur du corps des crabes en fonction de la longueur de leur carapace pour chaque espèce. La première chose à faire est de tracer le graphique en nuage de points. Une petite astuce ici : la première couleur du graphique est rouge-orange et la seconde un vert-bleu. Par contre, on a l'espèce bleue qui est avant l'espèce orange ("B" avant "O" par ordre alphabétique). Donc, sans précautions particulières, on aurait l'espèce bleue représentée en rouge-orange et l'espèce orange en vert-bleu, comme c'était le cas au début de ce tutoriel pour le graphique en boites de dispersion. Nous allons donc inverser les niveaux de la variable `species` à l'aide de `fct_relevel()`. Nous aurions aussi bien pu changer la palette de couleurs utilisée.
 
-```{r, echo = TRUE}
-chart(data = crabs, depth ~ length %col=% species) +
+```{r, echo=TRUE}
+crabs %>.%
+  smutate(., species = fct_relevel(species, "O", "B")) %>.%
+chart(data = ., depth ~ length %col=% species) +
   geom_point()
 ```
 
-Le nuage de point de l'épaisseur du corps en fonction de la longueur de la carapace met une distribution des observations linéaire. Les crabes orange ont un rapport épaisseur/longueur un peu plus élevé.
+Nous voyons sur ce graphique que les nuages de points s'étirent linéairement. C'est un prérequis pour un modèle... linéaire, bien sûr. Ensuite, il nous semble que l'épaisseur des crabes oranges est sensiblement supérieure à celle des crabes bleus pour une même longueur de carapace. Mais est-ce significatif ?
 
-C'est à vous de jouer ! Débutez votre analyse par un modèle complet de l'épaisseur du crabe en fonction de la longueur de la carapace et de l'espèce. Simplifiez ensuite ce modèle si cela est nécessaire en analysant le résumé de votre modèle. La section 3.4.2 du cours de [SDD2](https://wp.sciviews.org/sdd-umons2) détaille le choix du modèle à utiliser. Voici les noms des variables du tableau `crabs` : `species`, `length`, `depth`.
+Commencez par utiliser un modèle complet de l'épaisseur en fonction de la longueur de la carapace et de l'espèce. Simplifiez ensuite ce modèle si cela est nécessaire en analysant le résumé de votre modèle. La [section 3.4.2 du cours de SDD II](https://wp.sciviews.org/sdd-umons2/?iframe=wp.sciviews.org/sdd-umons2-2022/ancova.html%23choix-du-mod%C3%A8le) explique comment choisir le meilleur modèle dans ce type de situation. Voici les noms des variables du tableau `crabs` : `species`, `length`, `depth`.
 
-```{r lm_h3, exercise = TRUE}
-lm. <- ___(data = ___, ___ ~ ___)
-summary(lm.)
+```{r lm_h3, exercise=TRUE}
+crabs_lm <- ___(data = ___, ___ ~ ___)
+summary(crabs_lm)
 ```
 
 ```{r lm_h3-hint-1}
-lm. <- lm(data = crabs, length ~ ___)
-summary(lm.)
+crabs_lm <- lm(data = crabs, length ~ ___)
+summary(crabs_lm)
 ```
 
 ```{r lm_h3-hint-2}
-lm. <- lm(data = crabs, depth ~ length + species + length:species)
-summary(lm.)
+crabs_lm <- lm(data = crabs, depth ~ length + species + length:species)
+summary(crabs_lm)
 
  #### ATTENTION: Hint suivant = solution !####
 ```
 
 ```{r lm_h3-solution}
-lm. <- lm(data = crabs, depth ~ length + length:species)
-summary(lm.)
+## Solution ##
+crabs_lm <- lm(data = crabs, depth ~ length + length:species)
+summary(crabs_lm)
 ```
 
 ```{r lm_h3-check}
-grade_code("Bravo ! Vous avez réussi à simplifier le modèle.", "Il semble que vous avez commis une erreur. Analysez le résumé de votre modèle.")
+grade_code("Vous avez correctement simplifié le modèle.", "Il semble que vous avez commis une erreur. Analysez le résumé de votre modèle.")
 ```
 
 Intéressons-nous à présent aux premiers graphiques permettant d'analyser les résidus du modèle généré ci-dessus.
 
 ```{r}
 crabs_lm <- lm(data = crabs, depth ~ length + length:species)
+```
+
+```{r, echo=TRUE}
 chart$resfitted(crabs_lm)
 ```
 
 ```{r qu_resid}
-question("Analysez la distribution homogène des résidus. Sélectionnez les éléments corrects.",
-    answer("On observe autant de résidus positif que négatif.", correct = TRUE),
-    answer("La courbe de tendance général indiquant l'influence général des résidus reste proche de 0 tout au long de l'axe X.", correct = TRUE),
-    answer("Les valeurs des résidus restent homogène tout le long de l'axe X.", correct = TRUE),
+question("Analysez la distribution des résidus sur base du graphique. Sélectionnez les éléments corrects.",
+    answer("On observe autant de résidus positif que négatif.", correct = FALSE), # ATTENTION Guyliann, c'est la somme des résidus qui vaut zéro, pas le nombre des positifs moins le nombre des négatifs... C'est donc FAUX!
+    answer("La courbe de tendance générale ne révèle pas d'anomalie particulière.", correct = TRUE),
+    answer("La variance des résidus en fonction des valeurs prédites parait homogène (homoscédasticité).", correct = TRUE),
   allow_retry = TRUE, random_answer_order = TRUE,
-  correct = "Bravo ! Tu as sélectionné tous les éléments correctes proposés.",
-  incorrect = "Attention, N'auriez vous pas oublié un élément important dans la liste proposée ?"
+  correct = "Bonne interprétation de ce graphique d'analyse des résidus. Ici, nous n'avons pas d'anomalie particulière. Un piège : ce n'est pas le nombre de résidus positifs et négatifs qui s'équilibre, mais la somme des valeurs positives et négatives de ces résidus !",
+  incorrect = "Attention, observez plus attentivement ce graphique et les propositions offertes."
   )
 ```
 
-Plusieurs autres graphiques diagnostiques sont disponibles et très utiles pour qualifier la qualité d'un modèle. Assurez-vous de les maitriser.
+Plusieurs autres graphiques de diagnostic des résidus sont disponibles. Assurez-vous de bien les maîtriser. Consultez les modules 1, 2, 3, 4 et 5 de [SDD II](https://wp.sciviews.org/sdd-umons2/) pour réviser les notions liées à la modélisation si nécessaire.
 
-Consultez les modules 1, 2, 3, 4 et 5 de [SDD II](https://wp.sciviews.org/sdd-umons2/) pour réviser les notions liées à la modélisation.
+## Analyse en composantes principales
 
-## Analyse en composante principale
+L'une des méthodes les plus employées dans l'analyse multivariée est l'analyse en composantes principales (ACP). Utilisons à nouveau notre jeu de données `crabs` pour réaliser une ACP. Avant de débuter cette analyse, il est important de repérer les variables quantitatives, et de synthétiser les corrélations linéaires (coefficients de corrélation de Pearson) entre ces variables.
 
-L'une des méthodes les plus employées dans l'analyse multivariée est l'analyse en composantes principales. Cette dernière est la base de nombreuses autres méthodes. Il est de ce fait indispensable de la maitriser.
-
-Utilisons à nouveau notre tableau `crabs` pour réaliser cette analyse. Avant de débuter cette analyse, il est important de repérer les variables quantitatives d'intérêt, et synthétiser les corrélations linéaires (coefficients de corrélation de Pearson) entre ces variables.
-
-```{r, echo = TRUE}
-plot(correlation(fselect(crabs, front:depth)), type = "upper")
+```{r, echo=TRUE}
+plot(correlation(sselect(crabs, front:depth)), type = "upper")
 ```
 
-Les quatre variables ont une forte corrélation linéaire. La fonction employée afin de réaliser cette analyse est la fonction `pca()`. La formule spécifiée dans la fonction comprend toutes les variables que nous souhaitons employer dans l'ACP. Ces variables ne peuvent être que des variables numériques.
+Les quatre variables ont une forte corrélation linéaire positive. Nous réalisons une ACP à l'aide de la fonction `pca()`. La formule spécifiée dans la fonction doit reprendre toutes les variables que nous souhaitons employer dans l'ACP. Ces variables ne peuvent être que des variables numériques.
 
-```{r, echo = TRUE}
+```{r, echo=TRUE}
 crabs_pca <- pca(data = crabs, ~ front + rear + length + width + depth)
 summary(crabs_pca)
 ```
 
 ![](images/breaking_news.jpg){width="30%"}
 
-Des graphiques génériques `chart()` sont disponible dans le package {exploreit} afin d'analyser l'acp qui est un objet de type `pcomp`. Consultez la page d'aide `pca` du package {exploreit} afin de découvrir tous les graphiques disponibles.
+Des graphiques génériques `chart()` sont disponible dans le package {exploreit} pour analyser votre ACP. L'objet renvoyé par `pca()` est de classe **pcomp**. Consultez la page d'aide `?pca` pour avoir plus d'informations sur les différents graphiques disponibles (ceux-ci correspondent au code que vous deviez sourcer avec la SciViews Box 2021, mais maintenant, ils sont inclus directement dans `SciViews::R` à condition d'indiquer `"explore"` comme topic, donc `SciViews::R("explore")`).
 
-Le graphique des éboulis suivant permet de mettre en évidence la chute de variance d'un axe principal à l'autre. Un effet saturant est observé du premier axe de l'ACP qui comprend la quasi-totalité de la variance.
-
-On peut préciser `chart(mon_acp, type = "\_\_\_")` ou bien on spécifie le type de graphique que l'on souhaite à la suite du dollar `chart$___(...)` :
+On peut préciser `chart(mon_acp, type = "mon_type")` ou bien on spécifie le type de graphique que l'on souhaite à la suite du dollar `chart$mon_type(mon_acp)`. Cette dernière forme étant fortement conseillée. Vous avez les trois types de graphiques suivants :
 
 -   `scree` = le graphique des éboulis
--   `loadings` = la représentation des variables dans l'espace
--   `scores` = la représentation des individus dans l'espace
+-   `loadings` = la représentation dans l'espace des variables
+-   `scores` = la représentation dans l'espace des individus
+
+Le graphique des éboulis suivant permet de mettre en évidence la chute de variance d'un axe principal à l'autre. Un effet saturant est observé sur le premier axe de l'ACP qui reprend la quasi-totalité de la variance.
 
 ```{r, echo = TRUE}
-# chart$scree(crabs_pca)
-chart(crabs_pca, type = "scree")
+chart$scree(crabs_pca)
 ```
 
-C'est à vous de jouer ! Vous allez tenter de réduire cet effet de saturation en divisant chaque variable numérique d'intérêt par la largueur de la carapace `width` et réaliser à nouveau une ACP sur ces variables calculées.
+La représentation dans les espaces des variables et des individus donnent ceci :
+
+```{r, echo = TRUE}
+chart$loadings(crabs_pca)
+chart$scores(crabs_pca)
+```
+
+Dans un cas comme celui-ci, il est possible d'analyser plus en détail au delà de cet effet saturant, mais pour cela, il faut l'éliminer d'abord. Une façon de faire consiste à diviser chaque variable numérique par l'une d'entre elles que l'on considère comme plus représentative de l'effet saturant. Ici, c'est la taille globale des crabes, et nous pouvons utiliser, par exemple, la largueur de la carapace `width` comme référence. Faites cette transformation.
 
 ```{r acp_h3, exercise = TRUE}
 # Calcul des nouvelles variables
-crabs_red <- smutate(___, front = ___/___, length = ___/___, 
-    rear = ___/___, depth = ___/___, sp_sex = paste0(species, sex))
+crabs_w <- smutate(___, front_w = ___/___, length_w = ___/___, 
+  rear_w = ___/___, depth_w = ___/___, sp_sex = paste0(species, sex))
 # Réalisation de l'ACP (respectez l'ordre de création des variables)
-crabs_pca <- pca(data = ___, ~ ___ + ___ + ___ + ___)
+crabs_w_pca <- pca(data = ___, ~ ___ + ___ + ___ + ___)
 # Résumé de l'ACP
 ___(___)
 ```
 
 ```{r acp_h3-hint-1}
 # Calcul des nouvelles variables
-crabs_red <- smutate(crabs, front = ___/width, length = ___/width, 
-    rear = ___/width, depth = ___/width, sp_sex = paste0(species, sex))
+crabs_w <- smutate(crabs, front_w = ___/width, length_w = ___/width, 
+  rear_w = ___/width, depth_w = ___/width, sp_sex = paste0(species, sex))
 # Réalisation de l'ACP (respectez l'ordre de création des variables)
-crabs_pca <- pca(data = crabs_red, ~ ___ + ___ + ___ + ___)
+crabs_w_pca <- pca(data = crabs_w, ~ ___ + ___ + ___ + ___)
 # Résumé de l'ACP
 ___(crabs_pca)
 ```
 
 ```{r acp_h3-hint-2}
 # Calcul des nouvelles variables
-crabs_red <- smutate(crabs, front = front/width, length = length/width, 
-    rear = rear/width, depth = depth/width, sp_sex = paste0(species, sex))
+crabs_w <- smutate(crabs, front_w = front/width, length_w = length/width, 
+  rear_w = rear/width, depth_w = depth/width, sp_sex = paste0(species, sex))
 # Réalisation de l'ACP (respectez l'ordre de création des variables)
-crabs_pca <- pca(data = crabs_red, ~ ___ + ___ + ___ + ___)
+crabs_w_pca <- pca(data = crabs_w, ~ front_w + ___ + ___ + ___)
 # Résumé de l'ACP
-summary(crabs_pca)
+summary(crabs_w_pca)
 
  #### ATTENTION: Hint suivant = solution !####
 ```
 
 ```{r acp_h3-solution}
+## Solution ##
 # Calcul des nouvelles variables
-crabs_red <- smutate(crabs, front = front/width, length = length/width, 
-    rear = rear/width, depth = depth/width, sp_sex = paste0(species, sex))
+crabs_w <- smutate(crabs, front_w = front/width, length_w = length/width, 
+  rear_w = rear/width, depth_w = depth/width, sp_sex = paste0(species, sex))
 # Réalisation de l'ACP (respectez l'ordre de création des variables)
-crabs_pca <- pca(data = crabs_red, ~ front + length + rear + depth)
+crabs_w_pca <- pca(data = crabs_w, ~ front_w + length_w + rear_w + depth_w)
 # Résumé de l'ACP
-summary(crabs_pca)
+summary(crabs_w_pca)
 ```
 
 ```{r acp_h3-check}
-grade_code("Bien joué ! , vous venez d'obtenir l'objet crabs_pca. Vous avez su sélectionner les variables les plus intéressantes.", "Il semble que vous avez commis un erreur. Vérifiez la formule donnée dans l'ACP.")
+grade_code("Vous venez d'obtenir l'objet crabs_w_pca. Vous avez su sélectionner les variables les plus intéressantes.", "Il semble que vous avez commis un erreur. Vérifiez votre formule dans l'ACP.")
 ```
 
 À présent, réalisez le graphique des éboulis, la représentation dans l'espace des variables et la représentation dans l'espace des individus. Discriminez les individus grâce à la variable `sp_sex`.
 
 ```{r crabs_acp_prep}
 # Calcul des nouvelles variables
-crabs_red <- smutate(crabs, front = front/width, length = length/width, 
-    rear = rear/width, depth = depth/width, sp_sex = paste0(species, sex))
+crabs_w <- smutate(crabs, front_w = front/width, length_w = length/width, 
+  rear_w = rear/width, depth_w = depth/width, sp_sex = paste0(species, sex))
 # Réalisation de l'ACP
-crabs_pca <- pca(data = crabs_red, ~ front + length + rear + depth)
+crabs_w_pca <- pca(data = crabs_w, ~ front_w + length_w + rear_w + depth_w)
 ```
 
 ```{r acp_graph_h2, exercise = TRUE, exercise.setup = "crabs_acp_prep"}
 # Graphique des éboulis
-chart(___, type = ___)
+chart$___(___)
 # Représentation dans l’espace des variables
-chart(___, type = ___)
+chart$___(___)
 # Représentation dans l’espace des individus
-chart(___, type = ___, labels = ___$___) +
+chart$___(___, , labels = ___$___) +
   stat_ellipse()
 ```
 
 ```{r acp_graph_h2-hint-1}
 # Graphique des éboulis
-chart(crabs_pca, type = "scree")
+chart$scree(crabs_w_pca)
 # Représentation dans l’espace des variables
-chart(___, type = ___)
+chart$___(___)
 # Représentation dans l’espace des individus
-chart(___, type = ___,labels = crabs_red$___) +
+chart$___(___,labels = crabs_w$___) +
   stat_ellipse()
 
  #### ATTENTION: Hint suivant = solution !####
 ```
 
 ```{r acp_graph_h2-solution}
+## Solution ##
 # Graphique des éboulis
-chart(crabs_pca, type = "scree")
+chart$scree(crabs_w_pca)
 # Représentation dans l’espace des variables
-chart(crabs_pca, type = "loadings")
+chart$loadings(crabs_w_pca)
 # Représentation dans l’espace des individus
-chart(crabs_pca, type = "scores", labels = crabs_red$sp_sex) +
+chart$scores(crabs_w_pca, labels = crabs_w$sp_sex) +
   stat_ellipse()
 ```
 
 ```{r acp_graph_h2-check}
-grade_code("Bravo ! Vous avez correctement réalisé les 3 graphiques demandés. Répondez à la question suivante afin de vérifier que vous êtes capable de les interpréter.", "Il semble que tu as commis une erreur, relis attentivement ton code.")
+grade_code("Vous avez correctement réalisé les trois graphiques demandés. Répondez à la question suivante relative à l'interprétation de cette analyse.", "Il semble que vous ayez commis une erreur, relisez attentivement le code, et si nescessaire, le module 7 du cours SDD II.")
 ```
 
 ```{r qu_acp}
-question("Sélectionnez parmi les éléments suivants, les éléments qui décrivent l'ACP réalisée sur les variables calculées (Plusieurs éléments peuvent être cochés).",
-  answer("L'ACP permet de séparer les 4 groupes (crabes bleus males, crabes bleus femelles, crabes oranges males et les crabes bleus femelles). Les médianes des longueurs des carapaces des crabes orange sont supérieures aux crabes bleus.", correct = TRUE),
-  answer("Le premier axe reprend 63.5% de la variance totale. Cet axe est correlée avec la longueur de la carapace, la profondeur de la carapace et la taille du lobe frontale.", correct = TRUE),
-  answer("Le second axe représente 27.7% de la variance totale. Cet axe est fortement correlée avec la largueur à l'arrière de la carapace.",correct = TRUE),
-  answer("La longueur et l'épaisseur des carapaces sont fortement correlées ensemble.", correct = TRUE),
-  answer("L'épaisseur de la carapace n'est pas correlée avec la largeur à l'arrière de la carapace.", correct = TRUE),
-  answer( "La largeur à l'arrière de la carapace permet de distingue les individus male des femelles. Les crabes oranges ont une carapaces plus épaisse et plus grandes que les crabes bleus.", correct = TRUE),
+question("Sélectionnez les affirmations correctes (plusieurs choix possibles).",
+  answer("L'ACP permet de séparer les deux espèces. Les rapports longueur/largeur sont plus importants pour les crabes oranges.", correct = TRUE),
+  answer("Le premier axe reprend 63.5% de la variance totale. Cet axe est corrélé avec les ratios longueur/largeur, profondeur/largeur et taille du lobe frontal/largeur.", correct = TRUE),
+  answer("Le second axe représente 27.7% de la variance totale. Cet axe est inversément correlé avec le ratio largueur à l'arrière/largeur.",correct = TRUE),
+  answer("Les ratios longueur/largeur et épaisseur/largeur sont directement corrélés.", correct = TRUE),
+  answer("Le ratio épaisseur/largeur est inversément corrélé avec le ratio largeur à l'arrière/largeur.", correct = FALSE),
+  answer( "Le ratio largeur à l'arrière/largeur permet de distinguer la plupart des individus mâles des femelles et les crabes bleus on une carapace plus compacte (rapport longueur - largeur) que les crabes oranges.", correct = TRUE),
   allow_retry = TRUE, random_answer_order = TRUE,
-  correct = "Bravo ! Tous les éléments sont corrects. La description d'une ACP est une tâche complexe. De tres nombreux éléments doivent être décris.",
-  incorrect = "Attention, N'auriez vous pas oublié un élément de cette description ?")
+  correct = "Bon travail. La description d'une ACP est une tâche complexe. De tres nombreux éléments doivent être décris.",
+  incorrect = "Attention, vous avez commis une ou plusieurs erreurs. Vérifiez !")
 ```
 
 ## Conclusion
 
-Vous venez de réviser les éléments essentiels des cours de sciences de données I et II. Vous avez les éléments minimaux pour débuter ce cours de science des données III.
+Vous venez de réviser les éléments essentiels des cours de sciences de données I et II. Vous avez également découvert les nouveautés de la SciViews Box 2022. Grâce à ce tutoriel, vous avez pu déterminer par vous-mêmes si votre niveau de connaissance est suffisant ou non pour aborder le cours de Science des Données III. Si pas, vous devez revoir la matière non comprise de manière urgente, sinon vous ne pourrez pas suivre !
 
 ```{r comm_noscore, echo=FALSE}
 question_text(
