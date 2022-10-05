@@ -1,10 +1,10 @@
 ---
 title: "Matrices de confusion"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III Module 1** Matrices de confusion et métriques qui en découlent."
+description: "**SDD III Module 1** Matrices de confusion et métriques."
 tutorial:
   id: "C01La_confusion"
-  version: 2.1.0/5
+  version: 2.1.1/5
 output:
   learnr::tutorial:
     progressive: true
@@ -29,42 +29,37 @@ BioDataScience3::learnr_server(input, output, session)
 
 ## Objectifs
 
-Il est possible de créer une multitude de classifieurs. Afin de déterminer le classifieur le plus adapté, nous avons besoin d'évaluer sa qualité. L'approche la plus adaptée est d'employer des métriques comme le taux de reconnaissance globale, la précision, le rappel.... Ces métriques se calculent sur base d'une matrice de confusion. Ces métriques sont également employées afin de comparer les classifieurs entre eux.
+Il est possible de créer une multitude de classifieurs différents à partir d'un même jeu de données. Afin de déterminer le classifieur le plus adapté, nous avons besoin d'évaluer la qualité de chacun d'eux. Pour ce faire, nous utilisons des métriques comme le taux de reconnaissance globale, la précision, le rappel.... Ces métriques se calculent sur base d'une matrice de confusion.
 
-Ce tutoriel a pour objectif
+Ce tutoriel a pour objectifs :
 
--   Choisir la bonne métrique
--   Appréhender les matrices de confusion.
--   Appréhender les principales métriques grâce aux calculs à la main de ces dernières à partir d'une matrice de confusion 2 x 2.
+-   Apprendre à choisir la bonne métrique
+-   Appréhender les matrices de confusion
+-   Calculer les principales métriques à partir d'une matrice de confusion 2 x 2
 
 ## Choix des métriques
 
 ```{r qu_metrics}
-#question("Quelle est la métrique la plus adpatée afin de déterminer le nombre d'items d'intéret trouvé parmi l'ensemble des items ?",
-#  answer("Rappel", correct = TRUE),
-#  answer("Spécificité"),
-#  answer("Taux de faux positifs"),
-#  answer("Précision"),
-#  answer("Score F"),
-#  answer("Rappel"),
-#  allow_retry = TRUE, random_answer_order = TRUE,
-#)
-
-question("Quelle est la métrique la plus adpatée afin de mettre en avant le nombre d'items d'intéret trouvé parmi l'ensemble des items ?",
-  answer("Rappel", correct = TRUE, message = "Le rappel permet de connaitre quelle est la fraction de classe X trouvé par l'ordinatuer parmi l'ensemble des items."),
-  answer("Précision", message = "La précision permet de connaitre quelle est la fraction effectivement de classe X que l’ordinateur a classé comme X ?"),
-  answer("Spécificité", message = "La spécificité est l'opposé du rappel. On s'intéresse à la vrai négatif."),
-  answer("Score F", message = "Il s'agit d'une métrique qui combine la précision et le rappel."),
-  allow_retry = TRUE, random_answer_order = TRUE,
-  correct = "Bravo ! Vous avez trouvé la métrique la plus adaptée.",
+question("Quelle est la métrique la plus adaptée pour s'assurer que le classifieur trouve un maximum d'items d'une classe donnée ?",
+  answer("Rappel", correct = TRUE,
+    message = "Le rappel permet de connaitre quelle est la fraction de classe X trouvée par l'ordinateur parmi l'ensemble des items appartenant effectivement à cette classe."),
+  answer("Précision",
+    message = "La précision permet de connaitre quelle est la fraction que l'ordinateur a classé comme X et qui appartient effectivement à cette classe."),
+  answer("Spécificité",
+    message = "La spécificité est l'opposé du rappel. On s'intéresse aux vrais négatifs, donc, les items non classés comme X et qui n'en sont pas."),
+  answer("Score F",
+    message = "Il s'agit d'une métrique qui combine la précision et le rappel."),
+  allow_retry = TRUE,
+  random_answer_order = TRUE,
+  correct = "Vous avez trouvé la métrique la plus adaptée.",
   incorrect = "Attention, Ce n'est pas la bonne métrique.",
   submit_button = "Soumettre une réponse",
   try_again_button = "Resoumettre une réponse")
 ```
 
-## Le taux de reconnaissance global
+## Taux de reconnaissance global
 
-Ces métriques peuvent sembler abstraites. En effectuant un exemple à la main, on peut les appréhender plus facilement. Intéressez-vous pour débuter au taux de reconnaissance globale.
+Ces métriques peuvent sembler abstraites. En les calculant à la main, on peut les appréhender plus facilement. Intéressez-vous, pour débuter, au taux de reconnaissance globale.
 
 ```{r, echo=FALSE, message=FALSE}
 mconf <- dtf(
@@ -75,16 +70,16 @@ rownames(mconf) <- c("A", "B", "C")
 knitr::kable(mconf, caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
 ```
 
-Sur base de la matrice de confusion fictive ci-dessus, calculez le taux de reconnaissance global du groupe B. Il s'agit de la première étape. Il faut définir les vrais positifs, les faux positifs, les faux négatifs et les vrais négatifs. Ensuite, il faut ensuite calculer la métrique d'intérêt.
+Sur base de la matrice de confusion fictive ci-dessus, calculez le taux de reconnaissance global du groupe B. Il s'agit de la première étape. Il faut définir les vrais positifs, les faux positifs, les faux négatifs et les vrais négatifs. Ensuite, il faut calculer la métrique d'intérêt.
 
-```{r conf1_h2, exercise = TRUE}
-tp <- ___ # TRUE POSITIVE, vrai positif
-fp <- ___ # FALSE POSITIVE, faux positif
-fn <- ___ # FALSE NEGATIVE, faux négatif
-tn <- ___ # TRUE NEGATIVE, vrai négatif
-# calcul de la métrique
-conf <- ___
-conf
+```{r conf1_h2, exercise=TRUE}
+tp <- ___ # vrai positif
+fp <- ___ # faux positif
+fn <- ___ # faux négatif
+tn <- ___ # vrai négatif
+# Calcul de la métrique
+acc <- ___
+acc
 ```
 
 ```{r conf1_h2-hint-1}
@@ -92,9 +87,9 @@ tp <- 160
 fp <- 90
 fn <- 80
 tn <- 440
-# calcul de la métrique
-conf <- ___
-conf
+# Calcul de la métrique
+acc <- ___
+acc
 ## Attention, le prochain indice est la solution ##
 ```
 
@@ -104,9 +99,9 @@ tp <- 160
 fp <- 90
 fn <- 80
 tn <- 440
-# calcul de la métrique
-conf <- (tp + tn) / (tp + fp + fn + tn)
-conf
+# Calcul de la métrique
+acc <- (tp + tn) / (tp + fp + fn + tn)
+acc
 ```
 
 ```{r conf1_h2-check}
@@ -116,13 +111,13 @@ conf
 #    )
 #)
 grade_result(
-  pass_if(~ identical(.result, ((160+440)/(160+90+80+440)))),
-  correct = "Bien joué, c'est la somme des vrais positifs et négatifs sur le total général.",
-  incorrect =  "Révise la formule mathématique de taux de reconnaissance"
+  pass_if(~ identical(.result, ((160 + 440) / (160 + 90 + 80 + 440)))),
+  correct = "C'est la somme des vrais positifs et négatifs sur le total général (en d'autres termes, la somme de la diagonale sur le total général).",
+  incorrect =  "Révisez la formule mathématique qui permet de calculer le taux de reconnaissance global."
   )
 ```
 
-## Le taux de vrai positif
+## Taux de vrais positifs
 
 ```{r, echo=FALSE, message=FALSE}
 mconf <- dtf(
@@ -133,16 +128,16 @@ rownames(mconf) <- c("A", "B", "C")
 knitr::kable(mconf, caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
 ```
 
-Sur base de cette nouvelle matrice de confusion ci-dessus, calculez le **taux de vrais positifs** du groupe C.
+Sur base de la nouvelle matrice de confusion ci-dessus, calculez le **taux de vrais positifs** du groupe C.
 
 ```{r conf2_h2, exercise = TRUE}
 tp <- ___
 fp <- ___
 fn <- ___
 tn <- ___
-# calcul de la métrique
-conf <- ___
-conf
+# Calcul de la métrique
+tpr <- ___
+tpr
 ```
 
 ```{r conf2_h2-hint-1}
@@ -150,9 +145,9 @@ tp <- 140
 fp <- 10
 fn <- 100
 tn <- 190
-# calcul de la métrique
-conf <- ___
-conf
+# Calcul de la métrique
+tpr <- ___
+tpr
 ## Attention, le prochain indice est la solution ##
 ```
 
@@ -162,18 +157,19 @@ tp <- 140
 fp <- 10
 fn <- 100
 tn <- 190
-# calcul de la métrique
-conf <- tp / (tp + fn)
-conf
+# Calcul de la métrique
+tpr <- tp / (tp + fn)
+tpr
 ```
 
 ```{r conf2_h2-check}
 grade_result(
-  pass_if(~ identical(.result, (140/(140 + 100))), "La référence est l'ensemble des positifs, soit les vrais positifs, mais aussi les faux négatifs.")
+  pass_if(~ identical(.result, (140 / (140 + 100))),
+    "La référence est l'ensemble des positifs, soit les vrais positifs, mais aussi les faux négatifs.")
 )
 ```
 
-## La spécificité
+## Spécificité
 
 ```{r, echo=FALSE, message=FALSE}
 mconf <- dtf(
@@ -184,16 +180,16 @@ rownames(mconf) <- c("A", "B", "C")
 knitr::kable(mconf, caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
 ```
 
-Sur base de cette matrice de confusion ci-dessus, calculez la **spécificité** du groupe A.
+Sur base de la matrice de confusion ci-dessus, calculez la **spécificité** du groupe A.
 
 ```{r conf3_h2, exercise = TRUE}
 tp <- ___
 fp <- ___
 fn <- ___
 tn <- ___
-# calcul de la métrique
-conf <- ___
-conf
+# Calcul de la métrique
+specif <- ___
+specif
 ```
 
 ```{r conf3_h2-hint-1}
@@ -201,9 +197,9 @@ tp <- 90
 fp <- 50
 fn <- 0
 tn <- 300
-# calcul de la métrique
-conf <- ___
-conf
+# Calcul de la métrique
+specif <- ___
+specif
 ## Attention, le prochain indice est la solution ##
 ```
 
@@ -213,18 +209,19 @@ tp <- 90
 fp <- 50
 fn <- 0
 tn <- 300
-# calcul de la métrique
-conf <- tn / (tn + fp)
-conf
+# Calcul de la métrique
+specif <- tn / (tn + fp)
+specif
 ```
 
 ```{r conf3_h2-check}
 grade_result(
-  pass_if(~ identical(.result, (300/(300 + 50))), "À l'inverse ici, on considère comme référence l'ensemble des négatifs qui ne sont pas du groupe A, donc les vrais négatifs mais aussi les faux positifs.")
+  pass_if(~ identical(.result, (300 / (300 + 50))),
+    "À l'inverse ici, on considère comme référence l'ensemble des négatifs, donc ceux qui ne sont pas du groupe A, c'est-à-dire les vrais négatifs additionnés des faux positifs.")
 )
 ```
 
-## La précision
+## Précision
 
 ```{r, echo=FALSE, message=FALSE}
 mconf <- dtf(
@@ -242,9 +239,9 @@ tp <- ___
 fp <- ___
 fn <- ___
 tn <- ___
-# calcul de la métrique
-conf <- ___
-conf
+# Calcul de la métrique
+prec <- ___
+prec
 ```
 
 ```{r conf4_h2-hint-1}
@@ -252,9 +249,9 @@ tp <- 10
 fp <- 150
 fn <- 30
 tn <- 260
-# calcul de la métrique
-conf <- ___
-conf
+# Calcul de la métrique
+prec <- ___
+prec
 ## Attention, le prochain indice est la solution ##
 ```
 
@@ -264,20 +261,21 @@ tp <- 10
 fp <- 150
 fn <- 30
 tn <- 260
-# calcul de la métrique
-conf <- tp / (tp + fp)
-conf
+# Calcul de la métrique
+prec <- tp / (tp + fp)
+prec
 ```
 
 ```{r conf4_h2-check}
 grade_result(
-  pass_if(~ identical(.result, (10/(10+150))), "Ne pas se tromper car cette fois la référence est l'ensemble des items classés par l'ordinateur comme B, soit les vrais et les faux positifs.")
+  pass_if(~ identical(.result, (10 / (10 + 150))),
+    "Ne pas se tromper car cette fois la référence est l'ensemble des items classés par l'ordinateur comme B, soit les vrais et les faux positifs.")
 )
 ```
 
 ## Conclusion
 
-Même si la réalisation de ces calculs de métrique peut vous sembler simpliste. Ils vous ont permis d'appréhender un peu mieux ces métriques qui sont des éléments cruciaux dans la mise en place d'un classifieur. À chaque fois que vous devrez étudier la qualité d'un classifieur, débuter par définir les métriques les plus pertinentes.
+Ces calculs de métriques à la main peut vous sembler simpliste. Ils vous ont permis d'appréhender un peu mieux ces métriques qui sont des éléments cruciaux dans l'évaluation d'un classifieur. À chaque fois que vous devrez étudier la qualité d'un classifieur, commencez par définir les métriques les plus pertinentes par rapport à vos objectifs.
 
 ```{r comm_noscore, echo=FALSE}
 question_text(

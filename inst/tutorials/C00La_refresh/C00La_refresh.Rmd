@@ -1,10 +1,10 @@
 ---
 title: "Rappel de SDD I et II"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III Module 0** Rappel des notions importantes des cours SDD I et II."
+description: "**SDD III** Rappel des cours SDD I et II et nouveautés svbox2022."
 tutorial:
   id: "C00La_refresh"
-version: 2.0.1/15
+version: 2.0.2/14
 output:
   learnr::tutorial:
   progressive: true
@@ -186,7 +186,7 @@ chart(data = crabs, length ~ width %col=% sex | species) +
 
 Il n'est pas aisé de se souvenir du nom de chaque fonction que l'on peut employer avec `chart()` ou avec `ggplot()`. Nous vous proposons pour ce faire une syntaxe alternative. La fonction `gg$` associée au pipe natif de R `|>` permet d'obtenir une liste de toutes les fonctions disponibles que l'on peut ajouter au graphique. Le pipe `|>` va remplacer le `+` et on ajoute avant `geom_point()` l'instruction. `gg$`
 
-```{r, echo = TRUE}
+```{r, echo=TRUE}
 chart(data = crabs, length ~ width %col=% sex | species) |>
   gg$geom_point()
 ```
@@ -296,7 +296,7 @@ L'utilisation d'objets **data.table** requiert quelques modifications présenté
 
 -   Soit vous utilisez une autre famille de fonctions, appelées "speedy" et qui portent le même nom que les fonctions "tidy" et avec une syntaxe similaire la plupart du temps, mais préfixées d'un "s"? comme `sselect()`, `smutate()`, `sgroup_by()`, `ssummarise()`...
 
-```{r, echo = TRUE, eval = FALSE}
+```{r, echo=TRUE, eval=FALSE}
 # Assignation classique avec fonctions "speedy" => version conseillée
 crabs1 <- sselect(crabs, species, sex, length) 
 # Assignation alternative avec fonctions "tidy"
@@ -494,7 +494,7 @@ crabs <- read("crabs", package = "MASS", lang = "fr")
 crabs2 <- smutate(crabs, depth_len5 = (depth/length)^5)
 ```
 
-```{r anova_h3, exercise = TRUE, exercise.setup = "anova_prep"}
+```{r anova_h3, exercise=TRUE, exercise.setup="anova_prep"}
 # Réalisation de l'ANOVA
 anova(crabs_lm <- lm(data = ___, ___ ~ ___))
 # Vérification de l'homoscédasticité
@@ -644,7 +644,7 @@ chart$scores(crabs_pca)
 
 Dans un cas comme celui-ci, il est possible d'analyser plus en détail au delà de cet effet saturant, mais pour cela, il faut l'éliminer d'abord. Une façon de faire consiste à diviser chaque variable numérique par l'une d'entre elles que l'on considère comme plus représentative de l'effet saturant. Ici, c'est la taille globale des crabes, et nous pouvons utiliser, par exemple, la largueur de la carapace `width` comme référence. Faites cette transformation.
 
-```{r acp_h3, exercise = TRUE}
+```{r acp_h3, exercise=TRUE}
 # Calcul des nouvelles variables
 crabs_w <- smutate(___, front_w = ___/___, length_w = ___/___, 
   rear_w = ___/___, depth_w = ___/___, sp_sex = paste0(species, sex))
@@ -701,7 +701,7 @@ crabs_w <- smutate(crabs, front_w = front/width, length_w = length/width,
 crabs_w_pca <- pca(data = crabs_w, ~ front_w + length_w + rear_w + depth_w)
 ```
 
-```{r acp_graph_h2, exercise = TRUE, exercise.setup = "crabs_acp_prep"}
+```{r acp_graph_h2, exercise=TRUE, exercise.setup="crabs_acp_prep"}
 # Graphique des éboulis
 chart$___(___)
 # Représentation dans l’espace des variables

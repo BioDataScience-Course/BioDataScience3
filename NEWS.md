@@ -1,3 +1,9 @@
+# BioDataScience3 2022.2.0
+
+-   **C00La_rappel** renamed **C00La_refresh** and also totally reworked. Also includes explanations about changes between svbox2021 and svbox2022.
+
+-   **C01La_confusion** and **C01Lb_ml1** revised.
+
 # BioDataScience3 2022.1.0
 
 -   All learnr exercices adapted and tested with svbox2022.

@@ -53,9 +53,5 @@ dermatology
 \description{
 34 attributes are studied on 366 patients to determine the type of Eryhemato-Squamous Disease.
 12 attributes are the clinical attributes and 22 attributes are the Histopathological attributes.
-The family history feature has the value 1 if any of these diseases has been observed in the family, and 0 otherwise.
-The age feature simply represents the age of the patient.
-Every other feature (clinical and histopathological) was given a degree in the range of 0 to 3.
-Here, 0 indicates that the feature was not present, 3 indicates the largest amount possible, and 1, 2 indicate the relative intermediate values.
 }
 \keyword{datasets}

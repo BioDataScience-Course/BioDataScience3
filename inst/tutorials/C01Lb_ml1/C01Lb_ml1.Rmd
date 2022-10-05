@@ -1,10 +1,10 @@
 ---
 title: "Machine learning (1)"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III Module 1** Découverte de la classification supervisée avec l'ADL."
+description: "**SDD III Module 1** Classification supervisée avec l'ADL."
 tutorial:
   id: "C01Lb_ml1"
-  version: 2.1.0/7
+  version: 2.2.0/7
 output:
   learnr::tutorial:
     progressive: true
@@ -14,10 +14,7 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 BioDataScience3::learnr_setup()
-SciViews::R()
-library(mlearning)
-library(exploreit)
-library(rsample)
+SciViews::R("ml", "explore")
 
 # exercice preparation --------
 read("biometry", package = "BioDataScience") %>.%
@@ -25,18 +22,18 @@ read("biometry", package = "BioDataScience") %>.%
   drop_na(.) %->%
   bio
 
-## Prepare train et test sets
+## Prepare train and test sets
 set.seed(164)
 bio_split <- initial_split(bio, prop = 2/3)
 bio_train <- training(bio_split)
 bio_test <- testing(bio_split)
 
-## Creation d'un modèle lda
+## Create an LDA model
 bio_lda <- mlLda(data = bio_train, gender ~ .)
 
 ## Confusion 
 bio_conf <- confusion(predict(bio_lda, bio_test), bio_test$gender)
-conf_tab <- summary(bio_conf)
+bio_conf_tab <- summary(bio_conf)
 ```
 
 ```{r, echo=FALSE}
@@ -51,71 +48,70 @@ BioDataScience3::learnr_server(input, output, session)
 
 ## Objectifs
 
-De très nombreux algorithmes de classifications supervisées existent, la méthode liée à cette séance d'exercice porte sur l'analyse discriminante linéaire. Cette méthode se base sur les mêmes principes que l'analyse discriminante linéaire.
+De nombreux algorithmes de classification supervisée coexistent. Nous découvrons ici comment classer des items à l'aide d'un ordinateur grâce à l'Analyse Discriminante Linéaire (ADL). Cette méthode se base sur les mêmes principes que l'ACP que vous avez utilisée au cours SDD II.
 
-La mise en place d'un classifieur requiert de suivre une série d'étapes :
+L'élaboration d'un classifieur requiert de suivre une série d'étapes :
 
--   explorer les données
-    -   visualiser vos données à l'aide de plusieurs graphiques,
-    -   vérifier et corriger le type de chaque variable (surtout pour les variables facteurs),
-    -   calculer des variables supplémentaires pertinentes,
-    -   traiter le problème des valeurs manquantes si votre modèle ne les gère pas,
-    -   éliminer les variables inutiles (par exemple, le code d'identification d'un individu).
--   préparer le set d'apprentissage et le set de test
--   entrainer un classifieur (choisir l'algorithme, l'entrainer...)
--   évaluer la qualité du classifieur à l'aide de métrique pertinente.
--   déployer le classifieur afin de prédire les classes d'intérêts
+-   Explorer les données
+    -   Visualiser les données à l'aide de divers graphiques,
+    -   Vérifier et corriger le type de chaque variable (surtout pour les variables "factor"),
+    -   Calculer des variables supplémentaires pertinentes,
+    -   Traiter le problème des valeurs manquantes si votre modèle ne les gère pas,
+    -   Éliminer les variables inutiles (par exemple, le code d'identification d'un individu).
+-   Préparer le set d'apprentissage et le set de test
+-   Entraîner un classifieur (choisir l'algorithme, l'ajuster sur le set d'apprentissage...)
+-   Évaluer la qualité du classifieur à l'aide des métriques pertinentes
+-   Déployer le classifieur afin de prédire les classes dans un gros jeu de données non encore classé manuellement.
 
-L'objectif de ce tutoriel est de vous permettre de découvrir l'analyse discriminante linéaire.Vous devez être bien conscient de toutes les étapes ci-dessus. Cependant ici, nous allons aller droit au but et considérer que cela a été fait en partie pour vous, mais ne l'oubliez pas plus tard dans vos projets !
+L'objectif de ce tutoriel est de vous permettre de découvrir l'analyse discriminante linéaire. Vous devez être bien conscient de toutes les étapes ci-dessus et vous devrez les mettre en œuvre dans le cadre de vos projets plus tard. Cependant, pour rendre cette première approche de la classification supervisée plus abordable, nous ne détaillerons pas toutes ces étapes, mais seulement les quelques unes qui mènent à un classifieur ADL fonctionnel.
 
-## Différenciation des hommes et des femmes
+## Différences morphométriques entre hommes et femmes
 
-Proposez un classifieur qui permet de discriminer les hommes des femmes sur base de mesures biométriques
+Le calcul de l'indice de masse corporelle (IMC) a déjà fait l'objet de plusieurs de vos analyses dans les cours précédents. C'est en effet un sujet à la fois simple à comprendre au premier abord, et en réalité, assez compliqué dans le détail. Le projet de départ est de définir un indice, un nombre, qui quantifie l'"obésité" d'une personne sur une échelle allant de l'anorexie la plus extrême jusqu'à l'obésité morbide la plus forte. On se rend vite compte qu'il ne suffit pas simplement de prendre la masse, ou même, la masse rapportée à la taille. En effet, un certain nombre de facteurs interviennent comme le genre, l'âge, la morphologie générale, la pratique de sport à haut niveau, etc.
+
+À partir du moment où la classification supervisée permet de déterminer s'il est possible de différencier des sous-populations sur base de mesures quantitatives, nous pouvons utiliser l'ADL pour répondre à la question suivante : si les différences entre genres interviennent de manière non négligeables sur les variables qui sont utilisées régulièrement dans les formules de calcul de l'IMC, il doit être possible de *prédire* si un individu est un homme ou une femme *uniquement* sur base de l'information contenue dans ces variables quantitatives. Autrement dit, nous prenons le problème à l'envers. Au lieu de nous demander comment le genre influence l'IMC, on se demande si les variables quantitatives qui interviennent dans le calcul de l'IMC permettent de prédire le genre. Et si c'est le cas, nous en conclurons que le genre ne peut probablement pas être négligé dans nos formules. Cette approche inversée est utile dans certaines situations où les relations entre les variables sont obscures car il existe des algorithmes de classification supervisée qui fonctionnent comme des boîtes noires et pour lesquelles ce type d'information n'est justement pas nécessaire.
 
 ![](images/man_woman.png){width="35%"}
 
-Vous avez à votre disposition le tableau de données suivant :
+Vous avez à votre disposition le tableau de données suivant que l'on réduit à quatre variables :
 
-```{r, echo = TRUE}
+-   le genre `gender`, que l'on cherchera à prédire, une variable `factor` à deux niveaux `M` pour homme et `W` pour femme, et
+-   trois variables quantitatives rencontrées dans les diverses formules d'IMC, soit la masse `weight` en kg, la taille `height`, et la circonférence du poignet `wrist` en mm.
+
+```{r, echo=TRUE}
 read("biometry", package = "BioDataScience",lang = "fr") %>.%
-  sselect(., gender, weight, height, wrist) ->
+  sselect(., gender, weight, height, wrist) %->%
   bio
 ```
 
-Ce jeu de données est constitué`r nrow(bio)` d'individus. Quatre variables sont sélectionnées pour cette étude `r names(bio)`. Notre variable d'intérêt est la variable `gender` . Cette variable a deux niveaux : `M` (Man), `W` (Woman). Il y a également trois variables numériques qui sont les attributs à utiliser pour la mise en place du classifieur :
+Commençons par explorer ce jeu de données.
 
--   weight : la masse en kg
--   height : la taille en cm
--   wrist : la circonférence du poignet en mm
-
-La première étape est d'explorer ce tableau de données à l'aide de tableau, de graphiques, d'analyses multivariées
-
-```{r, echo = TRUE}
+```{r, echo=TRUE}
 skimr::skim(bio)
 ```
 
-Étant donné que la LDA se base sur les mêmes principes que l'ACP, une ACP est réalisée ci-dessous afin d'explorer les données.
+Étant donné que la LDA se base sur les mêmes principes que l'ACP, une ACP peut-être réalisée pour résumer les données.
 
-```{r}
-bio_red <- na_omit(bio)
-bio_pca <- pca(data = sselect(bio, -gender), ~., scale = TRUE)
+```{r, echo=TRUE}
+bio_red <- sdrop_na(bio)
+bio_pca <- pca(data = sselect(bio_red, -gender), ~ ., scale = TRUE)
 summary(bio_pca)
 a <- chart(bio_pca, type = "loadings")
 b <- chart(bio_pca, type = "scores", labels = bio_red$gender) +
   stat_ellipse()
-combine_charts(list(a,b))
+combine_charts(list(a, b))
 ```
 
 ```{r qu_explo}
-question("Sélectionnez les éléments pertinents de l'analyse exploratoire proposée ci-dessus.",
-  answer("Le tableau de données comprend 4 variables numériques et une variable facteur ordonnée."),
+question("Sélectionnez les éléments pertinents de l'analyse exploratoire réalisée ci-dessus.",
+  answer("Le tableau de données comprend quatre variables numériques et une variable facteur ordonnée."),
   answer("La répartition entre les hommes (M) et les femmes (W) est proche de 50/50", correct = TRUE),
   answer("On observe la présence de valeurs manquantes pour la variable de la circomférence du poignets.", correct = TRUE),
   answer("Toutes les variables sont complètes. Il n'y a pas de valeurs manquantes dans ce tableau."),
-  answer("L'ACP permet de séparer assez efficacement les hommes des femmes. Les hommes ont tendance à être plus grands et plus lourds.", correct = TRUE),
+  answer("L'ACP permet de séparer en grande partie les hommes des femmes. Les hommes ont tendance à être plus grands et plus lourds.", correct = TRUE),
   allow_retry = TRUE, random_answer_order = TRUE,
-  correct = "Bravo ! Vous avez sélectionné les éléments correctes.",
-  incorrect = "Attention, Ce n'est pas complet. Intéressez vous avec attention à la description du tableau et à l'ACP",
+  correct = "Vous avez sélectionné les éléments corrects.",
+  incorrect = "Attention, Ce n'est pas complet. Intéressez-vous avec plus d'attention à la description du tableau et à l'ACP.",
   submit_button = "Soumettre une réponse",
   try_again_button = "Resoumettre une réponse")
 ```
@@ -124,15 +120,15 @@ question("Sélectionnez les éléments pertinents de l'analyse exploratoire prop
 
 Suite à la phase exploratoire de l'analyse, il en est ressorti que des valeurs manquantes devaient être filtrées.
 
-```{r, echo = TRUE}
-bio <- na_omit(bio, "wrist") # Filtrer les valeurs manquantes en spécifiant la colonne d'intérêt.
+```{r, echo=TRUE}
+bio <- sdrop_na(bio, wrist) # Filtrer les valeurs manquantes en spécifiant la colonne concernée
 ```
 
-Utilisez les fonctions `initial_split()`, `training()` et `testing()` du package `rsamples` afin de définir votre set d'apprentissage et votre set de test. Votre set d'apprentissage se nomme `bio_train` et votre set de test se nomme `bio_test`. Il vous est demandé de réaliser un set d'entrainement contenant 0.75 des observations.
+Utilisez les fonctions `initial_split()`, `training()` et `testing()` pour définir votre set d'apprentissage et votre set de test. Votre set d'apprentissage va se nommer `bio_train` et votre set de test sera `bio_test`. Il vous est demandé de réaliser un set d'apprentissage contenant 3/4 des observations et en conservant les mêmes proportions qu'au départ pour le genre.
 
-```{r split_h2, exercise = TRUE}
+```{r split_h2, exercise=TRUE}
 set.seed(164) # Fixer le début du générateur de nombres pseudo-aléatoires
-bio_split <- initial_split(___, prop = ___)
+bio_split <- initial_split(___, prop = ___, ___ = gender)
 bio_split
 # Diviser le tableau
 ___ <- training(___)
@@ -141,7 +137,7 @@ bio_test <- testing(___)
 
 ```{r split_h2-hint-1}
 set.seed(164) # Fixer le début du générateur de nombres pseudo-aléatoires
-bio_split <- initial_split(bio, prop = 0.75)
+bio_split <- initial_split(bio, prop = 3/4, ___ = gender)
 bio_split
 # Diviser le tableau
 ___ <- training(___)
@@ -151,8 +147,9 @@ bio_test <- testing(___)
 ```
 
 ```{r split_h2-solution}
+## Solution ##
 set.seed(164) # Fixer le début du générateur de nombres pseudo-aléatoires
-bio_split <- initial_split(bio, prop = 0.75)
+bio_split <- initial_split(bio, prop = 3/4, strata = gender)
 bio_split
 # Diviser le tableau
 bio_train <- training(bio_split)
@@ -160,22 +157,20 @@ bio_test <- testing(bio_split)
 ```
 
 ```{r split_h2-check}
-grade_code("Parfait ! Vous avez réalisez votre set d'apprentissage et votre set d'évaluation avec les proportions demandées. N'hésitez pas à consulter la page d'aide des fonctions initial_split(), training() et test(). Vous trouverez des informations très intéressantes sur la réalisation des sets d'apprentissage et de test.", "Avez vous bien respectée les consignes ? Il ne faut compléter que les éléments signalés par ___.")
+grade_code("Vous avez réalisez votre set d'apprentissage et votre set de test avec les proportions demandées. N'hésitez pas à consulter la page d'aide des fonctions `initial_split()`, `training()` et `testing()`. Vous y trouverez des informations très intéressantes sur la réalisation des sets d'apprentissage et de test.", "Avez-vous bien respecté les consignes ? Il ne faut compléter que les zones signalées par `___`.")
 ```
 
 ## Entrainement du modèle
 
-Il vous est demandé de réaliser un classifieur utilisant l'analyse discriminante linéaire. C'est à vous de définir le tableau de données à employer entre `bio`, `bio_train` et `bio_test`.
+Créez maintenant un classifieur du genre en fonction des autres variables (en utilisant une formule abrégée). Choisissez le tableau adéquat pour ce faire et placer ce classifieur dans la variable `bio_lda`.
 
-Entrainez un modèle de type discriminant linéaire avec le set d'apprentissage. Votre objectif est de prédire la variable `gender` à l'aide des trois variables numériques. Placer ce classifieur dans la variable `bio_lda`.
-
-```{r lda1_h2, exercise = TRUE}
-bio_lda <- mlLda(data = ___, ___ ~ ___)
+```{r lda1_h2, exercise=TRUE}
+bio_lda <- ___(data = ___, ___ ~ ___)
 summary(bio_lda)
 ```
 
 ```{r lda1_h2-hint-1}
-bio_lda <- mlLda(data = bio_train, ___ ~ ___)
+bio_lda <- mlLda(data = ___, gender ~ ___)
 summary(bio_lda)
 
 ## Attention, le prochain indice est la solution ##
@@ -188,16 +183,14 @@ summary(bio_lda)
 ```
 
 ```{r lda1_h2-check}
-grade_code("Votre premier modèle LDA. Voyons quoi en faire à présent...", "Avez vous bien proposé la formule écrites sous sa forme condensée ? ")
+grade_code("Voici donc votre premier classifieur LDA. Voyons maintenant quoi en faire...", "Avez-vous bien écrit la formule sous sa forme condensée ?")
 ```
 
-*La formule doit être écrite sous sa forme condensée*
+## Performances du classifieur
 
-## Performance de votre modèle
+Vous allez maintenant déterminer les performances de votre classifieur `bio_lda`. Ne vous trompez pas dans les jeux de données à utiliser `bio`, `bio_train` et `bio_test` pour ce faire.
 
-Vous devez maintenant tester les performances de votre classifieur `bio_lda`. Ne vous trompez pas dans le jeu de données à utiliser `bio_train` ou `bio_test` pour ce faire.
-
-```{r lda2_h2, exercise = TRUE}
+```{r lda2_h2, exercise=TRUE}
 bio_pred <- predict(___, ___)
 bio_conf <- confusion(___, ___$___)
 bio_conf
@@ -205,7 +198,7 @@ summary(bio_conf)
 ```
 
 ```{r lda2_h2-hint-1}
-bio_pred <- predict(bio_lda, bio_test)
+bio_pred <- predict(bio_lda, ___)
 bio_conf <- confusion(bio_pred, ___$___)
 bio_conf
 summary(bio_conf)
@@ -228,44 +221,46 @@ grade_code("Vous venez de réaliser vos premières analyses des performances d'u
 ```{r qu_lda}
 quiz(
   question("Combien d'items du set de test sont correctement classé ?",
-    answer(sprintf("%1.f", sum(conf_tab$TP)), correct = TRUE),
-    answer(sprintf("%1.f", sum(conf_tab$Auto))),
-    answer(sprintf("%1.f", conf_tab$Manu[1])),
-    answer(sprintf("%1.f", conf_tab$TN[2])),
+    answer(sprintf("%1.f", sum(bio_conf_tab$TP)), correct = TRUE),
+    answer(sprintf("%1.f", sum(bio_conf_tab$Auto))),
+    answer(sprintf("%1.f", bio_conf_tab$Manu[1])),
+    answer(sprintf("%1.f", bio_conf_tab$TN[2])),
     answer("Aucune des réponses proposées"),
     allow_retry = TRUE, random_answer_order = TRUE,
     submit_button = "Soumettre une réponse",
     try_again_button = "Resoumettre une réponse",
-    incorrect = "Mauvaise réponse. Recommencez afin de trouver la bonne réponse",
-    correct = "Bravo, c'est correct !"),
-  question("Quel est le taux d'erreur global (en %) ?",
-    answer(sprintf("%.1f", 100 * (1 - (sum(conf_tab$TP)/sum(conf_tab$Auto)))), correct = TRUE),
-    answer(sprintf("%.1f", 100 * (sum(conf_tab$TP)/sum(conf_tab$Auto)))),
-  answer(sprintf("%3.f", sum(conf_tab$Auto) - sum(conf_tab$TP))),
-    answer(sprintf("%3.f", conf_tab$TN[2])),
+    incorrect = "Mauvaise réponse. Concentrez-vous et réessayez.",
+    correct = "C'est du bon travail."),
+  question("Quel est le taux d'erreur globale (en %) ?",
+    answer(sprintf("%.1f", 100 * (1 - (sum(bio_conf_tab$TP)/sum(bio_conf_tab$Auto)))), correct = TRUE),
+    answer(sprintf("%.1f", 100 * (sum(bio_conf_tab$TP)/sum(bio_conf_tab$Auto)))),
+    answer(sprintf("%3.f", sum(bio_conf_tab$Auto) - sum(bio_conf_tab$TP))),
+    answer(sprintf("%3.f", bio_conf_tab$TN[2])),
     answer("Aucune des réponses proposées"),
     allow_retry = TRUE, random_answer_order = TRUE,
     submit_button = "Soumettre une réponse",
     try_again_button = "Resoumettre une réponse",
-    incorrect = "Mauvaise réponse. Recommencez afin de trouver la bonne réponse",
-    correct = "Bravo, c'est correct !"),
-  question("Quel est le taux de vrai positif pour les hommes (M) ?",
-    answer(sprintf("%.3f", conf_tab[row.names(conf_tab) == "M", ]$Recall), correct = TRUE),
-    answer(sprintf("%.3f", conf_tab[row.names(conf_tab) == "M", ]$Fscore)),
-    answer(sprintf("%3.f", sum(conf_tab$Auto) - sum(conf_tab$TP))),
-    answer(sprintf("%.3f", conf_tab[row.names(conf_tab) == "W", ]$Recall)),
+    incorrect = "Mauvaise réponse. Réessayez après avoir mieux examiné les résultats obtenus.",
+    correct = "C'est correct."),
+  question("Quel est le taux de vrais positifs pour les hommes (M) ?",
+    answer(sprintf("%.3f", bio_conf_tab[row.names(bio_conf_tab) == "M", ]$Recall), correct = TRUE),
+    answer(sprintf("%.3f", bio_conf_tab[row.names(bio_conf_tab) == "M", ]$Fscore)),
+    answer(sprintf("%3.f", sum(bio_conf_tab$Auto) - sum(bio_conf_tab$TP))),
+    answer(sprintf("%.3f", bio_conf_tab[row.names(bio_conf_tab) == "W", ]$Recall)),
     answer("Aucune des réponses proposées"),
     allow_retry = TRUE, random_answer_order = TRUE,
     submit_button = "Soumettre une réponse",
     try_again_button = "Resoumettre une réponse",
-    incorrect = "Mauvaise réponse. Recommencez afin de trouver la bonne réponse",
-    correct = "Bravo, c'est correct !")
+    incorrect = "Mauvaise réponse. Examinez bien la matrice de confusion.",
+    correct = "C'est exact.")
   )
 ```
 
 ## Conclusion
 
-Bien joué ! Vous venez de proposer votre premier classifieur. Vous avez réalisé les étapes d'exploration des données, de création de votre modèle et de l'évaluation de votre modèle. Ce modèle est prêt pour être employé sur de nouvelles observations.
+Vous venez de créer votre premier classifieur. Nous avons détaillé ensemble les étapes d'exploration et de préparation des données rapidement. Ensuite, vous avez été guidé dans la séparation en set d'apprentissage et de test, et dans l'utilisation du premier pour entraîner votre LDA et du second pour déterminer les performances du classifieur ainsi obtenu.
+
+À l'issue de cette étude, nous constatons que dans ce jeu de données, il est possible de différencier les hommes des femmes à l'aide seulement des informations de masse, taille et circonférence de poignet avec un taux d'erreur inférieur à 15%. Nous en concluons donc que l'information portée par ces trois variables quantitatives permet cette discrimination de genre, et donc que nous devons nous en préoccuper lors de l'élaboration de notre prochain indice de masse corporel qui mettra tout le monde d'accord !
 
 ```{r comm_noscore, echo=FALSE}
 question_text(
