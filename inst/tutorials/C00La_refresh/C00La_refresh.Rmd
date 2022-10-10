@@ -707,7 +707,7 @@ chart$___(___)
 # Représentation dans l’espace des variables
 chart$___(___)
 # Représentation dans l’espace des individus
-chart$___(___, , labels = ___$___) +
+chart$___(___, labels = ___$___) +
   stat_ellipse()
 ```
 
@@ -717,7 +717,7 @@ chart$scree(crabs_w_pca)
 # Représentation dans l’espace des variables
 chart$___(___)
 # Représentation dans l’espace des individus
-chart$___(___,labels = crabs_w$___) +
+chart$___(___, labels = crabs_w$___) +
   stat_ellipse()
 
  #### ATTENTION: Hint suivant = solution !####
