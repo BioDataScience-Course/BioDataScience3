@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III** Rappel des cours SDD I et II et nouveautés svbox2022."
 tutorial:
   id: "C00La_refresh"
-version: 2.0.2/14
+version: 2.0.1/14
 output:
   learnr::tutorial:
   progressive: true
