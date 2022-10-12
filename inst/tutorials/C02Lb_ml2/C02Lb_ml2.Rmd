@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III Module 2** K plus proches voisins, méthodes par arbres, forêt aléatoire."
 tutorial:
   id: "C02Lb_ml2"
-version: 2.0.0/6
+version: 2.0.0/5
 output:
   learnr::tutorial:
   progressive: true
@@ -14,8 +14,7 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 BioDataScience3::learnr_setup()
-SciViews::R()
-library(mlearning)
+SciViews::R("ml")
 
 # Import dataset ----
 pumpkins <- read("pumpkins", package = "BioDataScience3")
@@ -61,7 +60,7 @@ BioDataScience3::learnr_server(input, output, session)
 
 ## Objectifs
 
-Ce tutoriel a pour objectif de vous permettre de découvrir de nouveaux algorithmes de classifications supervisées. Il s'intéresse aux K plus proches voisins, à la méthode par arbres et à la méthode par de la forêt aléatoire.
+Ce tutoriel a pour objectif de vous permettre de découvrir de nouveaux algorithmes de classifications supervisées. Il s'intéresse aux K plus proches voisins, à la méthode par arbres et à la méthode de la forêt aléatoire.
 
 Ces trois méthodes vont s'ajouter à l'analyse discriminante linéaire que vous avez découverte dans le premier module du cours de SDD III. Toutes ces méthodes font partie de votre boite à outils de la classification supervisée. Employez la méthode la plus judicieuse en fonction du contexte. Il est même conseillé de les tester et de les comparer afin de proposer le classifieur le plus efficace.
 
@@ -78,7 +77,7 @@ Le package {mlearning} permet d'utiliser une interface similaire pour chaque mé
 
 ## Explorer les données
 
-Les données employées dans ce tutoriel sont associées à l'article : ["Classification of Rice Varieties Using Artificial Intelligence Methods"](https://doi.org/10.18201/ijisae.2019355381). N'hésitez pas à consulter cet article pour en apprendre davantage sur ces données.
+Les données employées dans ce tutoriel sont associées à l'article : ["The use of machine learning methods in classification of pumpkin seeds (Cucurbita pepo L.)"](https://doi.org/10.1007/s10722-021-01226-0). N'hésitez pas à consulter cet article pour en apprendre davantage sur ces données.
 
 ```{r, echo = TRUE}
 pumpkins <- read("pumpkins", package = "BioDataScience3")
@@ -98,10 +97,9 @@ C'est à vous d'explorer ce tableau. Vous avez la possibilité de réaliser tous
 
 ## Préparer le set d'apprentissage et le test
 
-Réalisez le set d'apprentissage et le set de test. 80% des observations vont servir à entrainer le classifieur et 20% pour évaluer le classifieur. Le tableau de données se nomme `pumpkins`. Utilisez les fonctions dédiées à la création des sets d'apprentissage et de test `initial_spit()`, `training()`, `testing()` du package {rsample}.
+Réalisez le set d'apprentissage et le set de test. 80% des observations vont servir à entrainer le classifieur et 20% pour évaluer le classifieur. Le tableau de données se nomme `pumpkins`. Utilisez les fonctions dédiées à la création des sets d'apprentissage et de test `initial_spit()`, `training()`, `testing()`.
 
 ```{r split_h2, exercise = TRUE}
-library(rsample)
 set.seed(101121) # Générateur de nombres pseudo-aléatoires
 pumpkins_split <- initial_split(___, prop = ___)
 pumpkins_split
@@ -112,7 +110,6 @@ pumpkins_test <- ___(___)
 ```
 
 ```{r split_h2-hint-1}
-library(rsample)
 set.seed(101121) # Générateur de nombres pseudo-aléatoires
 pumpkins_split <- initial_split(___, prop = ___)
 pumpkins_split
@@ -125,7 +122,6 @@ pumpkins_test <- ___(___)
 ```
 
 ```{r split_h2-solution}
-library(rsample)
 set.seed(101121) # Générateur de nombres pseudo-aléatoires
 pumpkins_split <- initial_split(pumpkins, prop = 0.8)
 pumpkins_split
@@ -156,9 +152,9 @@ pumpkins_rf <- ml___(data = ___, ___~___, ___ = ___)
 # K plus proches voisins
 pumpkins_knn <- mlKnn(data = pumpkins_train, class~., k.nn = 15)
 # Partitionnement récursif
-pumpkins_part <- mlRpart(data = pumpkins_train, class~.)
+pumpkins_part <- ml___(data = ___, ___~___)
 # Forêt aléatoire
-pumpkins_rf <- mlRforest(data = pumpkins_train, class~., ntree = 100)
+pumpkins_rf <- ml___(data = ___, ___~___, ___ = ___)
 
 ## Attention, le prochain indice est la solution ##
 ```
@@ -217,15 +213,6 @@ grade_code("Bien joué ! Vous avez calculé les métriques des trois modèles. V
 
 ```{r qu_algo}
 quiz(
-  question("Quel classifieur permet d'avoir le meilleur taux de reconnaissance global ?",
-    answer("Les K plus proches voisins"),
-    answer("Le partitionnement récursif"),
-    answer("La forêt aléatoire", correct = TRUE),
-    allow_retry = TRUE, 
-    submit_button = "Soumettre une réponse",
-    try_again_button = "Resoumettre une réponse",
-    incorrect = "Mauvaise réponse. Recommencez et analysez les métriques des trois classifieurs.",
-    correct = "Bravo, c'est correct !"),
   question("Quel est la valeur du taux de vrais positifs pour le groupe des Cercevelik obtenu via le classifieur utilisant les k plus proches voisins ?",
     answer(sprintf("%.4f", conf_knn["Cercevelik",]$Recall), correct = TRUE),
     answer(sprintf("%.4f", conf_knn["Cercevelik",]$Precision)),
