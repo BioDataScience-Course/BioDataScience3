@@ -14,10 +14,7 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 BioDataScience3::learnr_setup()
-SciViews::R()
-library(mlearning)
-library(exploreit)
-library(rsample)
+SciViews::R("explore", "ml", lang = "fr")
 
 # Import dataset ----
 rice <- read("rice", package = "BioDataScience3", lang = "fr")
@@ -60,7 +57,7 @@ L'objectif de ce tutoriel est de comprendre la validation croisée et de l'appli
 Les données employées dans cette séance d'exercice proviennent de l'article : ["Classification of Rice Varieties Using Artificial Intelligence Methods"](https://doi.org/10.18201/ijisae.2019355381). N'hésitez pas à consulter cet article pour en apprendre davantage sur ces données.
 
 ```{r, echo=TRUE}
-rice <- read("rice", package = "BioDataScience3", lang = "fr")
+rice <- read("rice", package = "BioDataScience3")
 ```
 
 Le tableau `rice` a `r nrow(rice)` observations. Deux variétés de riz sont étudiées : `Cammeo` et `Osmancik`. Sur base d'analyse d'image, sept variables morphologiques sont extraites comme le périmètre, l'aire ou encore la longueur de l'axe majeur de l'ellipsoïde qui entoure la silhouette du grain de riz sur une image numérique.
@@ -103,7 +100,7 @@ L'exploration des données a été réalisée pour vous. Avant de passer à la s
 Utilisez les fonctions `initial_split()`, `training()` et `testing()` du package `rsamples` afin de définir votre set d'apprentissage et votre set de test. Votre set d'apprentissage se nomme `rice_train` et votre set de test se nomme `rice_test`. Il vous est demandé de réaliser un set d'entrainement contenant 0.8 des observations. Cet échantillonnage doit être stratifié grâce à la variable `class`.
 
 ```{r rice_split_h2, exercise = TRUE}
-set.seed(888) # Fixer le début du générateur de nombres pseudo-aléatoires
+set.seed(8888) # Fixer le début du générateur de nombres pseudo-aléatoires
 rice_split <- initial_split(___, prop = ___, strata = ___)
 rice_split
 # Diviser le tableau
@@ -141,7 +138,7 @@ grade_code("Parfait ! Vous avez réalisez votre set d'apprentissage et votre set
 
 Il vous est demandé de réaliser un classifieur utilisant l'analyse discriminante linéaire. C'est à vous de définir le tableau de données à employer entre `rice`, `rice_train` et `rice_test`.
 
-Entrainez un modèle de type discriminant linéaire avec le set d'apprentissage. Votre objectif est de prédire la variable `class` à l'aide des sept variable. Assignez le classifieur n'utilisant pas la validation croisée à `rice_lda` et assignez le classifieur utilisant la validation croisée à rice_cv_lda.
+Entrainez un modèle de type analyse discriminant linéaire avec le set d'apprentissage. Votre objectif est de prédire la variable `class` à l'aide des sept variable. Assignez le classifieur n'utilisant pas la validation croisée à `rice_lda` et assignez le classifieur utilisant la validation croisée à rice_cv_lda.
 
 ```{r lda_h2, exercise = TRUE}
 set.seed(8888)
@@ -170,7 +167,7 @@ grade_code("Votre LDA est entrainé. Il faut encore mesuré ces performances.", 
 
 *La formule doit être écrite sous sa forme condensée*
 
-### Analyse discriminante linéaire avec validation croisée
+Réalisez à présent votre modèle en utilisant la validation croisée.
 
 ```{r lda_cv_h2, exercise = TRUE}
 set.seed(8888)
@@ -234,7 +231,7 @@ summary(rice_conf)
 ```
 
 ```{r pred_lda_h2-check}
-grade_code("Vous venez les analyses des performances du premier classifieur. Prenez un peu de temps pour analyser votre matrice de confusion et les métriques qui en découlent.")
+grade_code("Vous venez de calculer les métriques de performances du premier classifieur. Prenez un peu de temps pour analyser votre matrice de confusion et les métriques qui en découlent.")
 ```
 
 Évaluez les performances du second classifieur `rice_lda_cv` à l'aide d'une validation croisée dix fois.
