@@ -21,7 +21,7 @@ library(rsample)
 
 # Import dataset ----
 rice <- read("rice", package = "BioDataScience3", lang = "fr")
-# genrateur de nombre pseudo aléatoire
+# générateur de nombre pseudo aléatoire
 set.seed(8888)
 # Training and test set ----
 rice_split <- rsample::initial_split(rice, 0.8, strata = class)
@@ -49,7 +49,7 @@ BioDataScience3::learnr_server(input, output, session)
 
 ## Objectifs
 
-Lors de la création d'un classifieur, on va définir un set d'apprentissage et un set de test. Il est évident qu'il ne faut jamais employer les mêmes individus en apprentissage et en test. Cela aurait pour conséquence de surévaluer la capacité d'un classifieur à reconnaitre les niveaux de la variable facteur d'intérêt.
+Lors de la création d'un classifieur, on va définir un set d'apprentissage et un set de test. Il est évident qu'il ne faut jamais employer les mêmes individus en apprentissage et en test. Cela aurait pour conséquence de surévaluer la capacité d'un classifieur à reconnaître les niveaux de la variable facteur d'intérêt.
 
 La validation croisée est une méthode particulière qui permet d'employer tous les objets, à la fois dans le set d'apprentissage et dans le set de test, mais jamais simultanément.
 
@@ -57,13 +57,13 @@ L'objectif de ce tutoriel est de comprendre la validation croisée et de l'appli
 
 ## Exploration des données
 
-Les données employées dans cette séance d'exercice sont associées à l'article : ["Classification of Rice Varieties Using Artificial Intelligence Methods"](https://doi.org/10.18201/ijisae.2019355381). N'hésitez pas à consulter cet article pour en apprendre davantage sur ces données.
+Les données employées dans cette séance d'exercice proviennent de l'article : ["Classification of Rice Varieties Using Artificial Intelligence Methods"](https://doi.org/10.18201/ijisae.2019355381). N'hésitez pas à consulter cet article pour en apprendre davantage sur ces données.
 
 ```{r, echo=TRUE}
 rice <- read("rice", package = "BioDataScience3", lang = "fr")
 ```
 
-Le tableau `rice` comprend `r nrow(rice)` observations. Deux espèces de riz sont étudiées : `Cammeo` et `Osmancik`. Sur base d'analyse d'image, sept variables morphologiques sont extraites comme le périmètre, l'aire ou encore la longueur de l'axe majeur.
+Le tableau `rice` a `r nrow(rice)` observations. Deux variétés de riz sont étudiées : `Cammeo` et `Osmancik`. Sur base d'analyse d'image, sept variables morphologiques sont extraites comme le périmètre, l'aire ou encore la longueur de l'axe majeur de l'ellipsoïde qui entoure la silhouette du grain de riz sur une image numérique.
 
 Les résultats ci-dessous vous renseignent sur les variables.
 
@@ -71,17 +71,17 @@ Les résultats ci-dessous vous renseignent sur les variables.
 skimr::skim(rice)
 ```
 
-Étant donné que vous allez employer l'analyse discriminante linéaire afin d'entrainer vos classifieurs. Une ACP est réalisée ci-dessous vu que ces deux méthodes se basent sur les mêmes principes.
+Vous allez employer l'analyse discriminante linéaire afin d'entraîner vos classifieurs. Vous pouvez décrire vos données à l'aide de tableaux ou de graphiques. Vous pouvez aussi réaliser une ACP pour avoir une vue d'ensemble sur les données avant de vous lancer dans la classification. Voici ce que cela donne :
 
 ```{r, echo=TRUE}
 rice_pca <- pca(data = sselect(rice, -class), ~., scale = TRUE)
 summary(rice_pca)
 ```
 
-Le graphique des éboulis est proposé ci-dessous
+Le graphique des éboulis est présenté ci-dessous.
 
 ```{r, echo=TRUE}
-chart(rice_pca, type = "scree")
+chart$scree(rice_pca)
 ```
 
 La représentation dans l'espace des variables est proposée ci-dessous
