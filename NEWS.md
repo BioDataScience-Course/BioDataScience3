@@ -1,3 +1,9 @@
+# BioDataScience3 2022.3.0
+
+-   **C02La_cv** and **C03La_roc** revised.
+
+-   **C02Lb_ml2** and **C03Lb_ml3** partly revised, but inactivated because they have to be further reworked before being useful (`.inactivated` at the end of the name).
+
 # BioDataScience3 2022.2.0
 
 -   **C00La_rappel** renamed **C00La_refresh** and also totally reworked. Also includes explanations about changes between svbox2021 and svbox2022.
