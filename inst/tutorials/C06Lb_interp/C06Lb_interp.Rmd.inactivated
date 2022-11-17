@@ -1,9 +1,9 @@
 ---
-title: "Décomposition de séries spatio-temporelles"
+title: "Interpolation spatiale"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III Module 5** Décomposition saisonnière de séries spatio-temporelles."
+description: "**SDD III Module 6** Différentes techniques d'interpolation spatiale."
 tutorial:
-  id: "C05Lb_ts_decomp"
+  id: "C06Lb_interp"
 version: 2.0.0/0
 output:
   learnr::tutorial:
@@ -15,7 +15,7 @@ runtime: shiny_prerendered
 ```{r setup, include=FALSE}
 BioDataScience3::learnr_setup()
 SciViews::R()
-library(pastecs)
+library(mlearning)
 
 # ...
 ```
@@ -30,10 +30,8 @@ BioDataScience3::learnr_server(input, output, session)
 
 ------------------------------------------------------------------------
 
-**Ce tutoriel doit encore être écrit. Vous devez probablement penser à installer une version plus récente du package qui contient les exercices finalisés !**
-
 ## Objectifs
 
 -   ...
 
-## Décomposition de ...
+## Fond de carte

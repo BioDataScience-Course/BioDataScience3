@@ -1,9 +1,9 @@
 ---
-title: "Interpolation spatiale"
+title: "Filtrage de séries spatio-temporelles"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III Module 6** Différentes techniques d'interpolation spatiale."
+description: "**SDD III Module 5** Filtrage de séries avec moyennes et médianes mobiles ou par différence."
 tutorial:
-  id: "C06Lb_interp"
+  id: "C05La_ts_filter"
 version: 2.0.0/0
 output:
   learnr::tutorial:
@@ -15,7 +15,7 @@ runtime: shiny_prerendered
 ```{r setup, include=FALSE}
 BioDataScience3::learnr_setup()
 SciViews::R()
-library(mlearning)
+library(pastecs)
 
 # ...
 ```
@@ -30,10 +30,8 @@ BioDataScience3::learnr_server(input, output, session)
 
 ------------------------------------------------------------------------
 
-**Ce tutoriel doit encore être écrit. Vous devez probablement penser à installer une version plus récente du package qui contient les exercices finalisés !**
-
 ## Objectifs
 
 -   ...
 
-## Fond de carte
+## Filtrage de ...

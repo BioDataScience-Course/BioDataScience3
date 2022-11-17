@@ -1,7 +1,7 @@
 ---
 title: "Réalisation de cartes"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III : Module 6** Réalisation de cartes dans R avec {chart} et {tmap}."
+description: "**SDD III : Module 6** Réalisation de cartes avec {chart} et {tmap}."
 tutorial:
   id: "C06La_map"
   version: 2.0.0/7
@@ -72,8 +72,6 @@ BioDataScience3::learnr_server(input, output, session)
 
 ------------------------------------------------------------------------
 
-**Ce tutoriel correspond à la version 2021-2022. Il est en cours de révision pour la version 2022-2023. Vous devez probablement penser à installer une version plus récente du package qui contient les exercices finalisés !**
-
 ## Objectifs
 
 -   Maîtriser les objets **sf**,
@@ -82,7 +80,7 @@ BioDataScience3::learnr_server(input, output, session)
 
 ## Avant de débuter
 
-Les packages suivant sont chargés par défaut pour chaque exercice
+Les packages suivant sont chargés par défaut pour chaque exercice :
 
 ```{r, eval=FALSE, echo=TRUE}
 SciViews::R()
@@ -145,7 +143,7 @@ read("NLD_prov", package = "tmap") %>.%
 nld
 ```
 
-Vous avez à disposition l'objet `nld` qui représente les provinces des Pays-bas.
+Vous avez à disposition l'objet `nld` qui représente les provinces des Pays-Bas.
 
 ### Carte avec `chart()`
 
@@ -168,7 +166,7 @@ chart(data = nld) +
 ```
 
 ```{r chartmap1-check}
-grade_code("C'est parfait ! Une fois le code supplémentaire sourcé, il suffit d'utiliser `chart()` et `geom_sf()`. Cela fonctionne bien pour des données vectorisées (représentées sours forme de lignes brises ou de polygônes), mais cela est beaucoup (parfois trop) lent avec les données \"raster\" (en mode pixel).")
+grade_code("Une fois le code supplémentaire sourcé, il suffit d'utiliser `chart()` et `geom_sf()`. Cela fonctionne bien pour des données vectorisées (représentées sours forme de lignes brisées ou de polygones), mais cela est beaucoup (parfois trop) lent avec les données \"raster\" (en mode pixel).")
 ```
 
 ```{r}
@@ -190,7 +188,7 @@ chart(data = nld, ~ 0 %fill=% name) +
 ```
 
 ```{r chartmap2-check}
-grade_code("Comme pour les autres graphiques ggplot2/chart, le remplissage se fait via l'argument `fill=` qui se traduit par `%fill=%` dans l'interface formule.")
+grade_code("Comme pour les autres graphiques ggplot2/chart, le remplissage se fait via l'argument `fill =` qui se traduit par `%fill=%` dans l'interface formule.")
 ```
 
 ```{r}
@@ -198,7 +196,7 @@ chart(data = nld) +
   geom_sf(aes(fill = population))
 ```
 
-Refaites la carte ci-dessus, mais maintenant \*sans¨utiliser l'interface formule dans `chart()`, mais en spécifiant l'es paramètres dans `geom_sf()`.
+Refaites la carte ci-dessus, mais maintenant *sans* utiliser l'interface formule dans `chart()`, mais en spécifiant les paramètres dans `geom_sf()`.
 
 ```{r chartmap3, exercise=TRUE, exercise.lines=3}
 ___(___ = ___) +
@@ -212,7 +210,7 @@ chart(data = nld) +
 ```
 
 ```{r chartmap3-check}
-grade_code("Le choix des variables pour les différentes propriétés passe ici via la fonction `aes()`. Si c'est l'interfazce formule que vous souhaitez utiliser à ce endroit, alors vous utiliserez plutôt `f_aes()`.")
+grade_code("Le choix des variables pour les différentes propriétés passe ici via la fonction `aes()`. Si c'est l'interface formule que vous souhaitez utiliser à cet endroit, alors vous utiliserez plutôt `f_aes()`.")
 ```
 
 ### Carte en R de base avec `plot()`
@@ -235,14 +233,14 @@ plot(st_geometry(nld))
 ```
 
 ```{r basemap1-check}
-grade_code("Oui, `sf_geometry()` extrait l'info nécessaire de l'objet **sf** dans ce cas.")
+grade_code("La fonction `sf_geometry()` extrait l'info nécessaire de l'objet **sf** dans ce cas.")
 ```
 
 Le code R de base est bien plus rapide que les cartes réalisées avec `chart()`(ou `ggplot()`). Cette remarque est valable pour tous les types de graphiques entre les deux moteurs graphiques.
 
 ### Utilisation de {tmap} pour les cartes
 
-Le package {tmap} est très utile pour réaliser des cartes. Il est rapide comme le R de bas, mais en même temps, il suit la logique d'addition des couches de `ggplot()`/ `chart()`.
+Le package {tmap} est très utile pour réaliser des cartes. Il est rapide comme le R de base, mais en même temps, il suit la logique d'addition des couches de `ggplot()`/ `chart()`.
 
 ```{r}
 tm_shape(nld) +
@@ -272,9 +270,9 @@ tm_shape(nld) +
   tm_fill("name", title = "Province")
 ```
 
-Reproduisez la ci-dessus avec le package {tmap} en modulant les arguments des fonctions utilisées et en ajoutant une couche de remplissage.
+Reproduisez la carte ci-dessus avec le package {tmap} en modulant les arguments des fonctions utilisées et en ajoutant une couche de remplissage.
 
-```{r tmap2, exercise = TRUE, exercise.lines = 3}
+```{r tmap2, exercise=TRUE, exercise.lines=3}
 tm_shape(___) +
   tm_borders() +
   tm_fill(___, title = ___)
@@ -299,11 +297,11 @@ tm_shape(nld) +
   tm_scale_bar(position = c("left", "bottom"))
 ```
 
-A présent, tentez de reproduire une carte un peu plus complexes en cinq fonction, toujours avec le package {tmap}. Partez de la solution de l'exercice précédent que vous complétez.
+A présent, tentez de reproduire une carte un peu plus complexes en cinq couches, toujours avec le package {tmap}. Partez de la solution de l'exercice précédent que vous complétez.
 
 1.  définissez le fond de carte,
-2.  ajoutez les limite de chaque province au fond de carte,
-3.  affichez les provinces sur ma carte via les couleurs et changez le titre de ma légende,
+2.  ajoutez les limites de chaque province au fond de carte,
+3.  affichez les provinces sur la carte via les couleurs et changez le titre de la légende,
 4.  ajoutez l'indication du nord,
 5.  enfin, ajoutez l'échelle en bas à gauche.
 

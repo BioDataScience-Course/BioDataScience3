@@ -1,9 +1,9 @@
 ---
-title: "Filtrage de séries spatio-temporelles"
+title: "Décomposition de séries spatio-temporelles"
 author: "Guyliann Engels & Philippe Grosjean"
-description: "**SDD III Module 5** Filtrage de séries avec moyennes et médianes mobiles ou par différence."
+description: "**SDD III Module 5** Décomposition saisonnière de séries spatio-temporelles."
 tutorial:
-  id: "C05La_ts_filter"
+  id: "C05Lb_ts_decomp"
 version: 2.0.0/0
 output:
   learnr::tutorial:
@@ -30,10 +30,8 @@ BioDataScience3::learnr_server(input, output, session)
 
 ------------------------------------------------------------------------
 
-**Ce tutoriel doit encore être écrit. Vous devez probablement penser à installer une version plus récente du package qui contient les exercices finalisés !**
-
 ## Objectifs
 
 -   ...
 
-## Filtrage de ...
+## Décomposition de ...
