@@ -1,3 +1,9 @@
+# BioDataScience3 2022.4.0
+
+-   **C04La_ts_intro** revised.
+
+-   **C04La_ts_analysis** inactivated.
+
 # BioDataScience3 2022.3.0
 
 -   **C02La_cv** and **C03La_roc** revised.

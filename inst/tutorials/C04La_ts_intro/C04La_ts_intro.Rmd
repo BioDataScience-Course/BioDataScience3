@@ -130,7 +130,7 @@ grade_code("Par rapport à l'exercice précédent, nous utilisons `deltat = 3` (
 Calculez une troisième fois les statistiques glissantes sur `nottem` et visualisez la moyenne, mais cette fois-ci avec des blocs de *6 mois*.
 
 ```{r statslide3_h3, exercise=TRUE}
-not.stat <- stat.slide(___, ___, xmin = ___, deltat = ___)
+not.stat <- stat.slide(___, ___, xmin = ___, deltat = ___/___)
 plot(not.stat, stat = "___")
 ```
 
@@ -209,12 +209,12 @@ plot(___)
 
 ```{r ts3-solution}
 ## Solution ##
-serie <- ts(vec, start = c(1993, 4), frequency = 4)
+serie <- ts(vec, start = c(1993, 2), frequency = 4)
 plot(serie)
 ```
 
 ```{r ts3-check}
-grade_code("La fréquence est de 4 ici. Le premier trimestre est constitué de janvier, février et mars. Le début du second trimestre de 1993 est donc le 1er avril, soit `c(1993, 4)`.")
+grade_code("La fréquence est de 4 ici. Le premier trimestre est constitué de janvier, février et mars. Le début du second trimestre de 1993 est donc le 1er avril, soit `c(1993, 2)`.")
 ```
 
 ## Manipulation d'un objet ts
