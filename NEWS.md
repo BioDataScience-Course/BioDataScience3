@@ -1,8 +1,8 @@
 # BioDataScience3 2022.4.0
 
--   **C04La_ts_intro** revised.
+-   **C04La_ts_intro** and **C06La_map** revised.
 
--   **C04La_ts_analysis** inactivated.
+-   **C04La_ts_analysis**, **C05La_ts_filter**, **C05Lb_ts_decomp**, and **C06Lb_interp** inactivated.
 
 # BioDataScience3 2022.3.0
 
