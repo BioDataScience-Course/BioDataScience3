@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III Module 4** Statistiques glissantes, création et manipulation d'objets ts."
 tutorial:
   id: "C04La_ts_intro"
-  version: 2.0.0/6
+  version: 2.0.1/9
 output:
   learnr::tutorial:
     progressive: true
@@ -32,8 +32,6 @@ BioDataScience3::learnr_server(input, output, session)
 ```
 
 ------------------------------------------------------------------------
-
-**Ce tutoriel correspond à la version 2021-2022. Il est en cours de révision pour la version 2022-2023. Vous devez probablement penser à installer une version plus récente du package qui contient les exercices finalisés !**
 
 ## Objectifs
 
@@ -89,7 +87,7 @@ plot(not.stat, stat = "mean")
 ```
 
 ```{r statslide1_h3-check}
-grade_code("Donc, le premier argument est le temps (obtenu à l'aide de `time(ma_serie)`. Le second aregument est la série elle-même. Les autres arguments précisent comment l'axe temporel est découpé. Ici, `xmin = 1920` indique que le découpage commence le 1er janvier 1920 et `deltat = 1` précise que l'intervalle de temps à considérer pour chaque bloc successif est de une unité qui est ici l'année")
+grade_code("Donc, le premier argument est le temps (obtenu à l'aide de `time(ma_serie)`. Le second argument est la série elle-même. Les autres arguments précisent comment l'axe temporel est découpé. Ici, `xmin = 1920` indique que le découpage commence le 1er janvier 1920 et `deltat = 1` précise que l'intervalle de temps à considérer pour chaque bloc successif est de une unité qui est ici l'année")
 ```
 
 #### Blocs de 3 ans
@@ -132,7 +130,7 @@ grade_code("Par rapport à l'exercice précédent, nous utilisons `deltat = 3` (
 Calculez une troisième fois les statistiques glissantes sur `nottem` et visualisez la moyenne, mais cette fois-ci avec des blocs de *6 mois*.
 
 ```{r statslide3_h3, exercise = TRUE}
-not.stat <- stat.slide(___, ___, xmin = ___, deltat = ___)
+not.stat <- stat.slide(___, ___, xmin = ___, deltat = ___/___)
 plot(not.stat, stat = "___")
 ```
 
@@ -160,7 +158,7 @@ grade_code("Lorsque la taille du bloc est une fraction de l'unité de mesure du 
 
 ## Construction d'un objet **ts**
 
-Avant de manipuler un objet **ts**, il faut être capable de le construire. La fonction `ts()` set à cela. Pour plus d'informations sur cedtte fonction et ses arguments, voyez `?ts` dans la console R. Nous n'utiliserons que les principaux arguments dans ce tutoriel.
+Avant de manipuler un objet **ts**, il faut être capable de le construire. La fonction `ts()` sert à cela. Pour plus d'informations sur cedtte fonction et ses arguments, voyez `?ts` dans la console R. Nous n'utiliserons que les principaux arguments dans ce tutoriel.
 
 ### Série 1
 
@@ -197,7 +195,7 @@ plot(serie)
 ```
 
 ```{r ts2-check}
-grade_code("Il est plus simple et plus parlant d'indiquer `c(2005, 7)` pour le 1er juillet 2005, plkutôt que d'écrire `2005 + 7/12`, bien que cette dernière forme convienne aussi (si on considère en première approximation que chaque mois est exactement 1/12 d'année, ce qui n'est pas parfaitement correct comme vous le savez).")
+grade_code("Il est plus simple et plus parlant d'indiquer `c(2005, 7)` pour le 1er juillet 2005, plutôt que d'écrire `2005 + 7/12`, bien que cette dernière forme convienne aussi (si on considère en première approximation que chaque mois est exactement 1/12 d'année, ce qui n'est pas parfaitement correct comme vous le savez).")
 ```
 
 ### Série 3
@@ -211,12 +209,12 @@ plot(___)
 
 ```{r ts3-solution}
 ## Solution ##
-serie <- ts(vec, start = c(1993, 4), frequency = 4)
+serie <- ts(vec, start = c(1993, 2), frequency = 4)
 plot(serie)
 ```
 
 ```{r ts3-check}
-grade_code("Effectivement, la fréquence est de 4 ici. Le premier trimestre est constitué de janvier, février et mars. Le début du second trimestre de 1993 est donc le 1er avril, soit `c(1993, 4)`.")
+grade_code("Effectivement, la fréquence est de 4 ici. Le premier trimestre est constitué de janvier, février et mars. Le début du second trimestre de 1993 est donc le 1er avril, soit `c(1993, 2)`.")
 ```
 
 ## Manipulation d'un objet ts
