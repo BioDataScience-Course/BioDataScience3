@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III Module 4** Statistiques glissantes, création et manipulation d'objets ts."
 tutorial:
   id: "C04La_ts_intro"
-  version: 2.0.0/6
+  version: 2.0.1/9
 output:
   learnr::tutorial:
     progressive: true
@@ -33,8 +33,6 @@ BioDataScience3::learnr_server(input, output, session)
 
 ------------------------------------------------------------------------
 
-**Ce tutoriel correspond à la version 2021-2022. Il est en cours de révision pour la version 2022-2023. Vous devez probablement penser à installer une version plus récente du package qui contient les exercices finalisés !**
-
 ## Objectifs
 
 -   Utilisez les statistiques glissantes pour décrire une série spatio-temporelle,
@@ -45,7 +43,7 @@ BioDataScience3::learnr_server(input, output, session)
 
 ## Température de l'air
 
-La température moyenne mensuelle de l'air est étudié entre 1920 et 1939 au château de Nottingham. Ètant en Angleterre, cette mesure est effectuée en degrés Fahrenheit.
+La température moyenne mensuelle de l'air est étudié entre 1920 et 1939 au château de Nottingham. Étant en Angleterre, cette mesure est effectuée en degrés Fahrenheit.
 
 ```{r, echo = TRUE}
 plot(nottem)
@@ -65,7 +63,7 @@ Les statistiques glissantes (*sliding statistics* en anglais) permettent de calc
 
 Réalisez des statistiques glissantes sur la série `nottem`. Vous devez produire un graphique qui montre les valeurs moyenne par blocs *annuels*.
 
-```{r statslide1_h3, exercise = TRUE}
+```{r statslide1_h3, exercise=TRUE}
 not.stat <- stat.slide(___, ___, xmin = ___, deltat = ___)
 plot(not.stat, stat = "___")
 ```
@@ -89,14 +87,14 @@ plot(not.stat, stat = "mean")
 ```
 
 ```{r statslide1_h3-check}
-grade_code("Donc, le premier argument est le temps (obtenu à l'aide de `time(ma_serie)`. Le second aregument est la série elle-même. Les autres arguments précisent comment l'axe temporel est découpé. Ici, `xmin = 1920` indique que le découpage commence le 1er janvier 1920 et `deltat = 1` précise que l'intervalle de temps à considérer pour chaque bloc successif est de une unité qui est ici l'année")
+grade_code("Donc, le premier argument est le temps (obtenu à l'aide de `time(ma_serie)`. Le second argument est la série elle-même. Les autres arguments précisent comment l'axe temporel est découpé. Ici, `xmin = 1920` indique que le découpage commence le 1er janvier 1920 et `deltat = 1` précise que l'intervalle de temps à considérer pour chaque bloc successif est de une unité qui est ici l'année")
 ```
 
 #### Blocs de 3 ans
 
 Réalisez de nouvelles statistiques glissantes sur `nottem` et visualisez les valeurs moyennes et médianes par blocs de *3 ans*.
 
-```{r statslide2_h3, exercise = TRUE}
+```{r statslide2_h3, exercise=TRUE}
 not.stat <- stat.slide(___, ___, xmin = ___, deltat = ___)
 plot(not.stat, stat = "___") # Moyennes d'abord
 ___(not.stat, stat = "___") # Médianes ensuite
@@ -131,7 +129,7 @@ grade_code("Par rapport à l'exercice précédent, nous utilisons `deltat = 3` (
 
 Calculez une troisième fois les statistiques glissantes sur `nottem` et visualisez la moyenne, mais cette fois-ci avec des blocs de *6 mois*.
 
-```{r statslide3_h3, exercise = TRUE}
+```{r statslide3_h3, exercise=TRUE}
 not.stat <- stat.slide(___, ___, xmin = ___, deltat = ___)
 plot(not.stat, stat = "___")
 ```
@@ -160,13 +158,13 @@ grade_code("Lorsque la taille du bloc est une fraction de l'unité de mesure du 
 
 ## Construction d'un objet **ts**
 
-Avant de manipuler un objet **ts**, il faut être capable de le construire. La fonction `ts()` set à cela. Pour plus d'informations sur cedtte fonction et ses arguments, voyez `?ts` dans la console R. Nous n'utiliserons que les principaux arguments dans ce tutoriel.
+Avant de manipuler un objet **ts**, il faut être capable de le construire. La fonction `ts()` set à cela. Pour plus d'informations sur cette fonction et ses arguments, voyez `?ts` dans la console R. Nous n'utiliserons que les principaux arguments dans ce tutoriel.
 
 ### Série 1
 
 Vous allez construire une série fictive qui débute au 1er janvier 2000. Une observation est réalisée chaque mois. Un vecteur de valeurs numériques correspondant aux observations de cette série est à votre disposition sous le nom `vec`. Transformez-le en un objet **ts** nommés `serie` en prenant soin de bien encoder le temps. Réalisez ensuite un graphique de cette série avec la fonction `plot()`.
 
-```{r ts1, exercise = TRUE}
+```{r ts1, exercise=TRUE}
 serie <- ts(vec, start = ___, frequency = ___)
 plot(___)
 ```
@@ -178,14 +176,14 @@ plot(serie)
 ```
 
 ```{r ts1-check}
-grade_code("Pour spécifier le temps d'un objet **ts**, vous commencez par choisir l'unité de temps. Ici, l'unité la plus facile est l'année. Ensuite, vous spécifiez complètement l'axe du temps avec des observations réalisées à intervalle régulier à l'aide de deux paramètres parmi ces quatres : `start`, `end`, `deltat` ou `frequency`. Ici, nous avons utilisé `start = 2000` (premier jour de l'an 2000, sinon, on doit ajouter une décimale correspondant au nombre de jours écoulés, ou s'il s'agit de mois, on peut aussi indiquer par exemple `start = c(2000, 3)` pour le début du troisième mois, soit le 1er mars 2000) et `frequency=`, la fréquence des observations. Ici 12, puisqu'il y a une observation pa mois, donc 12 pas an.")
+grade_code("Pour spécifier le temps d'un objet **ts**, vous commencez par choisir l'unité de temps. Ici, l'unité la plus facile est l'année. Ensuite, vous spécifiez complètement l'axe du temps avec des observations réalisées à intervalle régulier à l'aide de deux paramètres parmi ces quatres : `start`, `end`, `deltat` ou `frequency`. Ici, nous avons utilisé `start = 2000` (premier jour de l'an 2000, sinon, on doit ajouter une décimale correspondant au nombre de jours écoulés, ou s'il s'agit de mois, on peut aussi indiquer par exemple `start = c(2000, 3)` pour le début du troisième mois, soit le 1er mars 2000) et `frequency =`, la fréquence des observations. Ici 12, puisqu'il y a une observation pa mois, donc 12 pas an.")
 ```
 
 ### Série 2
 
 Toujours à partir du vecteur des observations `vec`, vous allez maintenant considérer que votre série fictive débute le 1er juillet 2005. Faites le même exercice que ci-dessus avec cette nouvelle information.
 
-```{r ts2, exercise = TRUE}
+```{r ts2, exercise=TRUE}
 serie <- ts(vec, start = c(___,___), frequency = ___)
 plot(___)
 ```
@@ -197,14 +195,14 @@ plot(serie)
 ```
 
 ```{r ts2-check}
-grade_code("Il est plus simple et plus parlant d'indiquer `c(2005, 7)` pour le 1er juillet 2005, plkutôt que d'écrire `2005 + 7/12`, bien que cette dernière forme convienne aussi (si on considère en première approximation que chaque mois est exactement 1/12 d'année, ce qui n'est pas parfaitement correct comme vous le savez).")
+grade_code("Il est plus simple et plus parlant d'indiquer `c(2005, 7)` pour le 1er juillet 2005, plutôt que d'écrire `2005 + 7/12`, bien que cette dernière forme convienne aussi (si on considère en première approximation que chaque mois est exactement 1/12 d'année, ce qui n'est pas parfaitement correct comme vous le savez).")
 ```
 
 ### Série 3
 
 Toujours à partir de vos observations dans `vec`, faite une troisième fois un exercice similaire, mais cette fois-ci, vous considérerez que vos observations commencent le premier jour du second trimestre de 1993 et que vous avez une observation par trimestre.
 
-```{r ts3, exercise = TRUE}
+```{r ts3, exercise=TRUE}
 serie <- ts(vec, start = c(___, ___), frequency = ___)
 plot(___)
 ```
@@ -216,7 +214,7 @@ plot(serie)
 ```
 
 ```{r ts3-check}
-grade_code("Effectivement, la fréquence est de 4 ici. Le premier trimestre est constitué de janvier, février et mars. Le début du second trimestre de 1993 est donc le 1er avril, soit `c(1993, 4)`.")
+grade_code("La fréquence est de 4 ici. Le premier trimestre est constitué de janvier, février et mars. Le début du second trimestre de 1993 est donc le 1er avril, soit `c(1993, 4)`.")
 ```
 
 ## Manipulation d'un objet ts
@@ -227,7 +225,7 @@ Vous avez à disposition une série spatio-temporelle sous forme d'objet **ts** 
 
 Combien d'observations `serie` contient-elle par unité de temps ?
 
-```{r manip1, exercise = TRUE, exercise.lines=3}
+```{r manip1, exercise=TRUE, exercise.lines=3}
 ___(___)
 ```
 
@@ -237,14 +235,14 @@ frequency(serie)
 ```
 
 ```{r manip1-check}
-grade_code("Tout simplement `frenquency()` nous donne cette information.")
+grade_code("C'est bien la fonction `frenquency()` nous donne cette information.")
 ```
 
 ### Exercice 2
 
-Quand débute `serie`(sachant que son unité de temps ext l'année) ?
+Quand débute `serie` (sachant que son unité de temps est l'année) ?
 
-```{r manip2, exercise = TRUE, exercise.lines=3}
+```{r manip2, exercise=TRUE, exercise.lines=3}
 ___(___)
 ```
 
@@ -254,7 +252,7 @@ start(serie)
 ```
 
 ```{r manip2-check}
-grade_code("Aussi simple, `start()` nous l'indique.")
+grade_code("Ici, c'est effectivement `start()` qui nous l'indique.")
 ```
 
 ### Exercice 3
@@ -267,7 +265,7 @@ boxplot(split(serie, cycle(serie)), col = "cornsilk")
 
 Reproduisez-le par vous-même.
 
-```{r manip3, exercise = TRUE, exercise.lines=3}
+```{r manip3, exercise=TRUE, exercise.lines=3}
 ___(___(___,___(___)), col = "cornsilk")
 ```
 
@@ -277,7 +275,7 @@ boxplot(split(serie, cycle(serie)), col = "cornsilk")
 ```
 
 ```{r manip3-check}
-grade_code("Ici plusieurs traitements sont combinés pour obtenir le résultat. Tout d'abord `cycle()` indique l'ordre des observations selon un cycle d'une unité de temps. Pour l'année ici, les observations de janvier se voient toutes attribuer `1`, celles de février `2`, etc. Ensuite `split()` sépare la série initiale en 12 sous-série, ayant même valeurs pour le cycle. Autrement dit, on sépare les données de chaque mois dans sa série propre. Enfin, `boxplot()` est la fonction qui crée une boite de dispersion parallèle en R de base. On final, on compare la distribution des obervations pour chaque mois au cours des années.")
+grade_code("Ici plusieurs traitements sont combinés pour obtenir le résultat. Tout d'abord `cycle()` indique l'ordre des observations selon un cycle d'une unité de temps. Pour l'année ici, les observations de janvier se voient toutes attribuer `1`, celles de février `2`, etc. Ensuite `split()` sépare la série initiale en 12 sous-séries, ayant chacune même valeur pour le cycle. Autrement dit, on sépare les données de chaque mois dans sa série propre. Enfin, `boxplot()` est la fonction qui crée une boite de dispersion parallèle en R de base. Au final, on compare la distribution des observations pour chaque mois au cours des années.")
 ```
 
 ## Conclusion
