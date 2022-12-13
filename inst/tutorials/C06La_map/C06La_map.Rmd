@@ -14,9 +14,7 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 BioDataScience3::learnr_setup()
-SciViews::R()
-library(sf)
-library(tmap)
+SciViews::R("spatial")
 
 read("NLD_prov", package = "tmap") %>.%
   fselect(., name, population, geometry) %>.%
@@ -83,17 +81,13 @@ BioDataScience3::learnr_server(input, output, session)
 Les packages suivant sont chargés par défaut pour chaque exercice :
 
 ```{r, eval=FALSE, echo=TRUE}
-SciViews::R()
-library(sf)
-library(tmap)
+SciViews::R("spatial")
 ```
 
 Ce code est exécuté par défaut avant de débuter votre séance d'exercices. Il permet de réaliser des cartes avec la fonction `chart()`. Dans vos projets plus tard, vous devrez prendre soin de l'inclure dans un script R et de le sourcer dans vos différents documents.
 
 ```{r, eval=FALSE, echo=TRUE}
-SciViews::R
-library(sf)
-library(tmap)
+SciViews::R("spatial")
 chart.sf <- function(data, specif = aes(), formula = NULL, mapping = aes(), type = NULL,
 theme = theme_svmap, env = parent.frame()) {
   if (!missing(specif))

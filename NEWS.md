@@ -1,3 +1,7 @@
+# BioDataScience3 2022.4.1
+
+-   Corrections in **C06La_map**.
+
 # BioDataScience3 2022.4.0
 
 -   **C04La_ts_intro** and **C06La_map** revised.
