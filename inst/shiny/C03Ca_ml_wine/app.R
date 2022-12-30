@@ -29,7 +29,7 @@ if (!file.exists(dir))
   dir <- "~/C03_challenge" # Alternate dir for local tests
 database <- file.path(dir, "wine.sqlite")
 table <- "wines"
-wine2quality <- read$rds(file.path(dir, "wine2quality.rds"))$value
+wine2quality <- read$rds(file.path(dir, "wine2quality.rds"))
 
 # Is the countdown over?
 is_done <- function()
