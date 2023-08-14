@@ -2,6 +2,8 @@
 
 -   New version for academic year 2023-2024.
 
+-   The addin to select learnrs or Shiny apps now detects inactivated items and takes them out of the list.
+
 # BioDataScience3 2022.4.1
 
 -   Corrections in **C06La_map**.
