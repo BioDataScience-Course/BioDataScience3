@@ -1,5 +1,5 @@
 Package: BioDataScience3
-Version: 2022.4.1
+Version: 2023.0.0
 Title: A Series of Learnr Documents for Biological Data Science 3
 Description: Interactive documents using learnr for studying biological data science (second course).
 Authors@R: c(
@@ -8,7 +8,7 @@ Authors@R: c(
   person("Guyliann", "Engels", role = "aut",
   email = "guyliann.engels@umons.ac.be"))
 Maintainer: Philippe Grosjean <phgrosjean@sciviews.org>
-Depends: R (>= 4.1.0)
+Depends: R (>= 4.2.0)
 Imports: learnitdown, BioDataScience, shiny, miniUI
 Suggests: SciViews, ggplot2, ggpubr, data.io, svMisc, svBase, svFlow, chart, covr, knitr, testthat, gradethis
 License: MIT + file LICENSE
@@ -16,6 +16,6 @@ Encoding: UTF-8
 URL: https://github.com/BioDataScience-Course/BioDataScience3
 BugReports: https://github.com/BioDataScience-Course/BioDataScience3/issues
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 VignetteBuilder: knitr
 LazyData: true

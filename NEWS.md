@@ -1,3 +1,7 @@
+# BioDataScience3 2023.0.0
+
+-   New version for academic year 2023-2024.
+
 # BioDataScience3 2022.4.1
 
 -   Corrections in **C06La_map**.
@@ -28,7 +32,7 @@
 
 -   Addition and reworking of learnrs: two learnrs for each module + learnr **C00La_rappel**.
 
-# BioDataScience3 2022.0.1
+# BioDataScience3 2022.0.0
 
 -   New version for academic year 2022-2023.
 
