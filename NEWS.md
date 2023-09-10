@@ -4,6 +4,8 @@
 
 -   The addin to select learnrs or Shiny apps now detects inactivated items and takes them out of the list.
 
+-   A new addin to create a course issue is added.
+
 # BioDataScience3 2022.4.1
 
 -   Corrections in **C06La_map**.

@@ -1,4 +1,9 @@
-Name: Run sdd III-V tutorial or app
+Name: Run sdd III-IV tutorial or app
 Description: Run one of the learnr tutorials or Shiny applications in this package
 Binding: run_addin
+Interactive: true
+
+Name: New sdd III issue
+Description: Create a new issue in the course GitHub repository
+Binding: sdd3_issue
 Interactive: true
