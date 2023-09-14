@@ -44,6 +44,8 @@ BioDataScience3::learnr_banner()
 BioDataScience3::learnr_server(input, output, session)
 ```
 
+<!-- PhG: en 2024-2025, réécrire ceci en faisant une ADL classique, pas un truc alambiqué comme ici. L'ADL classique cherche à catégoriser des individus selon des classes... juste dans le but de réaliser un tel classement via l'ordinateur -->
+
 ------------------------------------------------------------------------
 
 ## Objectifs
@@ -69,14 +71,14 @@ L'objectif de ce tutoriel est de vous permettre de découvrir l'analyse discrimi
 
 Le calcul de l'indice de masse corporelle (IMC) a déjà fait l'objet de plusieurs de vos analyses dans les cours précédents. C'est en effet un sujet à la fois simple à comprendre au premier abord, et en réalité, assez compliqué dans le détail. Le projet de départ est de définir un indice, un nombre, qui quantifie l'"obésité" d'une personne sur une échelle allant de l'anorexie la plus extrême jusqu'à l'obésité morbide la plus forte. On se rend vite compte qu'il ne suffit pas simplement de prendre la masse, ou même, la masse rapportée à la taille. En effet, un certain nombre de facteurs interviennent comme le genre, l'âge, la morphologie générale, la pratique de sport à haut niveau, etc.
 
-À partir du moment où la classification supervisée permet de déterminer s'il est possible de différencier des sous-populations sur base de mesures quantitatives, nous pouvons utiliser l'ADL pour répondre à la question suivante : si les différences entre genres interviennent de manière non négligeables sur les variables qui sont utilisées régulièrement dans les formules de calcul de l'IMC, il doit être possible de *prédire* si un individu est un homme ou une femme *uniquement* sur base de l'information contenue dans ces variables quantitatives. Autrement dit, nous prenons le problème à l'envers. Au lieu de nous demander comment le genre influence l'IMC, on se demande si les variables quantitatives qui interviennent dans le calcul de l'IMC permettent de prédire le genre. Et si c'est le cas, nous en conclurons que le genre ne peut probablement pas être négligé dans nos formules. Cette approche inversée est utile dans certaines situations où les relations entre les variables sont obscures car il existe des algorithmes de classification supervisée qui fonctionnent comme des boîtes noires et pour lesquelles ce type d'information n'est justement pas nécessaire.
+À partir du moment où la classification supervisée permet de déterminer s'il est possible de différencier des sous-populations sur base de mesures quantitatives, nous pouvons utiliser l'ADL pour répondre à la question suivante : si les différences entre genres interviennent de manière non négligeable sur les variables qui sont utilisées régulièrement dans les formules de calcul de l'IMC, il doit être possible de *prédire* si un individu est un homme ou une femme *uniquement* sur base de l'information contenue dans ces variables quantitatives. Autrement dit, nous prenons le problème à l'envers. Au lieu de nous demander comment le genre influence l'IMC, on se demande si les variables quantitatives qui interviennent dans le calcul de l'IMC permettent de prédire le genre. Et si c'est le cas, nous en conclurons que le genre ne peut probablement pas être négligé dans nos formules. Cette approche inversée est utile dans certaines situations où les relations entre les variables sont obscures, car il existe des algorithmes de classification supervisée qui fonctionnent comme des boîtes noires et pour lesquelles ce type d'information n'est justement pas nécessaire.
 
 ![](images/man_woman.png){width="35%"}
 
 Vous avez à votre disposition le tableau de données suivant que l'on réduit à quatre variables :
 
 -   le genre `gender`, que l'on cherchera à prédire, une variable `factor` à deux niveaux `M` pour homme et `W` pour femme, et
--   trois variables quantitatives rencontrées dans les diverses formules d'IMC, soit la masse `weight` en kg, la taille `height`, et la circonférence du poignet `wrist` en mm.
+-   trois variables quantitatives rencontrées dans les diverses formules d'IMC, soit la masse `weight` en kg, la taille `height`, et le tour de poignet `wrist` en mm.
 
 ```{r, echo=TRUE}
 read("biometry", package = "BioDataScience",lang = "fr") %>.%
@@ -90,7 +92,7 @@ Commençons par explorer ce jeu de données.
 skimr::skim(bio)
 ```
 
-Étant donné que la LDA se base sur les mêmes principes que l'ACP, une ACP peut-être réalisée pour résumer les données.
+Étant donné que l'ADL se base sur les mêmes principes que l'ACP, une ACP peut-être réalisée pour résumer les données.
 
 ```{r, echo=TRUE}
 bio_red <- sdrop_na(bio)
@@ -160,9 +162,9 @@ bio_test <- testing(bio_split)
 grade_code("Vous avez réalisez votre set d'apprentissage et votre set de test avec les proportions demandées. N'hésitez pas à consulter la page d'aide des fonctions `initial_split()`, `training()` et `testing()`. Vous y trouverez des informations très intéressantes sur la réalisation des sets d'apprentissage et de test.", "Avez-vous bien respecté les consignes ? Il ne faut compléter que les zones signalées par `___`.")
 ```
 
-## Entrainement du modèle
+## Entraînement du modèle
 
-Créez maintenant un classifieur du genre en fonction des autres variables (en utilisant une formule abrégée). Choisissez le tableau adéquat pour ce faire et placer ce classifieur dans la variable `bio_lda`.
+Créez maintenant un classifieur du genre en fonction des autres variables (en utilisant une formule abrégée). Choisissez le tableau adéquat pour ce faire et placez ce classifieur dans la variable `bio_lda`.
 
 ```{r lda1_h2, exercise=TRUE}
 bio_lda <- ___(data = ___, ___ ~ ___)
@@ -183,7 +185,7 @@ summary(bio_lda)
 ```
 
 ```{r lda1_h2-check}
-grade_code("Voici donc votre premier classifieur LDA. Voyons maintenant quoi en faire...", "Avez-vous bien écrit la formule sous sa forme condensée ?")
+grade_code("Voici donc votre premier classifieur ADL. Voyons maintenant quoi en faire...", "Avez-vous bien écrit la formule sous sa forme condensée ?")
 ```
 
 ## Performances du classifieur
@@ -258,9 +260,9 @@ quiz(
 
 ## Conclusion
 
-Vous venez de créer votre premier classifieur. Nous avons détaillé ensemble les étapes d'exploration et de préparation des données rapidement. Ensuite, vous avez été guidé dans la séparation en set d'apprentissage et de test, et dans l'utilisation du premier pour entraîner votre LDA et du second pour déterminer les performances du classifieur ainsi obtenu.
+Vous venez de créer votre premier classifieur. Nous avons détaillé ensemble les étapes d'exploration et de préparation des données rapidement. Ensuite, vous avez été guidé dans la séparation en set d'apprentissage et de test, et dans l'utilisation du premier pour entraîner votre ADL et du second pour déterminer les performances du classifieur ainsi obtenu.
 
-À l'issue de cette étude, nous constatons que dans ce jeu de données, il est possible de différencier les hommes des femmes à l'aide seulement des informations de masse, taille et circonférence de poignet avec un taux d'erreur inférieur à 15%. Nous en concluons donc que l'information portée par ces trois variables quantitatives permet cette discrimination de genre, et donc que nous devons nous en préoccuper lors de l'élaboration de notre prochain indice de masse corporel qui mettra tout le monde d'accord !
+À l'issue de cette étude, nous constatons que dans ce jeu de données, il est possible de différencier les hommes des femmes à l'aide seulement des informations de masse, taille et circonférence de poignet avec un taux d'erreur inférieur à 15%. Nous en concluons donc que l'information portée par ces trois variables quantitatives permet cette discrimination de genre, et donc que nous devons nous en préoccuper lors de l'élaboration de notre prochain indice de masse corporelle qui mettra tout le monde d'accord !
 
 ```{r comm_noscore, echo=FALSE}
 question_text(
