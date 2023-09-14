@@ -6,7 +6,7 @@
       major_axis_length  = "Major axis length",
       minor_axis_length  = "Minor axis length",
       eccentricity       = "Eccentricity",
-      convex_area        = "Convex Area",
+      convex_area        = "Convex area",
       extent             = "Extent",
       class              = "Class"),
     units = list(

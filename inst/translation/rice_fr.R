@@ -2,12 +2,12 @@
   rice <- labelise(rice, self = FALSE,
     label = list(
       area               = "Aire",
-      perimeter          = "Perimètre",
+      perimeter          = "Périmètre",
       major_axis_length  = "Longueur de l'axe majeur",
       minor_axis_length  = "Longueur de l'axe mineur",
       eccentricity       = "Excentricité",
       convex_area        = "Aire convexe",
-      extent             = "Extent",
+      extent             = "Etendue",
       class              = "Classe"),
     units = list(
       area               = "px^2",
