@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III** Rappel des cours SDD I et II et nouveautés svbox2022."
 tutorial:
   id: "C00La_refresh"
-version: 2.0.1/14
+version: 2.1.0/14
 output:
   learnr::tutorial:
   progressive: true
@@ -32,10 +32,10 @@ BioDataScience3::learnr_server(input, output, session)
 
 ## Objectifs
 
-Ce cours de [Science des données III : exploration et prédiction](https://wp.sciviews.org/sdd-umons3/) fait suite aux cours de [Science des données I : visualisation et inférence](https://wp.sciviews.org/sdd-umons/) et [Science des données II : analyse et modélisation](https://wp.sciviews.org/sdd-umons2/). Ce tutoriel vise à :
+Ce cours de [Science des données III : exploration et prédiction](https://wp.sciviews.org/sdd-umons3/) fait suite aux cours de [Science des données I : visualisation et inférence](https://wp.sciviews.org/sdd-umons/) et [Science des données II : analyse et modélisation](https://wp.sciviews.org/sdd-umons2/). Ce tutoriel vise à :
 
 -   Réviser les notions essentielles du cours de Science des données I et II.
--   Introduire les nouveautés dans la SciViews Box 2022
+-   Introduire les nouveautés dans la SciViews Box 2023
 
 Le cours de Science des données I se divise en deux parties. La première partie traite principalement de la réalisation de graphiques et du remaniement des données. La seconde partie s'intéresse aux probabilités, aux distributions statistiques les plus courantes en biologie ainsi qu'aux tests d'inférence (test *t* de Student, test de Wilcoxon, ANOVA, test de Kruskal-Wallis,...)
 
@@ -45,11 +45,11 @@ Ce tutoriel ne peut s'attarder sur chaque aspect des 22 modules des deux cours p
 
 ## Chargement de packages
 
-La fonction`SciViews::R()` est employée afin de charger une série cohérente de packages R. Nous l'utilisons en début de script R ou encore dans le premier chunk d'un rapport d'analyse au format R Markdown.
+La fonction`SciViews::R()` est employée pour charger une série cohérente de packages R. Nous l'utilisons en début de script R ou encore dans le premier chunk d'un rapport d'analyse au format R Markdown.
 
 Les packages R ainsi chargés permettent d'importer, remanier et visualiser à l'aide de graphiques sans devoir employer en plus la fonction `library()` pour charger d'autres packages en plus (mais elle reste disponible, bien sûr).
 
-Exécutez l'instruction `SciViews::R()` suivie de l'instruction `SciViews::SciViews_packages()` dans la console R ci-dessous et analysez le résultat obtenu. Rappelez-vous que pour exécuter et tester votre code vous cliquez sur le bouton `Run Code` et pour soumettre votre résultat (il faut que le code soit correct naturellement), vous cliquez sur le bouton `Submit`.
+Exécutez l'instruction `SciViews::R()` suivie de l'instruction `SciViews_packages()` dans la console R ci-dessous et analysez le résultat obtenu. Rappelez-vous que pour exécuter et tester votre code vous cliquez sur le bouton `Run Code` et pour soumettre votre résultat (il faut que le code soit correct naturellement), vous cliquez sur le bouton `Submit`.
 
 ```{r sciviews-noscore, exercise=TRUE}
 
@@ -57,11 +57,11 @@ Exécutez l'instruction `SciViews::R()` suivie de l'instruction `SciViews::SciVi
 
 ```{r sciviews-noscore-solution}
 SciViews::R()
-SciViews::SciViews_packages()
+SciViews_packages()
 ```
 
 ```{r sciviews-noscore-check}
-grade_code("Vous voyez qu'un certain nombre de packages R sont chargés.")
+grade_code("Vous voyez qu'un certain nombre de packages R sont chargés. Répondez à la question ci-dessous.")
 ```
 
 ```{r qu_sciviews}
@@ -73,13 +73,13 @@ question("Parmi ces packages R, lesquels sont chargés avec l'instruction `SciVi
   answer("collapse", correct = TRUE),
   allow_retry = TRUE, random_answer_order = TRUE,
   correct = "C'était une petite question d'échauffement liée à la lecture de sortie R.",
-  incorrect = "Attention, relisez attentivement ce que renvoie la fonction SciViews::SciViews_packages(). Plusieurs éléments sont à sélectionner."
+  incorrect = "Attention, relisez attentivement ce que renvoie la fonction SciViews_packages(). Plusieurs éléments sont à sélectionner."
     )
 ```
 
 ![](images/breaking_news.jpg){width="30%"}
 
-Des packages supplémentaires peuvent être chargés grâce à la fonction `SciViews::R()`. Ces packages additionnels vont être regroupés pour des tâches spécifiques comme `"model"` pour la modélisation, `"ml"` pour le machine learning, `"ts"` pour les séries spatio-temporelles, `"explore"` pour l'exploration multivariée, ...
+Des packages supplémentaires peuvent être chargés grâce à la fonction `SciViews::R()`. Ces packages additionnels vont être regroupés pour des tâches spécifiques comme `"model"` pour la modélisation, `"ml"` pour le machine learning, `"ts"` pour les séries spatio-temporelles, `"explore"` pour l'exploration multivariée, "spatial" pour les données géoréférencées...
 
 ```{r, echo=TRUE, eval=FALSE}
 SciViews::R("model")
@@ -105,6 +105,8 @@ crabs
 # Elle est disponible en exécutant l'instruction `?` ou encore `.?` dans la console R.
 # Par exemple, vous pouvez essayer `?read()`
 #  Vous trouverez des exemples explicites sur la tableau iris ou encore trees.
+crabs <- read(___, package = ___, lang = ___)
+crabs
 
  #### ATTENTION: Hint suivant = solution !####
 ```
@@ -753,7 +755,7 @@ question("Sélectionnez les affirmations correctes (plusieurs choix possibles)."
 
 ## Conclusion
 
-Vous venez de réviser les éléments essentiels des cours de sciences de données I et II. Vous avez également découvert les nouveautés de la SciViews Box 2022. Grâce à ce tutoriel, vous avez pu déterminer par vous-mêmes si votre niveau de connaissance est suffisant ou non pour aborder le cours de Science des Données III. Si pas, vous devez revoir la matière non comprise de manière urgente, sinon vous ne pourrez pas suivre !
+Vous venez de réviser les éléments essentiels des cours de sciences de données I et II. Vous avez également découvert les nouveautés de la SciViews Box 2023. Grâce à ce tutoriel, vous avez pu déterminer par vous-mêmes si votre niveau de connaissance est suffisant ou non pour aborder le cours de Science des Données III. Si pas, vous devez revoir la matière non comprise de manière urgente, sinon vous ne pourrez pas suivre !
 
 ```{r comm_noscore, echo=FALSE}
 question_text(

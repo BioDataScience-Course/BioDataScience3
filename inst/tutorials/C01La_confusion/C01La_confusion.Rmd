@@ -59,7 +59,7 @@ question("Quelle est la métrique la plus adaptée pour s'assurer que le classif
 
 ## Taux de reconnaissance global
 
-Ces métriques peuvent sembler abstraites. En les calculant à la main, on peut les appréhender plus facilement. Intéressez-vous, pour débuter, au taux de reconnaissance globale.
+Ces métriques peuvent sembler abstraites. En les calculant à la main, on peut les comprendre plus facilement. Intéressez-vous, pour débuter, au taux de reconnaissance globale.
 
 ```{r, echo=FALSE, message=FALSE}
 mconf <- dtf(
@@ -130,7 +130,7 @@ knitr::kable(mconf, caption = "Matrice de confusion dont les colonnes représent
 
 Sur base de la nouvelle matrice de confusion ci-dessus, calculez le **taux de vrais positifs** du groupe C.
 
-```{r conf2_h2, exercise = TRUE}
+```{r conf2_h2, exercise=TRUE}
 tp <- ___
 fp <- ___
 fn <- ___
@@ -182,7 +182,7 @@ knitr::kable(mconf, caption = "Matrice de confusion dont les colonnes représent
 
 Sur base de la matrice de confusion ci-dessus, calculez la **spécificité** du groupe A.
 
-```{r conf3_h2, exercise = TRUE}
+```{r conf3_h2, exercise=TRUE}
 tp <- ___
 fp <- ___
 fn <- ___
@@ -232,9 +232,9 @@ rownames(mconf) <- c("A", "B", "C")
 knitr::kable(mconf, caption = "Matrice de confusion dont les colonnes représentent la classification par ordinateur et les lignes la classification manuelle.")
 ```
 
-Sur base de la matrice de confusion ci-dessus, réaliser un dernier calcul à la main. Calculez la **précision** du groupe B.
+Sur base de la matrice de confusion ci-dessus, réalisez un dernier calcul. Quantifiez la **précision** du groupe B.
 
-```{r conf4_h2, exercise = TRUE}
+```{r conf4_h2, exercise=TRUE}
 tp <- ___
 fp <- ___
 fn <- ___
@@ -275,7 +275,7 @@ grade_result(
 
 ## Conclusion
 
-Ces calculs de métriques à la main peut vous sembler simpliste. Ils vous ont permis d'appréhender un peu mieux ces métriques qui sont des éléments cruciaux dans l'évaluation d'un classifieur. À chaque fois que vous devrez étudier la qualité d'un classifieur, commencez par définir les métriques les plus pertinentes par rapport à vos objectifs.
+Ces calculs de métriques à la main peuvent vous sembler simplistes. Ils vous ont permis de les comprendre un peu mieux. Ce sont des éléments cruciaux dans l'évaluation d'un classifieur. À chaque fois que vous devrez déterminer la qualité d'un classifieur, commencez par définir les métriques les plus pertinentes par rapport à vos objectifs.
 
 ```{r comm_noscore, echo=FALSE}
 question_text(
