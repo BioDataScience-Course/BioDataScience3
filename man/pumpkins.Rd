@@ -7,29 +7,42 @@
 \format{
 A data frame with 13 variables and 2500 observations:
 \describe{
-\item{\code{area}}{The number of pixels within the borders of a pumpkin seed.}
+\item{\code{area}}{The number of pixels within the borders of a pumpkin
+seed.}
 \item{\code{perimeter}}{The circumference in pixels of a pumpkin seed.}
-\item{\code{major_axis_length}}{The maximal axis distance of a pumpkin seed.}
+\item{\code{major_axis_length}}{The maximal axis distance of a pumpkin
+seed.}
 \item{\code{minor_axis_length}}{The small axis distance of a pumpkin seed.}
-\item{\code{convex_area}}{The ratio of a pumpkin seed area to the bounding box pixels.}
-\item{\code{equiv_diameter}}{The area of the pumpkin seed by four and dividing by the number pi, and taking the square root.}
+\item{\code{convex_area}}{The ratio of a pumpkin seed area to the bounding
+box pixels.}
+\item{\code{equiv_diameter}}{The diameter of a cicle with same area as the
+pumpkin.}
 \item{\code{eccentricity}}{The eccentricity of a pumpkin seed.}
 \item{\code{solidity}}{The convex condition of the pumpkin seeds.}
-\item{\code{extent}}{The ratio of a pumpkin seed area to the bounding box pixels.}
-\item{\code{roundness}}{The ovality of pumpkin seeds without considering its distortion of the edges.}
+\item{\code{extent}}{The ratio of a pumpkin seed area to the bounding box
+pixels.}
+\item{\code{roundness}}{The ovality of pumpkin seeds without considering
+its distortion at the edges.}
 \item{\code{aspect_ratio}}{The aspect ratio of the pumpkin seeds.}
-\item{\code{compactness}}{The area of the pumpkin seed relative to the area of the circle with the same circumference.}
-\item{\code{class}}{A \strong{factor} with two levels: \code{"Cercevelik"}, and \code{"Urgup Sivrisi"}.}
+\item{\code{compactness}}{The area of the pumpkin seed relative to the area
+of a circle with the same circumference.}
+\item{\code{class}}{A \strong{factor} with two levels: \code{"Cercevelik"}, and
+\code{"Urgup Sivrisi"}.}
 }
 }
 \source{
-{KOKLU, M., SARIGIL, S. and OZBEK, O. (2021). The use of machine learning methods in classification of pumpkin seeds (Cucurbita pepo L.). Genetic Resources and Crop Evolution, 68(7), 2713-2726. doi:10.1007/s10722-021-01226-0}
+{Koklu, M., Sarigil, S. and Ozbek, O. (2021). The use of machine
+learning methods in classification of pumpkin seeds (Cucurbita pepo L.).
+Genetic Resources and Crop Evolution, 68(7), 2713-2726.
+doi:10.1007/s10722-021-01226-0}
 }
 \usage{
 pumpkins
 }
 \description{
-A total of 2500 pumpkin seed's images were taken for the two species (Çerçevelik and Ürgüp Sivrisi),
-processed and feature inferences were made. 12 morphological features were obtained for each pumpkin seeds.
+A total of 2500 images of pumpkin seed were taken for two varieties
+(Çerçevelik and Ürgüp Sivrisi). The images were processed and feature were
+calculated. Twelve morphological features were obtained for each pumpkin
+seed.
 }
 \keyword{datasets}

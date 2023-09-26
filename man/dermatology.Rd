@@ -14,34 +14,54 @@ A data frame with 35 variables and 366 observations:
 \item{\code{koebner_phenomenon}}{Clinical attribute: koebner phenomenon}
 \item{\code{polygonal_papules}}{Clinical attribute: polygonal papules}
 \item{\code{follicular_papules}}{Clinical attribute: follicular papules}
-\item{\code{oral_mucosal_involvement}}{Clinical attribute: oral mucosal involvement}
-\item{\code{knee_elbow_involvement}}{Clinical attribute: knee and elbow involvement}
+\item{\code{oral_mucosal_involvement}}{Clinical attribute: oral mucosal
+involvement}
+\item{\code{knee_elbow_involvement}}{Clinical attribute: knee and elbow
+involvement}
 \item{\code{scalp_involvement}}{Clinical attribute: scalp involvement}
 \item{\code{family_history}}{Clinical attribute: family history}
-\item{\code{melanin_incontinence}}{Histopathological attribute: melanin incontinence}
-\item{\code{eosinophils_infiltrate}}{Histopathological attribute: eosinophils in the infiltrate}
+\item{\code{melanin_incontinence}}{Histopathological attribute: melanin
+incontinence}
+\item{\code{eosinophils_infiltrate}}{Histopathological attribute:
+eosinophils in the infiltrate}
 \item{\code{pnl_infiltrate}}{Histopathological attribute: PNL infiltrate}
-\item{\code{fibrosis_papillary_dermis}}{Histopathological attribute: fibrosis of the papillary dermis}
+\item{\code{fibrosis_papillary_dermis}}{Histopathological attribute:
+fibrosis of the papillary dermis}
 \item{\code{exocytosis}}{Histopathological attribute: exocytosis}
 \item{\code{acanthosis}}{Histopathological attribute: acanthosis}
 \item{\code{hyperkeratosis}}{Histopathological attribute: hyperkeratosis}
 \item{\code{parakeratosis}}{Histopathological attribute: parakeratosis}
-\item{\code{clubbing_rete_ridges}}{Histopathological attribute: clubbing of the rete ridges}
-\item{\code{elongation_rete_ridges}}{Histopathological attribute: elongation of the rete ridges}
-\item{\code{thinning_suprapapillary_epidermis}}{Histopathological attribute: thinning of the suprapapillary epidermis}
-\item{\code{spongiform_pustule}}{Histopathological attribute: spongiform pustule}
-\item{\code{munro_microabcess}}{Histopathological attribute: munro microabcess}
-\item{\code{focal_hypergranulosis}}{Histopathological attribute: focal hypergranulosis}
-\item{\code{disappearance_granular_layer}}{Histopathological attribute: disappearance of the granular layer}
-\item{\code{vacuolisation_damage_basal_layer}}{Histopathological attribute: vacuolisation and damage of basal layer}
+\item{\code{clubbing_rete_ridges}}{Histopathological attribute: clubbing of
+the rete ridges}
+\item{\code{elongation_rete_ridges}}{Histopathological attribute:
+elongation of the rete ridges}
+\item{\code{thinning_suprapapillary_epidermis}}{Histopathological
+attribute: thinning of the suprapapillary epidermis}
+\item{\code{spongiform_pustule}}{Histopathological attribute: spongiform
+pustule}
+\item{\code{munro_microabcess}}{Histopathological attribute: munro
+microabcess}
+\item{\code{focal_hypergranulosis}}{Histopathological attribute: focal
+hypergranulosis}
+\item{\code{disappearance_granular_layer}}{Histopathological attribute:
+disappearance of the granular layer}
+\item{\code{vacuolisation_damage_basal_layer}}{Histopathological attribute:
+vacuolisation and damage of basal layer}
 \item{\code{spongiosis}}{Histopathological attribute: spongiosis}
-\item{\code{saw_tooth_appearance_retes}}{Histopathological attribute: saw-tooth appearance of retes}
-\item{\code{follicular_horn_plug}}{Histopathological attribute: follicular horn plug}
-\item{\code{perifollicular_parakeratosis}}{Histopathological attribute: perifollicular parakeratosis}
-\item{\code{inflammatory_monoluclear_inflitrate}}{Histopathological attribute: inflammatory monoluclear inflitrate}
-\item{\code{band_like_infiltrate}}{Histopathological attribute: band-like infiltrate}
+\item{\code{saw_tooth_appearance_retes}}{Histopathological attribute:
+saw-tooth appearance of retes}
+\item{\code{follicular_horn_plug}}{Histopathological attribute: follicular
+horn plug}
+\item{\code{perifollicular_parakeratosis}}{Histopathological attribute:
+perifollicular parakeratosis}
+\item{\code{inflammatory_monoluclear_inflitrate}}{Histopathological
+attribute: inflammatory monoluclear inflitrate}
+\item{\code{band_like_infiltrate}}{Histopathological attribute: band-like
+infiltrate}
 \item{\code{age}}{Histopathological attribute: age}
-\item{\code{class}}{A \strong{factor} with six levels: psoriasis, seboreic dermatitis, lichen planus, pityriasis rosea, cronic dermatitis, pityriasis rubra pilaris.}
+\item{\code{class}}{A \strong{factor} with six levels: \code{psoriasis},
+\verb{seboreic dermatitis}, \verb{lichen planus}, \verb{pityriasis rosea},
+\verb{cronic dermatitis}, \verb{pityriasis rubra pilaris}.}
 }
 }
 \source{
@@ -51,7 +71,8 @@ A data frame with 35 variables and 366 observations:
 dermatology
 }
 \description{
-34 attributes are studied on 366 patients to determine the type of Eryhemato-Squamous Disease.
-12 attributes are the clinical attributes and 22 attributes are the Histopathological attributes.
+This dataset contains 34 attributes studied on 366 patients to determine the
+type of Eryhemato-Squamous Disease. Twelve attributes are the clinical data
+and 22 attributes are the histopathological informations.
 }
 \keyword{datasets}
