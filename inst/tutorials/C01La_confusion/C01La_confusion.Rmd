@@ -29,12 +29,12 @@ BioDataScience3::learnr_server(input, output, session)
 
 ## Objectifs
 
-Il est possible de créer une multitude de classifieurs différents à partir d'un même jeu de données. Afin de déterminer le classifieur le plus adapté, nous avons besoin d'évaluer la qualité de chacun d'eux. Pour ce faire, nous utilisons des métriques comme le taux de reconnaissance globale, la précision, le rappel.... Ces métriques se calculent sur base d'une matrice de confusion.
+Il est possible de créer une multitude de classifieurs différents à partir d'un même jeu de données. Afin de déterminer le classifieur le plus adapté, nous avons besoin d'évaluer la qualité de chacun d'eux. Pour ce faire, nous utilisons des métriques comme le taux de reconnaissance globale, la précision, le rappel.... La plupart de ces métriques se calculent sur base d'une matrice de confusion.
 
 Ce tutoriel a pour objectifs :
 
--   Apprendre à choisir la bonne métrique
 -   Appréhender les matrices de confusion
+-   Apprendre à choisir la bonne métrique
 -   Calculer les principales métriques à partir d'une matrice de confusion 2 x 2
 
 ## Choix des métriques
@@ -275,7 +275,7 @@ grade_result(
 
 ## Conclusion
 
-Ces calculs de métriques à la main peuvent vous sembler simplistes. Ils vous ont permis de les comprendre un peu mieux. Ce sont des éléments cruciaux dans l'évaluation d'un classifieur. À chaque fois que vous devrez déterminer la qualité d'un classifieur, commencez par définir les métriques les plus pertinentes par rapport à vos objectifs.
+Ces calculs de métriques devraient vous avoir permis de les comprendre un peu mieux. Ce sont des éléments cruciaux dans l'évaluation d'un classifieur. À chaque fois que vous devrez déterminer la qualité d'un classifieur, commencez par définir les métriques les plus pertinentes par rapport à vos objectifs. Dans les exercices que vous ferez plus loin, vous utiliserez ces métriques pour évaluer les performances de vos classifieurs et vous vous rendrez compte de leur intérêt en pratique.
 
 ```{r comm_noscore, echo=FALSE}
 question_text(

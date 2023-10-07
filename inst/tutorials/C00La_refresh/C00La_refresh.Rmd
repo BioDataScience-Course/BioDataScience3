@@ -276,7 +276,7 @@ chart(data = ___, ___ ~ ___ %___=% ___ ) |>
 crabs <- read("crabs", package = "MASS")
 # Graphique
 chart(data = crabs, length ~ ___ %fill=% ___ ) |>
-  gg$geom_box___
+  Sgg$geom_box___
 
  #### ATTENTION: Hint suivant = solution !####
 ```
@@ -733,8 +733,8 @@ grade_code("Vous avez correctement réalisé les trois graphiques demandés. Ré
 ```{r qu_acp}
 question("Sélectionnez les affirmations correctes (plusieurs choix possibles).",
   answer("L'ACP permet de séparer les deux espèces. Les rapports longueur/largeur sont plus importants pour les crabes oranges.", correct = TRUE),
-  answer("Le premier axe reprend 63.5% de la variance totale. Cet axe est corrélé avec les ratios longueur/largeur, profondeur/largeur et taille du lobe frontal/largeur.", correct = TRUE),
-  answer("Le second axe représente 27.7% de la variance totale. Cet axe est inversément correlé avec le ratio largueur à l'arrière/largeur.",correct = TRUE),
+  answer("Le premier axe reprend 63.5% de la variance totale. Cet axe est corrélé (directement ou inversément) avec les ratios longueur/largeur, profondeur/largeur et taille du lobe frontal/largeur.", correct = TRUE),
+  answer("Le second axe représente 27.7% de la variance totale. Cet axe est correlé (directement ou inversément) avec le ratio largueur à l'arrière/largeur.", correct = TRUE),
   answer("Les ratios longueur/largeur et épaisseur/largeur sont directement corrélés.", correct = TRUE),
   answer("Le ratio épaisseur/largeur est inversément corrélé avec le ratio largeur à l'arrière/largeur.", correct = FALSE),
   answer( "Le ratio largeur à l'arrière/largeur permet de distinguer la plupart des individus mâles des femelles et les crabes bleus on une carapace plus compacte (rapport longueur - largeur) que les crabes oranges.", correct = TRUE),

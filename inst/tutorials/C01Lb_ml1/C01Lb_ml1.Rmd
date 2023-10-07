@@ -14,24 +14,23 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 BioDataScience3::learnr_setup()
-SciViews::R("ml", "explore")
+SciViews::R("ml", "explore", lang = "fr")
 
-# exercice preparation --------
 read("biometry", package = "BioDataScience") %>.%
-  select(., gender, weight, height, wrist) %>.%
-  drop_na(.) %->%
+  sselect(., gender, weight, height, wrist) %>.%
+  sdrop_na(.) ->
   bio
 
-## Prepare train and test sets
+# Prepare train and test sets
 set.seed(164)
 bio_split <- initial_split(bio, prop = 2/3)
 bio_train <- training(bio_split)
 bio_test <- testing(bio_split)
 
-## Create an LDA model
+# Create an LDA model
 bio_lda <- mlLda(data = bio_train, gender ~ .)
 
-## Confusion 
+# Confusion 
 bio_conf <- confusion(predict(bio_lda, bio_test), bio_test$gender)
 bio_conf_tab <- summary(bio_conf)
 ```
@@ -63,6 +62,7 @@ L'élaboration d'un classifieur requiert de suivre une série d'étapes :
 -   Préparer le set d'apprentissage et le set de test
 -   Entraîner un classifieur (choisir l'algorithme, l'ajuster sur le set d'apprentissage...)
 -   Évaluer la qualité du classifieur à l'aide des métriques pertinentes
+-   Optimiser le classifieur en ajustant ses paramètres
 -   Déployer le classifieur afin de prédire les classes dans un gros jeu de données non encore classé manuellement.
 
 L'objectif de ce tutoriel est de vous permettre de découvrir l'analyse discriminante linéaire. Vous devez être bien conscient de toutes les étapes ci-dessus et vous devrez les mettre en œuvre dans le cadre de vos projets plus tard. Cependant, pour rendre cette première approche de la classification supervisée plus abordable, nous ne détaillerons pas toutes ces étapes, mais seulement les quelques unes qui mènent à un classifieur ADL fonctionnel.
@@ -78,11 +78,11 @@ Le calcul de l'indice de masse corporelle (IMC) a déjà fait l'objet de plusieu
 Vous avez à votre disposition le tableau de données suivant que l'on réduit à quatre variables :
 
 -   le genre `gender`, que l'on cherchera à prédire, une variable `factor` à deux niveaux `M` pour homme et `W` pour femme, et
--   trois variables quantitatives rencontrées dans les diverses formules d'IMC, soit la masse `weight` en kg, la taille `height`, et le tour de poignet `wrist` en mm.
+-   trois variables quantitatives rencontrées dans les diverses formules d'IMC, soit la masse `weight` en kg, la taille `height` en cm, et le tour de poignet `wrist` en mm.
 
 ```{r, echo=TRUE}
 read("biometry", package = "BioDataScience",lang = "fr") %>.%
-  sselect(., gender, weight, height, wrist) %->%
+  sselect(., gender, weight, height, wrist) ->
   bio
 ```
 
@@ -106,14 +106,14 @@ combine_charts(list(a, b))
 
 ```{r qu_explo}
 question("Sélectionnez les éléments pertinents de l'analyse exploratoire réalisée ci-dessus.",
-  answer("Le tableau de données comprend quatre variables numériques et une variable facteur ordonnée."),
+  answer("Le tableau de données contient quatre variables numériques et une variable facteur ordonnée."),
   answer("La répartition entre les hommes (M) et les femmes (W) est proche de 50/50", correct = TRUE),
-  answer("On observe la présence de valeurs manquantes pour la variable de la circomférence du poignets.", correct = TRUE),
-  answer("Toutes les variables sont complètes. Il n'y a pas de valeurs manquantes dans ce tableau."),
+  answer("On observe la présence de valeurs manquantes pour la variable tour de poignet.", correct = TRUE),
+  answer("Toutes les variables sont complètes. Il n'y a pas de valeurs manquantes dans ce jeu de données."),
   answer("L'ACP permet de séparer en grande partie les hommes des femmes. Les hommes ont tendance à être plus grands et plus lourds.", correct = TRUE),
   allow_retry = TRUE, random_answer_order = TRUE,
   correct = "Vous avez sélectionné les éléments corrects.",
-  incorrect = "Attention, Ce n'est pas complet. Intéressez-vous avec plus d'attention à la description du tableau et à l'ACP.",
+  incorrect = "Attention, Ce n'est pas complet. Intéressez-vous avec plus d'attention à la description du jeu de données et à l'ACP.",
   submit_button = "Soumettre une réponse",
   try_again_button = "Resoumettre une réponse")
 ```
@@ -123,7 +123,8 @@ question("Sélectionnez les éléments pertinents de l'analyse exploratoire réa
 Suite à la phase exploratoire de l'analyse, il en est ressorti que des valeurs manquantes devaient être filtrées.
 
 ```{r, echo=TRUE}
-bio <- sdrop_na(bio, wrist) # Filtrer les valeurs manquantes en spécifiant la colonne concernée
+# Filtrer les valeurs manquantes en spécifiant la colonne concernée
+bio <- sdrop_na(bio, wrist) 
 ```
 
 Utilisez les fonctions `initial_split()`, `training()` et `testing()` pour définir votre set d'apprentissage et votre set de test. Votre set d'apprentissage va se nommer `bio_train` et votre set de test sera `bio_test`. Il vous est demandé de réaliser un set d'apprentissage contenant 3/4 des observations et en conservant les mêmes proportions qu'au départ pour le genre.
@@ -185,7 +186,7 @@ summary(bio_lda)
 ```
 
 ```{r lda1_h2-check}
-grade_code("Voici donc votre premier classifieur ADL. Voyons maintenant quoi en faire...", "Avez-vous bien écrit la formule sous sa forme condensée ?")
+grade_code("Voici donc votre premier classifieur ADL. Voyons quoi en faire...", "Avez-vous bien écrit la formule sous sa forme condensée ?")
 ```
 
 ## Performances du classifieur

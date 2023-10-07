@@ -1,8 +1,12 @@
+# BioDataScience3 2023.1.1
+
+-   Correction in **C00La_refresh** relative to the interpretation of the ACP.
+
 # BioDataScience3 2023.1.0
 
 -   Revision of datasets and documentation of datasets.
 
--   Revision of **C00La_refresh** for academic year 2023-2024.
+-   Revision of **C00La_refresh**, **C01La_confusion** et **C01Lb_ml1** for academic year 2023-2024.
 
 # BioDataScience3 2023.0.0
 
