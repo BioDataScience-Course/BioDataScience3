@@ -1,6 +1,6 @@
 # BioDataScience3 2023.2.0
 
--   Revision of **C02La_cv**.
+-   Revision of **C02La_cv** and **C02Lb_ml2**.
 
 # BioDataScience3 2023.1.1
 

@@ -1,0 +1,263 @@
+---
+title: "Machine learning (2)"
+author: "Guyliann Engels & Philippe Grosjean"
+description: "**SDD III Module 2** K plus proches voisins, méthodes par arbres, forêt aléatoire."
+tutorial:
+  id: "C02Lb_ml2"
+version: 2.0.0/5
+output:
+  learnr::tutorial:
+  progressive: true
+allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+BioDataScience3::learnr_setup()
+SciViews::R("ml")
+
+# Import dataset
+pumpkins <- read("pumpkins", package = "BioDataScience3")
+
+set.seed(101121)
+pumpkins_split <- initial_split(pumpkins, prop = 0.8)
+pumpkins_split
+pumpkins_train <- training(pumpkins_split)
+pumpkins_test <- testing(pumpkins_split)
+
+# Classifieurs
+set.seed(3265)
+## K plus proches voisins
+pumpkins_knn <- mlKnn(data = pumpkins_train, class ~ ., k.nn = 15)
+## Partitionnement récursif
+pumpkins_part <- mlRpart(data = pumpkins_train, class ~ .)
+## Forêt aléatoire
+pumpkins_rf <- mlRforest(data = pumpkins_train, class ~ ., ntree = 100)
+
+# Matrices de confusion
+## K plus proches voisins
+predict(pumpkins_knn, pumpkins_test) |> confusion(pumpkins_test$class) |> summary() ->
+  conf_knn
+## Partitionnement récursif
+predict(pumpkins_part, pumpkins_test) |> confusion(pumpkins_test$class) |> summary() -> 
+  conf_part
+## forêt aléatoire
+predict(pumpkins_rf, pumpkins_test) |> confusion(pumpkins_test$class) |> summary() ->
+  conf_rf
+```
+
+```{r, echo=FALSE}
+BioDataScience3::learnr_banner()
+```
+
+```{r, context="server"}
+BioDataScience3::learnr_server(input, output, session)
+```
+
+------------------------------------------------------------------------
+
+## Objectifs
+
+Ce tutoriel a pour objectif de vous permettre de découvrir de nouveaux algorithmes de classifications supervisées : la méthode des k plus proches voisins, la méthode par arbres de partitionnement et celle dite de la forêt aléatoire.
+
+Toutes ces méthodes font partie de votre boite à outils pour la classification supervisée à côté de l'analyse discriminante linéaire et de la quantification vectorielle, ainsi que d'autres techniques encore que vous découvrirez dans le module 3 du cours. Concrètement, vous utiliserez la méthode la plus judicieuse en fonction du contexte. Il est même conseillé d'en tester plusieurs et de les comparer pour ensuite conserver le classifieur le plus efficace après cette étude comparative.
+
+Pour l'ADL, vous avez utilisé la fonction `mlLda()`. Voici les fonctions du package {mlearning} que vous utiliserez ici :
+
+| **Méthode**                    | **Fonction**                          |
+|--------------------------------|---------------------------------------|
+| Analyse discriminante linéaire | `mlLda(data = <df>, formula,...)`     |
+| K plus proches voisins         | `mlKnn(data = <df>, formula,...)`     |
+| Partitionnement récursif       | `mlRpart(data = <df>, formula,...)`   |
+| Foret aléatoire                | `mlRforest(data = <df>, formula,...)` |
+
+Le package {mlearning} permet d'utiliser une interface similaire et simplifiée pour chaque méthode. Il fait partie du dialecte `SciViews::R` et est chargé en spécifiant que la section relative au "machine learning" doit être également chargée à l'aide de `SciViews::R("ml")`
+
+## Exploration des données
+
+Les données employées dans ce tutoriel proviennent de l'article ["the use of machine learning methods in classification of pumpkin seeds (Cucurbita pepo L.)"](https://doi.org/10.1007/s10722-021-01226-0). N'hésitez pas à consulter cet article pour en apprendre davantage sur ces données. Nous avons choisi un jeu de données très similaire à celui sur le classement de grains de riz utilisé dans le learnr précédent consacré à la validation croisée pour que vous familiarisiez plus rapidement avec ces données et que vous concentriez votre énergie sur la comparaison des classifieurs. N'en concluez pas pour autant que la classification supervisée ne sert *que* à classer des objets sur base d'images numériques. Les cas d'utilisation en biologie et en sciences biomédicales sont infiniment plus larges, bien entendu.
+
+```{r, echo=TRUE}
+pumpkins <- read("pumpkins", package = "BioDataScience3")
+```
+
+Ce jeu de données reprend des mesures réalisées sur des graines de deux variétés de courge. Il comprend `r nrow(pumpkins)` observations et `r ncol(pumpkins)` variables. Les douze premières variables sont des attributs morphométriques obtenus par analyse d'image et la dernière colonne `class` correspond à la classe. Cette variable facteur est à deux niveaux.
+
+```{r}
+skimr::skim(pumpkins)
+```
+
+Observez attentivement ces tableaux descriptifs des données. Vous avez la possibilité de réaliser tous les analyses et les graphiques que vous désirez dans la zone ci-dessous pour mieux comprendre les données mises à disposition.
+
+```{r explo_noscore, exercise=TRUE}
+
+```
+
+## Préparation des sets d'apprentissage et de test
+
+Réalisez le set d'apprentissage et le set de test. 80% des observations vont servir à entraîner le classifieur et 20% seront réservés pour en évaluer les performances. Le jeu de données de départ se nomme `pumpkins`. Utilisez les fonctions de création des sets d'apprentissage et de test `initial_spit()`, `training()`, `testing()`.
+
+```{r split_h2, exercise=TRUE}
+set.seed(101121) # Générateur de nombres pseudo-aléatoires
+pumpkins_split <- initial_split(___, prop = ___)
+pumpkins_split
+# training set
+pumpkins_train <- ___(___)
+# test set
+pumpkins_test <- ___(___)
+```
+
+```{r split_h2-hint-1}
+set.seed(101121) # Générateur de nombres pseudo-aléatoires
+pumpkins_split <- initial_split(___, prop = ___)
+pumpkins_split
+# training set
+pumpkins_train <- training(pumpkins_split)
+# test set
+pumpkins_test <- ___(___)
+
+## Attention, le prochain indice est la solution ##
+```
+
+```{r split_h2-solution}
+## Solution ##
+set.seed(101121) # Générateur de nombres pseudo-aléatoires
+pumpkins_split <- initial_split(pumpkins, prop = 0.8)
+pumpkins_split
+# training set
+pumpkins_train <- training(pumpkins_split)
+# test set
+pumpkins_test <- testing(pumpkins_split)
+```
+
+```{r split_h2-check}
+grade_code("La création d'un set d'apprentissage et d'un set de test avec ces trois fonctions est facile. L'argument `strata=` de ìnitial_split()` est intéressant pour s'assurer d'avoir les mêmes proportions des différentes classes dans les deux sets mais n'est pas indispensable, et n'est pas utilisé ici.")
+```
+
+## Entraînement des classifieurs
+
+Créez trois classifieurs. Le premier doit utiliser la méthode des k plus proches voisins avec 15 individus proches considérés (`k.nn=`). Le second sera basé sur le partitionnement récursif. Le troisième doit utiliser la forêt aléatoire avec un nombre d'arbres limité à 100 (`ntree=`). Utilisez le set d'apprentissage préparé à l'étape précédente ainsi qu'une formule condensée.
+
+```{r ml_h2, exercise=TRUE}
+set.seed(3265)
+# K plus proches voisins
+pumpkins_knn <- ml___(data = ___, ___~___, ___ = ___)
+# Partitionnement récursif
+pumpkins_part <- ml___(data = ___, ___~___)
+# Forêt aléatoire
+pumpkins_rf <- ml___(data = ___, ___~___, ___ = ___)
+```
+
+```{r ml_h2-hint-1}
+set.seed(3265)
+# K plus proches voisins
+pumpkins_knn <- mlKnn(data = pumpkins_train, class ~ ., k.nn = 15)
+# Partitionnement récursif
+pumpkins_part <- ml___(data = ___, ___~___)
+# Forêt aléatoire
+pumpkins_rf <- ml___(data = ___, ___~___, ___ = ___)
+
+## Attention, le prochain indice est la solution ##
+```
+
+```{r ml_h2-solution}
+## Solution ##
+set.seed(3265)
+# K plus proches voisins
+pumpkins_knn <- mlKnn(data = pumpkins_train, class ~ ., k.nn = 15)
+# Partitionnement récursif
+pumpkins_part <- mlRpart(data = pumpkins_train, class ~ .)
+# Forêt aléatoire
+pumpkins_rf <- mlRforest(data = pumpkins_train, class ~ ., ntree = 100)
+```
+
+```{r ml_h2-check}
+grade_code("Vous avez maintenant les trois classifieurs avec les arguments demandés. Passons à l'analyse des performances de ces classifieurs.")
+```
+
+## Évaluation des performances des classifieurs
+
+Évaluez les trois classifieurs `pumpkins_knn`, `pumpkins_part` et `pumpkins_rf`. Choisissez bien le tableau de données à employer entre `pumpkins`, `pumpkins_train` et `pumpkins_test` pour la prédiction et l'élaboration de la matrice de confusion. Résumez cette dernière pour obtenir les différentes métriques. Utilisez l'opérateur de pipe natif de R `|>` pour organiser votre code.
+
+```{r predict_h2, exercise=TRUE}
+# K plus proches voisins
+predict(___, ___) |> confusion(___$___) |> summary()
+# Partitionnement récursif
+predict(___, ___) |> confusion(___$___) |> summary()
+# forêt aléatoire
+predict(___, ___) |> confusion(___$___) |> summary()
+```
+
+```{r predict_h2-hint-1}
+# K plus proches voisins
+predict(pumpkins_knn, pumpkins_test) |> confusion(___$class) |> summary()
+# Partitionnement récursif
+predict(___, ___) |> confusion(___$___) |> summary()
+# forêt aléatoire
+predict(___, ____) |> confusion(___$___) |> summary()
+
+## Attention, le prochain indice est la solution ##
+```
+
+```{r predict_h2-solution}
+## Solution ##
+# K plus proches voisins
+predict(pumpkins_knn, pumpkins_test) |> confusion(pumpkins_test$class) |> summary()
+# Partitionnement récursif
+predict(pumpkins_part, pumpkins_test) |> confusion(pumpkins_test$class) |> summary()
+# forêt aléatoire
+predict(pumpkins_rf, pumpkins_test) |> confusion(pumpkins_test$class) |> summary()
+```
+
+```{r predict_h2-check}
+grade_code("Vous avez calculé les métriques pour les trois classifieurs. Choisissez la ou les métriques qui sont les plus pertinentes dans le contexte et comparez vos trois classifieurs afin de décider lequel garder.")
+```
+
+```{r qu_algo}
+quiz(
+  question("Quel est le taux de vrais positifs pour le groupe des `Cercevelik` obtenu via le classifieur utilisant les k plus proches voisins ?",
+    answer(sprintf("%.4f", conf_knn["Cercevelik",]$Recall), correct = TRUE),
+    answer(sprintf("%.4f", conf_knn["Cercevelik",]$Precision)),
+    answer(sprintf("%.4f", conf_knn["Cercevelik",]$Fscore)),
+    answer(sprintf("%.4f", conf_knn["Cercevelik",]$FDR)),
+    allow_retry = TRUE, 
+    submit_button = "Soumettre une réponse",
+    try_again_button = "Resoumettre une réponse",
+    incorrect = "Mauvaise réponse. Recommencez et analysez plus finement les métriques calculées pour ce classifieur.",
+    correct = "Le rappel est équivalent au taux de vrais positifs."),
+  question("Quel est la spécificité pour le groupe des `Urgup Sivrisi` obtenu via le classifieur utilisant le partitionnement récursif ?",
+    answer(sprintf("%.4f", conf_part["Urgup Sivrisi",]$Specificity), correct = TRUE),
+    answer(sprintf("%.4f", conf_part["Urgup Sivrisi",]$Precision)),
+    answer(sprintf("%.4f", conf_part["Urgup Sivrisi",]$Fscore)),
+    answer(sprintf("%.4f", conf_part["Urgup Sivrisi",]$FDR)),
+    allow_retry = TRUE, 
+    submit_button = "Soumettre une réponse",
+    try_again_button = "Resoumettre une réponse",
+    incorrect = "Mauvaise réponse. Recommencez et analysez plus finement les métriques calculées pour ce classifieur.",
+    correct = "C'est bien cela. Examinez les performances des trois classifieurs un moment pour les comparer par vous-mêmes et pour déterminer lequel est le plus efficace ici. Quelle métrique choisissez-vous pour cela ?")
+  )
+```
+
+**Avant de cliquer sur "Next Topic", examinez ces résultats, comparez les trois classifieurs, et décidez en fonction de la métrique que vous jugez la plus appropriée quel est le meilleur des trois ici...** Réponse dans la section suivante.
+
+## Conclusion
+
+**Choix du meilleur classifieur :**
+
+-   La métrique à utiliser ici est le score F car nous souhaitons obtenir un bon compromis entre rappel et précision et nous n'avons pas de classe cible. La proportion d'items dans les deux classes est très proche et nous n'avons donc pas de difficultés liées à une répartition qui serait très mal balancée.
+
+-   La forêt aléatoire (classifieur #3) semble donner les meilleurs résultats, mais de très peu sur le partitionnement récursif (classifieur #2). Le gain selon le score F n'est toutefois que de 1% environ pour les deux classes entre ces classifieurs. C'est faible et de plus, la forêt aléatoire donne des résultats qui fluctuent d'un entraînement à l'autre (hors fixation du `set.seed()`). Il faudrait recommencer plusieurs fois ce classifieur pour avoir une idée de l'amplitude de cette variation et la comparer aux résultats du classifieur #2 avant de tirer une conclusion définitive.
+
+-   Même si la forêt aléatoire donne un résultat sensiblement meilleur que le partitionnement récursif, ce dernier est bien plus rapide à calculer. Il se pourrait que, dans une application de tri de pépins en temps réel (par exemple, un tapis roulant amène les graines une à une devant une caméra et le logiciel qui gère le robot doit donner une réponse instantanée pour animer ensuite un bras de tri de ces pépins), le temps de calcul soit un critère prépondérant. Dans ce cas peut être que le classifieur #2 est le meilleur dans un tel contexte.
+
+Vous venez de découvrir trois nouveaux algorithmes de classification supervisée. Votre boite à outils s'étoffe de module en module.
+
+```{r comm_noscore, echo=FALSE}
+question_text(
+  "Laissez-nous vos impressions sur cet outil pédagogique",
+  answer("", TRUE, message = "Pas de commentaires... C'est bien aussi."),
+  incorrect = "Vos commentaires sont enregistrés.",
+  placeholder = "Entrez vos commentaires ici...",
+  allow_retry = TRUE
+)
+```

@@ -288,6 +288,8 @@ quiz(
   )
 ```
 
+Si nous revenons un instant sur l'analyse en composantes principales, nous n'avions observé qu'une séparation très faible des deux variétés de riz. L'analyse discriminante linéaire fait bien mieux. Bien que ces deux méthodes soient fortement apparentées et effectuent un calcul relativement similaire, leurs objectifs sont très différents. L'ACP **"étale" les points** au mieux dans le premier plan PC1 - PC2, alors que l'ADL **sépare les classes** au mieux dans le premier plan LD1 - LD2. Vous pouvez donc utiliser les résultats de votre ACP comme point de départ, mais vous ne pouvez pas conclure que la classification se fera bien ou pas sur cette base pour cette seule analyse.
+
 ## Conclusion
 
 Ce tutoriel vous a permis de découvrir la validation croisée appliquée sur une analyse discriminante linéaire. L'avantage de la validation croisée est de pouvoir utiliser plus de données pour entraîner votre classifieur et également pour son test. Il n'est pas nécessaire de séparer les groupes à la main et de calculer *k* fois les performances avant de sommer les *k* matrices de confusion en une seule. La fonction `cvpredict()` se charge de faire tout cela pour vous automatiquement.
