@@ -16,19 +16,18 @@ runtime: shiny_prerendered
 BioDataScience3::learnr_setup()
 SciViews::R("explore", "ml", lang = "fr")
 
-# Import dataset ----
+# Import dataset
 rice <- read("rice", package = "BioDataScience3", lang = "fr")
-# générateur de nombre pseudo aléatoire
+# Training and test set
 set.seed(8888)
-# Training and test set ----
 rice_split <- rsample::initial_split(rice, 0.8, strata = class)
 rice_train <- rsample::training(rice_split)
 rice_test <- rsample::testing(rice_split)
-# mlda
+# mlLda
 rice_lda <- mlLda(data = rice_train, class ~ .)
 rice_conf <- confusion(predict(rice_lda, rice_test), rice_test$class)
 rice_tab <- summary(rice_conf)
-# mlda avec cv 10 fois
+# mlda with 10-fold CV
 rice_lda_cv <- mlLda(data = rice, class ~ .)
 rice_conf_cv <- confusion(cvpredict(rice_lda_cv, cv.k = 10), rice$class)
 rice_tab_cv <- summary(rice_conf_cv)
@@ -46,32 +45,34 @@ BioDataScience3::learnr_server(input, output, session)
 
 ## Objectifs
 
-Lors de la création d'un classifieur, on va définir un set d'apprentissage et un set de test. Il est évident qu'il ne faut jamais employer les mêmes individus en apprentissage et en test. Cela aurait pour conséquence de surévaluer la capacité d'un classifieur à reconnaître les niveaux de la variable facteur d'intérêt.
+Lors de la création d'un classifieur, nous allons définir un set d'apprentissage et un set de test. Il ne faut jamais employer les mêmes individus en apprentissage et en test. Cela aurait pour conséquence de surévaluer la capacité d'un classifieur à reconnaître les niveaux de la variable facteur d'intérêt.
 
-La validation croisée est une méthode particulière qui permet d'employer tous les objets, à la fois dans le set d'apprentissage et dans le set de test, mais jamais simultanément.
+La validation croisée est une méthode particulière qui permet d'utiliser tous les items, à la fois dans le set d'apprentissage et dans le set de test, mais jamais simultanément. Elle permet donc d'évaluer les performances d'un classifieur de manière non biaisée, tout en utilisant un maximum d'items à la fois en apprentissage et en test.
 
 L'objectif de ce tutoriel est de comprendre la validation croisée et de l'appliquer en pratique dans le cas d'une analyse discriminante linéaire.
 
 ## Exploration des données
 
-Les données employées dans cette séance d'exercice proviennent de l'article : ["Classification of Rice Varieties Using Artificial Intelligence Methods"](https://doi.org/10.18201/ijisae.2019355381). N'hésitez pas à consulter cet article pour en apprendre davantage sur ces données.
+Les données employées dans cette séance d'exercices proviennent de l'article ["Classification of Rice Varieties Using Artificial Intelligence Methods"](https://doi.org/10.18201/ijisae.2019355381). N'hésitez pas à consulter cet article pour en apprendre davantage sur les données.
 
 ```{r, echo=TRUE}
 rice <- read("rice", package = "BioDataScience3")
 ```
 
-Le tableau `rice` a `r nrow(rice)` observations. Deux variétés de riz sont étudiées : `Cammeo` et `Osmancik`. Sur base d'analyse d'image, sept variables morphologiques sont extraites comme le périmètre, l'aire ou encore la longueur de l'axe majeur de l'ellipsoïde qui entoure la silhouette du grain de riz sur une image numérique.
+Le tableau `rice` a `r nrow(rice)` items. Deux variétés de riz sont étudiées : `Cammeo` et `Osmancik`. Sur base d'analyse d'image, sept variables morphométriques sont calculées sur base d'images numériques des grains de riz comme le périmètre, l'aire ou encore la longueur de l'axe majeur de l'ellipsoïde qui entoure la silhouette du grain de riz sur l'image.
 
-Les résultats ci-dessous vous renseignent sur les variables.
+Les tableaux ci-dessous résument les variables de notre jeu de données.
 
 ```{r, echo = TRUE}
 skimr::skim(rice)
 ```
 
-Vous allez employer l'analyse discriminante linéaire afin d'entraîner vos classifieurs. Vous pouvez décrire vos données à l'aide de tableaux ou de graphiques. Vous pouvez aussi réaliser une ACP pour avoir une vue d'ensemble sur les données avant de vous lancer dans la classification. Voici ce que cela donne :
+Nous avons une variable qualitative `class` à deux niveaux avec des effectifs relativement bien balancés entre les deux classes. Nous avons aussi sept variables numériques qui peuvent servir d'attributs dans une classification supervisée. Il n'y a aucune donnée manquante.
+
+Vous utiliserez l'analyse discriminante linéaire pour entraîner vos classifieurs. Vous pouvez décrire vos données à l'aide de tableaux ou de graphiques supplémentaires. Vous pouvez aussi réaliser une ACP pour avoir une vue d'ensemble sur les données avant de vous lancer dans la classification ADL. Voici ce que cela donne :
 
 ```{r, echo=TRUE}
-rice_pca <- pca(data = sselect(rice, -class), ~., scale = TRUE)
+rice_pca <- pca(data = sselect(rice, -class), ~ ., scale = TRUE)
 summary(rice_pca)
 ```
 
@@ -81,23 +82,23 @@ Le graphique des éboulis est présenté ci-dessous.
 chart$scree(rice_pca)
 ```
 
-Voici la représentation dans l'espace des variables pour le premier plan de l'ACP :
+Voici la représentation dans l'espace des variables dans le premier plan de l'ACP :
 
 ```{r, echo=TRUE}
 chart$loadings(rice_pca)
 ```
 
-... et la représentation dans l'espace des individuspour le premier plan de l'ACP :
+... et la représentation dans l'espace des individus, toujours dans le premier plan de l'ACP :
 
 ```{r, echo=TRUE}
 chart$scores(rice_pca, labels = rice$class)
 ```
 
-Analysez par vous-même les résultats de l'ACP et estimez si vous penser que l'ADL fonctionnera sur cette base. Ensuite, passez à la section suivante.
+Notez bien qu'au niveau de l'ACP, la séparation entre les deux variétés de riz n'apparaît que très partielle.
 
-## Préparation du set d'apprentissage et de test
+## Préparation des sets d'apprentissage et de test
 
-Utilisez les fonctions `initial_split()`, `training()` et `testing()` afin de définir votre set d'apprentissage et votre set de test. Votre set d'apprentissage se nommera `rice_train` et votre set de test se nommera `rice_test`. Il vous est demandé de réaliser un set d'entraînement contenant 80% des observations. Cet échantillonnage doit être stratifié pour la variable `class`.
+Utilisez les fonctions `initial_split()`, `training()` et `testing()` pour définir votre set d'apprentissage et votre set de test. Votre set d'apprentissage se nommera `rice_train` et votre set de test se nommera `rice_test`. Il vous est demandé de réaliser un set d'apprentissage contenant 80% des observations. Cet échantillonnage doit être stratifié pour la variable `class`.
 
 ```{r rice_split_h2, exercise=TRUE}
 set.seed(8888) # Fixer le début du générateur de nombres pseudo-aléatoires
@@ -129,18 +130,14 @@ rice_test <- testing(rice_split)
 ```
 
 ```{r rice_split_h2-check}
-grade_code("Vous avez réalisé votre set d'apprentissage et votre set de test avec les proportions demandées.", "Avez-vous bien respectée les consignes ? Il ne faut compléter que les champs signalés par ___.")
+grade_code("Vous avez réalisé votre set d'apprentissage et votre set de test avec les proportions demandées.", "Avez-vous bien respectée les consignes ? Il ne faut compléter que les champs ___.")
 ```
 
-## Création des classifieurs
+## Analyse discriminante linéaire
 
-### Analyse discriminante linéaire
+Entraînez un premier classifieur `rice_lda` avec l'analyse discriminante linéaire (formule condensée) pour prédire `class` à l'aide des sept autres variables **sans utiliser la validation croisée** ensuite. Quel jeu de données devez-vous utiliser ? `rice`, `rice_train` ou `rice_test` ?
 
-Il vous est demandé de réaliser un classifieur utilisant l'analyse discriminante linéaire. C'est à vous de définir le tableau de données à employer entre `rice`, `rice_train` et `rice_test`.
-
-Entraînez un modèle de type analyse discriminant linéaire avec le set d'apprentissage (utilisez la formule condensée). Votre objectif est de prédire la variable `class` à l'aide des sept autres variables. Assignez le classifieur n'utilisant pas la validation croisée à `rice_lda` et assignez le classifieur utilisant la validation croisée à `rice_lda_cv`.
-
-```{r lda_h2, exercise = TRUE}
+```{r lda_h2, exercise=TRUE}
 rice_lda <- mlLda(data = ___, ___ ~ ___)
 summary(rice_lda)
 ```
@@ -159,10 +156,10 @@ summary(rice_lda)
 ```
 
 ```{r lda_h2-check}
-grade_code("Votre classifieur LDA est entrainé. Il faut encore en mesurer les performances.", "Avez-vous bien proposé la formule écrite sous sa forme condensée ? ")
+grade_code("Votre classifieur LDA est entrainé. Il faut encore en mesurer les performances.", "Avez-vous bien écrit la formule sous sa forme condensée ? Avez-vous choisi le bon jeu de données ?")
 ```
 
-Calculez maintenant votre classifieur afin d'en étudier les performances à l'aide de la validation croisée (toujours en utilisant la formule condensée).
+Entraînez maintenant un second classifieur `rice_lda_cv`, mais cette fois dans le but d'en étudier les performances par validation croisée (toujours en utilisant la formule condensée).
 
 ```{r lda_cv_h2, exercise=TRUE}
 rice_lda_cv <- mlLda(data = ___, ___ ~ ___)
@@ -183,14 +180,14 @@ summary(rice_lda_cv)
 ```
 
 ```{r lda_cv_h2-check}
-grade_code("Si vous souhaitez utiliser la validation croisée pour le test, vous pouvez entraîner votre modèle sur l'ensemble des données dans un premier temps avec {mlearning} que nous utilisons ici. Il faut bien sûr encore mesurer ses performances.", "Avez-vous bien écrit la formule sous sa forme condensée ?")
+grade_code("Si vous souhaitez utiliser la validation croisée pour le test, vous pouvez entraîner votre modèle sur l'ensemble des données dans un premier temps avec {mlearning} que nous utilisons ici. Il faut bien sûr encore étudier ses performances ensuite.", "Avez-vous bien écrit la formule sous sa forme condensée ?")
 ```
 
 ## Évaluation des performances des classifieurs
 
 Évaluez les performances du premier classifieur `rice_lda` sans validation croisée. Pour rappel, les jeux de données disponibles sont les suivants : `rice`, `rice_train` et `rice_test`
 
-```{r pred_lda_h2, exercise = TRUE}
+```{r pred_lda_h2, exercise=TRUE}
 # prédiction 
 rice_pred <- ___(___, ___)
 # matrice de confusion
@@ -222,7 +219,7 @@ grade_code("Vous venez de calculer les métriques de performances du premier cla
 
 Évaluez les performances du second classifieur `rice_lda_cv`, cette fois-ci, à l'aide d'une validation croisée dix fois.
 
-```{r lda_pred_cv_h2, exercise = TRUE}
+```{r lda_pred_cv_h2, exercise=TRUE}
 set.seed(76456)
 # prédiction 
 rice_pred_cv <- ___(___, cv.k = ___)
@@ -252,7 +249,7 @@ summary(rice_conf_cv)
 ```
 
 ```{r lda_pred_cv_h2-check}
-grade_code("Toute la mécanique de la validation croisée est \"déployée\" à l'intérieur de `cvpredict()`. En réalité, les données sont divisées en 10 sous-unités et 10 classifieurs différents sont entraînées et testés successivement. Aucun n'est identique à `rice_lda_cv`, mais ils en sont tous relativement proches. Prenez un peu de temps pour analyser votre matrice de confusion et les métriques qui en découlent.  Combien de données sont utilisées ici ?")
+grade_code("Toute la mécanique de la validation croisée est déployée à l'intérieur de `cvpredict()`. En réalité, les données sont divisées en dix sous-tableaux et dix classifieurs différents sont entraînées et testés successivement. Aucun n'est identique à `rice_lda_cv`, mais ils en sont tous relativement proches. Prenez un peu de temps pour analyser votre matrice de confusion et les métriques qui en découlent. Combien de données sont utilisées ici ?")
 ```
 
 Répondez aux questions ci-dessous relatives aux deux classifieurs `rice_lda` et `rice_lda_cv`.
@@ -267,7 +264,7 @@ quiz(
     try_again_button = "Resoumettre une réponse",
     incorrect = "Mauvaise réponse. Recommencez afin de trouver la bonne réponse",
     correct = "C'est le nombre d'observations utilisées en apprentissage qui sont déterminantes ici (plus d'observations mènent potentiellement à un meilleur classifieur)."),
-  question("Combien d'items sont employé afin de déterminer les performances du classifieur avec validation croisée ?",
+  question("Combien d'items sont employé pour déterminer les performances du classifieur avec validation croisée ?",
     answer(sprintf("%1.f", nrow(rice)), correct = TRUE),
     answer(sprintf("%1.f", nrow(rice_train))),
     answer(sprintf("%1.f", nrow(rice_test))),
@@ -276,8 +273,8 @@ quiz(
     submit_button = "Soumettre une réponse",
     try_again_button = "Resoumettre une réponse",
     incorrect = "Mauvaise réponse. Recommencez afin de trouver la bonne réponse",
-    correct = "On utilise effectivement l'ensemble des données disponibles."),
-  question("Quel est le taux de vrai positif pour la classe `Osmancik` avec le classifieurs `rice_lda_cv` ?",
+    correct = "L'ensemble des données disponibles est en effet utilisé pour le test en validation croisée."),
+  question("Quel est le taux de vrais positifs pour la classe `Osmancik` avec le classifieurs `rice_lda_cv` ?",
     answer(sprintf("%.3f", rice_tab_cv[row.names(rice_tab_cv) == "Osmancik", ]$Recall), correct = TRUE),
     answer(sprintf("%.3f", rice_tab_cv[row.names(rice_tab_cv) == "Osmancik", ]$Fscore)),
     answer(sprintf("%3.f", sum(rice_tab_cv$Auto) - sum(rice_tab_cv$TP))),
@@ -293,7 +290,7 @@ quiz(
 
 ## Conclusion
 
-Ce tutoriel vous a permis de découvrir la validation croisée appliquée sur une analyse discriminante linéaire. L'avantage de la validation croisée est de pouvoir employer plus de données pour entraîner votre classifieur. Il n'est pas nécessaire de séparer les groupes à la main et de calculer *n* fois les performances avant de sommer les *n* matrices de confusion en une seule. La fonction `cvpredict()` se charge de faire tout cela pour vous automatiquement.
+Ce tutoriel vous a permis de découvrir la validation croisée appliquée sur une analyse discriminante linéaire. L'avantage de la validation croisée est de pouvoir utiliser plus de données pour entraîner votre classifieur et également pour son test. Il n'est pas nécessaire de séparer les groupes à la main et de calculer *k* fois les performances avant de sommer les *k* matrices de confusion en une seule. La fonction `cvpredict()` se charge de faire tout cela pour vous automatiquement.
 
 ```{r comm_noscore, echo=FALSE}
 question_text(

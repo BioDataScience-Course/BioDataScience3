@@ -1,3 +1,7 @@
+# BioDataScience3 2023.2.0
+
+-   Revision of **C02La_cv**.
+
 # BioDataScience3 2023.1.1
 
 -   Correction in **C00La_refresh** relative to the interpretation of the ACP.
