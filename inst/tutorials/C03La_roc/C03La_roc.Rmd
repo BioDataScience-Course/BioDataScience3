@@ -22,7 +22,7 @@ breast <- janitor::clean_names(breast)
 breast <- na_omit(breast, "bare_nuclei")
 breast <- sselect(breast, -id)
 
-# Partitionnement récursif -------
+# Partitionnement récursif
 ## rpart1
 set.seed(12)
 breast_part <- mlRpart(data = breast, class ~ .)
@@ -32,7 +32,7 @@ part1_tab <- summary(part1_conf)
 
 ## rpart2
 set.seed(34564)
-# Sous-ensemble des tumeurs ma  lignes
+# Sous-ensemble des tumeurs malignes
 breast %>.%
   filter(., class == "malignant") %>.%
   sample_n(., 200) %->%
@@ -40,10 +40,10 @@ breast %>.%
 # Sous-ensemble des tumeurs bénignes
 breast %>.%
   filter(., class == "benign") %>.%
-  sample_n(., 100) %->%
+  sample_n(., 100) ->
   br_b2
 # Combinaison des tableaux
-breast2 %<-% bind_rows(br_m2, br_b2)
+breast2 <- bind_rows(br_m2, br_b2)
 # Création du classifieur
 set.seed(256)
 breast_part2 <- mlRpart(data = breast2, class ~ .)
@@ -63,7 +63,7 @@ part2_conf2_tab <- summary(part2_conf2)
 #part2_tab
 #part2_conf2_tab
 
-# ROC -----
+# Courbe ROC
 set.seed(875467)
 breast_pred <- cvpredict(breast_part, cv.k = 5, type = "membership") 
 #head(breast_pred)
@@ -81,24 +81,24 @@ BioDataScience3::learnr_server(input, output, session)
 
 ## Objectifs
 
-Un classifieur qui ne commet pas d'erreur, ce n'est pas réaliste. Les métriques sont calculées sur base d'une matrice de confusion. Des métriques permettent d'évaluer la qualité d'un classifieur comme le rappel, la précision, le taux d'erreur globale... Le nombre d'items dans chaque classe va influencer grandement la valeur de ces métriques. Ce tutoriel s'intéresse tout d'abord à l'effet des proportions entre les classes sur le classifieur et sur les métriques qui en évaluent les performances.
+Un classifieur qui ne commet pas d'erreur, ce n'est pas réaliste. Les métriques sont calculées sur base d'une matrice de confusion. Des métriques permettent d'évaluer la qualité d'un classifieur comme le rappel, la précision, le taux d'erreur globale... Le nombre d'items dans chaque classe va influencer grandement la valeur de la plupart de ces métriques. Ce tutoriel s'intéresse à l'effet des proportions entre les classes sur le classifieur et sur les métriques qui en évaluent les performances.
 
-Un autre manière d'influencer notre classifieur va être de modifier le seuil de détection. Étudier la variation du seuil de détection est l'objectif de la courbe ROC. Cette courbe représente le comportement de notre classifieur à deux classes pour tous les seuils de détection possibles.
+Un autre manière d'influencer notre classifieur va être de modifier le seuil de détection. Étudier la variation du seuil de détection est l'objectif de la courbe ROC. Cette courbe représente le comportement de notre classifieur à deux classes pour tous les seuils de détection possibles. La seconde partie du tutoriel traitera de courbe ROC.
 
 ## Effet des proportions sur les métriques
 
-Lorsqu'un classifieur ne commet aucune erreur. Les proportions de chacune des classes n'ont aucune importance. Qu'il y ait 10, 1000, 10000 individus par classe n'aura aucun effet. Par contre, dès qu'il y a des erreurs de classification, les proportions de chaque classe dans le set d'apprentissage vont avoir un effet sur les résultats de chaque métrique. Il peut être intéressant de modifier les proportions relatives de chaque classe afin de maximiser certaines métriques comme la précision ou le rappel. Cela va avoir également un effet sur les métriques globales (multiclasses) comme le taux de reconnaissance global.
+Lorsqu'un classifieur ne commet aucune erreur, les proportions des classes n'ont aucune importance. Par contre, dès qu'il y a des erreurs de classification, les proportions des classes dans le set d'apprentissage vont avoir un effet sur le classifieur et les proportions dans le set de test vont influencer les métriques de performance du classifieur. Il peut être intéressant de modifier les proportions relatives des classes pour maximiser certaines métriques comme la précision ou le rappel. Cela va avoir également un effet sur les métriques globales (multiclasses) comme le taux global de reconnaissance.
 
 Comme nous l'avons précisé depuis le premier module du cours de SDD III, il faut définir les métriques d'intérêt en fonction de notre objectif final. Souhaite-t-on un classifieur qui commet globalement peu d'erreurs ou bien un classifieur très précis pour une classe particulière ? Et l'erreur pour la classe en question est-elle plus grave si le classifieur rate certains individus (faux négatifs) ou s'il contamine trop la classe prédite (faux positifs) ? C'est à vous en tant qu'expert de le définir.
 
-Vous avez à votre disposition le tableau `BreastCancer` du package {mlbench}. Votre objectif est de déterminer si une tumeur du sein est bénigne ou maligne sur base de caractéristiques mesurées sur une biopsie. N'hésitez pas à consulter la page d'aide de ce tableau afin d'en apprendre davantage.
+Vous avez à votre disposition le tableau `BreastCancer` du package {mlbench}. Vous devez déterminer si une tumeur du sein est bénigne ou maligne sur base de caractéristiques récoltées par biopsie. N'hésitez pas à consulter la page d'aide de ce jeu de données pour en apprendre davantage (`?mlbench::BreastCancer`).
 
 ```{r, echo=TRUE}
 breast <- read("BreastCancer", package = "mlbench")
 breast <- janitor::clean_names(breast)
 ```
 
-Ce tableau comprend `r nrow(breast)` individus et `r ncol(breast)`.
+Ce jeu de données contient `r nrow(breast)` individus et `r ncol(breast)` variables.
 
 ```{r, echo=TRUE}
 skimr::skim(breast)
@@ -119,11 +119,11 @@ La répartition entre les tumeurs bénignes et malignes n'est pas homogène dans
 table(breast$class)
 ```
 
-Les médecins font appel à vous afin de mettre en place un classifieur capable de trouver un maximum de tumeurs malignes sur base des attributs choisis à l'aide d'une classification automatisée sur ordinateur. Ils acceptent que le classifieur se trompe et prédise des faux positifs. Par contre, ils ne souhaitent pas rater de patientes atteintes d'un cancer grave.
+Les médecins font appel à vous pour mettre en place un classifieur capable de trouver un maximum de tumeurs malignes sur base des attributs choisis à l'aide d'une classification automatisée sur ordinateur. Ils acceptent que le classifieur se trompe et prédise des faux positifs. Par contre, ils ne souhaitent pas rater de patientes atteintes d'un cancer grave.
 
-Réalisez un premier classifieur utilisant le partitionnement récursif et la validation croisée 5 fois afin d'employer un maximum d'observations. Utilisez une formule condensée. Nommez ce classifieur `breast_part`.
+Réalisez un premier classifieur utilisant le partitionnement récursif et la validation croisée cinq fois afin d'employer un maximum d'observations. Utilisez une formule condensée. Nommez ce classifieur `breast_part`.
 
-```{r rpart1_h2, exercise = TRUE}
+```{r rpart1_h2, exercise=TRUE}
 set.seed(12)
 # Création du classifieur
 breast_part <- ml___(data = ___, ___ ~ ___)
@@ -170,25 +170,26 @@ question("Quel est le taux de vrais positifs pour les personnes malades ?",
 Pour rappel, nous avons les effectifs suivants dans les deux classes :
 
 ```{r, echo=TRUE}
-table(breast$class)
+table(breast$class) |>
+  tabularise()
 ```
 
-À présent, construisez un nouveau classifieur utilisant à nouveau le partitionnement récursif avec une validation croisée 5 fois. Modifiez le set d'apprentissage afin d'avoir 100 tumeurs bénignes et 200 tumeurs malignes afin de réduire l'écart entre les deux.
+À présent, construisez un nouveau classifieur utilisant à nouveau le partitionnement récursif avec une validation croisée cinq fois. Modifiez le set d'apprentissage afin d'avoir 100 tumeurs bénignes et 200 tumeurs malignes pour réduire l'écart entre les deux.
 
 ```{r split_h2, exercise=TRUE}
 set.seed(34564)
 # Sous-ensemble des tumeurs malignes
 breast %>.%
   filter(., ___ == ___) %>.%
-  sample_n(., ___) %->%
+  sample_n(., ___) ->
   br_m2
 # Sous-ensemble des tumeurs bénignes
 breast %>.%
   filter(., ___ == ___) %>.%
-  sample_n(., ___) %->%
+  sample_n(., ___) ->
   br_b2
 # Combinaison des tableaux
-breast2 %<-% bind_rows(___, ___)
+breast2 <- bind_rows(___, ___)
 table(breast2$class)
 ```
 
@@ -197,15 +198,15 @@ set.seed(34564)
 # Sous-ensemble des tumeurs malignes
 breast %>.%
   filter(., class == ___) %>.%
-  sample_n(., ___) %->%
+  sample_n(., ___) ->
   br_m2
 # Sous-ensemble des tumeurs bénignes
 breast %>.%
   filter(., class == ___) %>.%
-  sample_n(., ___) %->%
+  sample_n(., ___) ->
   br_b2
 # Combinaison des tableaux
-breast2 %<-% bind_rows(br_m2, br_b2)
+breast2 <- bind_rows(br_m2, br_b2)
 table(breast2$class)
 
 ## Attention, le prochain indice est la solution ##
@@ -217,15 +218,15 @@ set.seed(34564)
 # Sous-ensemble des tumeurs malignes
 breast %>.%
   filter(., class == "malignant") %>.%
-  sample_n(., 200) %->%
+  sample_n(., 200) ->
   br_m2
 # Sous-ensemble des tumeurs bénignes
 breast %>.%
   filter(., class == "benign") %>.%
-  sample_n(., 100) %->%
+  sample_n(., 100) ->
   br_b2
 # Combinaison des tableaux
-breast2 %<-% bind_rows(br_m2, br_b2)
+breast2 <- bind_rows(br_m2, br_b2)
 table(breast2$class)
 ```
 
@@ -266,6 +267,7 @@ grade_code("Bon, maintenant, quelles sont les conséquences de ce changement ? C
 Si nous considérons que les probabilités d'obtenir une tumeur maligne ou bénigne sont estimables à partir de l'échantillon original, ici, nous avons modifié ces proportions. Donc, nos métriques ne correspondent pas à ce que nous mesurerions sur des échantillons aléatoires déjà pour cette raison.
 
 Heureusement, il est possible d'indiquer les probabilités *a priori* dans la matrice de confusion `part2_conf`. Ainsi, les métriques seront corrigées en tenant compte de ces probabilités d'avoir l'une ou l'autre tumeur.
+
 
 ```{r prior_h2, exercise=TRUE}
 # Calcul des probabilités a priori
@@ -319,13 +321,13 @@ quiz(
     submit_button = "Soumettre une réponse",
     try_again_button = "Resoumettre une réponse",
     incorrect = "Mauvaise réponse. Recommencez et analysez plus finement les métriques associés aux classifieurs.",
-    correct = "Vous pouvez observer que la modification des proportions a permis d'augmenter grandement le rappel. Cependant, nous observons une perte de précision. Les médecins vont préférer détecter un maximum des tumeurs malignes, quitte à avoir un peu plus de faux positifs dans le lot qu'ils démasqueront via des analyses plus poussées sur le sous-ensemble ainsi obtenu.")
+    correct = "Vous pouvez observer que la modification des proportions a permis d'augmenter grandement le rappel. Cependant, nous observons une perte de précision. Les médecins vont préférer détecter un maximum des tumeurs malignes, quitte à avoir un peu plus de faux positifs dans le lot qu'ils démasqueront via des analyses plus poussées sur les patientes déclarés positifs.")
 )
 ```
 
 ## Courbes ROC
 
-Dans la section précédente, nous avons modifié les proportions relatives dans les classes pour modifier les performances de notre classifieur (rappel *versus* précision). Il est possible de modifier aussi le seuil de détection. La courbe ROC permet d'étudier tous les seuils de détection pour un classifieur à deux classes. Cette vue d'ensemble est particulièrement utile si l'on ne connait pas les probabilités *a priori*, ou si celles-ci peuvent varier grandement. Une comparaison des classifieurs sur base des courbes ROC permet alors de choisir le meilleur dans les différents cas de figure qui peuvent se présenter.
+Dans la section précédente, nous avons altéré les proportions relatives dans les classes pour modifier les performances de notre classifieur (rappel *versus* précision). Il est possible de modifier aussi le seuil de détection. La courbe ROC permet d'étudier tous les seuils de détection pour un classifieur binaire. Cette vue d'ensemble est particulièrement utile si l'on ne connait pas les probabilités *a priori*, ou si celles-ci peuvent varier grandement. Une comparaison des classifieurs sur base des courbes ROC permet alors de choisir le meilleur dans les différents cas de figure qui peuvent se présenter.
 
 ```{r, echo=TRUE}
 set.seed(875467)
@@ -335,7 +337,7 @@ head(breast_pred)
 
 Réalisez en R de base le graphique de la courbe ROC. Vous devez commencer par formater les prédictions pour ROCR et nommer cet objet `pred_obj`. Ensuite, vous devez calculer les performances de votre `pred_obj` et le nommer `perf`. Déterminer les taux de vrais positifs (`tpr`) et le taux de faux positifs (`fpr`).
 
-```{r roc_h2, exercise = TRUE}
+```{r roc_h2, exercise=TRUE}
 library(ROCR)
 # 1) Formater les prédictions pour ROCR
 ___ <- prediction(breast_pred[,"malignant"], breast$class == "malignant")
@@ -371,9 +373,9 @@ plot(perf); abline(a = 0, b = 1, lty = 2)
 grade_code("Vous avez obtenu le graphique souhaité. On observe que le taux de vrais positifs augmente très rapidement, ce qui est bon signe.")
 ```
 
-Déterminez l'aire sous la courbe à l'aide de la fonction `auc()` du package {pROC}. Employez l'objet `breast_pred` explicité ci-dessus.
+Déterminez l'aire sous la courbe à l'aide de la fonction `auc()` du package {pROC} à partir de l'objet `breast_pred` explicité ci-dessus.
 
-```{r auc_h2, exercise = TRUE}
+```{r auc_h2, exercise=TRUE}
 ___::___(___$___, ___[, "malignant"])
 ```
 
@@ -386,12 +388,12 @@ pROC::auc(breast$class, breast_pred[, "malignant"])
 ```
 
 ```{r auc_h2-check}
-grade_code("Bien joué ! Vous avez déterminé la valeur de l'aire sous la courbe ROC.")
+grade_code("Vous avez déterminé la valeur de l'aire sous la courbe ROC pour votre classifieur.")
 ```
 
 ## Conclusion
 
-Vous venez de découvrir l'effet des proportions par classes sur le set d'apprentissage, la correction des métriques en renseignant la probabilité *a priori* et les courbes ROC. Tous ces outils vous seront iben utiles pour optimiser votre classifieur par rapport au problème rencontré.
+Vous venez d'explorer l'effet des proportions par classes sur un classifieur et sur les métriques de perfomance de ce classifieur. Vous avez aussi corrigé vos métriques en renseignant la probabilité *a priori*. Enfin, vous avez tracé une courbe ROC et calculé son aire sous la courbe, AUC. Tous ces outils vous seront bien utiles pour optimiser vos propres classifieurs.
 
 ```{r comm_noscore, echo=FALSE}
 question_text(

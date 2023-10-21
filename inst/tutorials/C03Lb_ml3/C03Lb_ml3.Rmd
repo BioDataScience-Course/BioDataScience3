@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III Module 3** Machines à vecteurs supports et réseaux de neurones."
 tutorial:
   id: "C03Lb_ml3"
-version: 2.0.0/4
+version: 2.1.0/5
 output:
   learnr::tutorial:
   progressive: true
@@ -56,26 +56,26 @@ BioDataScience3::learnr_server(input, output, session)
 
 Ce tutoriel a pour objectif de vous faire découvrir deux nouvelles méthodes de classification supervisée : la machine à vecteurs supports et les réseaux de neurones artificiels.
 
-Ces deux méthodes sont disponible dans le package {mlearning}
+Ces deux méthodes sont disponibles dans le package {mlearning}
 
 | **Méthode**                     | **Fonction**                   |
 |---------------------------------|--------------------------------|
 | Analyse discriminante linéaire  | `mlLda(data, formula,...)`     |
 | K plus proches voisins          | `mlKnn(data, formula,...)`     |
 | Partitionnement récursif        | `mlRpart(data, formula,...)`   |
-| Foret aléatoire                 | `mlRforest(data, formula,...)` |
+| Forêt aléatoire                 | `mlRforest(data, formula,...)` |
 | Machine à vecteurs supports     | `mlSvm(data, formula,...)`     |
 | Réseaux de neurones artificiels | `mlNnet(data, formula,...)`    |
 
-## Discrimination de maladie de la peau
+## Discrimination de maladies de la peau
 
-Discriminer des maladies de la peau n'est pas une tâche aisée pour les dermatologues. Plusieurs maladies peuvent avoir des symptômes similaires. Aidez ces médecins à mettre en place un classifieur visant à distinguer une maladie sur base de 12 variables cliniques. Vous avez à votre disposition le tableau `dermatology`.
+Discriminer des maladies de la peau n'est pas une tâche aisée pour les dermatologues. Plusieurs maladies peuvent avoir des symptômes similaires. Aidez ces médecins à mettre en place un classifieur visant à distinguer une maladie sur base de 12 variables cliniques. Vous avez à votre disposition le jeu de données `dermatology`.
 
 ```{r, echo=TRUE}
 dermatology <- read("dermatology", package = "BioDataScience3")
 ```
 
-Ce tableau contient 12 variables obtenues par des observations directes du médecin (signes cliniques) et 22 autres qui requièrent un prélèvement pour étudie histologique.
+Ce tableau contient 12 variables obtenues par des observations directes du médecin (signes cliniques) et 22 autres qui requièrent un prélèvement pour analyse histologique.
 
 ```{r}
 skimr::skim(dermatology)
@@ -113,7 +113,7 @@ derma <- na_omit(derma, cols = "age")
 grade_code("Une fois le remaniement des données réaliser, on va pouvoir s'attaquer à nos classifieurs.")
 ```
 
-C'est à vous d'explorer ce tableau. Vous avez la possibilité de réaliser tous les analyses et graphiques que vous désirez.
+Explorez ce jeu de données comme bon vous semble. Vous avez la possibilité de réaliser tous les analyses et graphiques que vous désirez ci-dessous.
 
 ```{r explo_noscore, exercise=TRUE}
 
@@ -121,7 +121,7 @@ C'est à vous d'explorer ce tableau. Vous avez la possibilité de réaliser tous
 
 ## Création des classifieurs
 
-Créez à présent trois classifieurs utilisant la machine à vecteurs supports avec un noyau radial, la machine à vecteurs supports avec un noyau linéaire et un réseau de neurones artificiels à simple couche avec 5 neurones dans la couche cachée (`size=`) et tous les autres paramètres par défaut. Utilisez le tableau `derma` et prédisez la variable `class`.
+Créez à présent trois classifieurs utilisant la machine à vecteurs supports avec un noyau radial, la machine à vecteurs supports avec un noyau linéaire et un réseau de neurones artificiels à simple couche avec douze neurones dans la couche cachée (`size=`) et tous les autres paramètres par défaut. Utilisez le tableau `derma` et prédisez la variable `class`.
 
 ```{r, classif_h2, exercise=TRUE}
 set.seed(960412)
@@ -140,7 +140,7 @@ derma_svmr <- mlSvm(data = derma, ___ ~ ___)
 # Machine à vecteurs supports avec un noyau linéaire
 derma_svml <- mlSvm(data = ___, ___ ~ ___, kernel = "linear")
 # Réseaux de neurones artificiels
-derma_nnet <- mlNnet(data = ___, ___ ~ ___, size = 5)
+derma_nnet <- mlNnet(data = ___, ___ ~ ___, size = 12)
 ```
 
 ```{r, classif_h2-solution}
@@ -150,10 +150,14 @@ derma_svmr <- mlSvm(data = derma, class ~ .)
 # Machine à vecteurs supports avec un noyau linéaire
 derma_svml <- mlSvm(data = derma, class ~ ., kernel = "linear")
 # Réseaux de neurones artificiels
-derma_nnet <- mlNnet(data = derma, class ~ ., size = 5)
+derma_nnet <- mlNnet(data = derma, class ~ ., size = 12)
 ```
 
-Évaluer les performances de vos trois classifieurs par validation croisée 10 fois.
+```{r classif_h2-check}
+grade_code("À part les nombreuses étapes nécessaires au réseau de neurones pour trouver une réponse, vous n'avez encore aucune information utile sur vos classifieurs. Vous devez maintenant en analyser les performances.")
+```
+
+Évaluer les performances de vos trois classifieurs par validation croisée dix fois.
 
 ```{r predict_h2, exercise=TRUE}
 set.seed(367)
@@ -190,11 +194,17 @@ grade_code("Il ne vous reste plus qu'à répondre aux questions ci-dessous")
 ```
 
 ```{r qu_pred}
-#nnet_tab
-#svml_tab
-#svmr_tab
-
-question("Quel classifieur permet d'avoir la meilleure précision pour la classe des `seboreic dermatitis`?",
+quiz(
+  question("Quel classifieur permet d'avoir la meilleure précision pour la classe des `seboreic dermatitis`?",
+    answer("Machine à vecteurs supports avec un noyau linéaire"),
+    answer("Machine à vecteurs supports à noyau radial"),
+    answer("Réseaux de neurones artificiels", correct = TRUE),
+    allow_retry = TRUE, 
+    submit_button = "Soumettre une réponse",
+    try_again_button = "Resoumettre une réponse",
+    incorrect = "Mauvaise réponse. Recommencez et analysez les métriques des trois classifieurs.",
+    correct = "Le réseau de neurones est le plus fort ici, suivi de peu par le SVM à noyau linéaire."),
+  question("Quel classifieur permet d'avoir la meilleure précision pour le `psoriasis`?",
     answer("Machine à vecteurs supports avec un noyau linéaire", correct = TRUE),
     answer("Machine à vecteurs supports à noyau radial"),
     answer("Réseaux de neurones artificiels"),
@@ -202,13 +212,13 @@ question("Quel classifieur permet d'avoir la meilleure précision pour la classe
     submit_button = "Soumettre une réponse",
     try_again_button = "Resoumettre une réponse",
     incorrect = "Mauvaise réponse. Recommencez et analysez les métriques des trois classifieurs.",
-    correct = "Les réseaux de neurones fonctionnent très bien, mais avec beaucoup plus de neurones. La machine à vecteurs supports est meilleure par rapport à un petit réseau.")
-
+    correct = "Les deux SVM font presque jeu égal dans ce cas, avec un gain marginal (probablement non significatif) pour la variante à noyau linéaire. Par contre, le réseau de neurones fait nettement moins bien.")
+)
 ```
 
 ## Conclusion
 
-Vous venez de découvrir deux nouveaux algorithmes de classifications supervisées. Vous maîtrisez maintenance quelques algorithmes simples et rapides (ADL, k plus proches voisins, partitionnement récursif) utiles dans les cas "faciles", ainsi que des techniques plus sophistiquées (forêt aléatoire, machin,e à vecteurs supports et réseaux de nuerones) pour les cas plus complexes.
+Vous venez de découvrir deux nouveaux algorithmes de classifications supervisées. Vous maîtrisez maintenant quelques algorithmes simples et rapides (ADL, k plus proches voisins, partitionnement récursif) utiles dans les cas "faciles", ainsi que des techniques plus sophistiquées (forêt aléatoire, machine à vecteurs supports et réseaux de neurones) pour les cas plus complexes.
 
 ```{r comm_noscore, echo=FALSE}
 question_text(
