@@ -14,8 +14,7 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 BioDataScience3::learnr_setup()
-SciViews::R()
-library(pastecs)
+SciViews::R("ts", lang = "fr")
 
 nottem <- read("nottem", package = "datasets")
 set.seed(13313)
@@ -43,9 +42,9 @@ BioDataScience3::learnr_server(input, output, session)
 
 ## Température de l'air
 
-La température moyenne mensuelle de l'air est étudié entre 1920 et 1939 au château de Nottingham. Étant en Angleterre, cette mesure est effectuée en degrés Fahrenheit.
+La température moyenne mensuelle de l'air est étudiée entre 1920 et 1939 au château de Nottingham. Étant en Angleterre, cette mesure est effectuée en degrés Fahrenheit.
 
-```{r, echo = TRUE}
+```{r, echo=TRUE}
 plot(nottem)
 ```
 
@@ -57,11 +56,11 @@ Voici quelques informations sur cette série :
 
 ### Statistiques glissantes
 
-Les statistiques glissantes (*sliding statistics* en anglais) permettent de calculer des descripteurs (moyenne, médiane, ...) pour des intervalles de temps précis le long de l'axe temporel de votre série. Avec le package {pastecs}, elles se calculent à l'aide de la fonction `stat.slide()`. Cette fonction expose de nombreux arguments qu'il est intéressant de connaître. N'hésitez pas à lire l'aide de la fonction (`?pastecs::stat.slide` dans la console R). Nous n'utiliserons que quelques uns de ces arguments dans le présent tutoriel, mais cela sera suffisant pour en comprendre la logique globale.
+Les statistiques glissantes (*sliding statistics* en anglais) permettent de calculer des descripteurs (moyenne, médiane...) pour des intervalles de temps précis le long de l'axe temporel de votre série. Avec le package {pastecs}, elles se calculent à l'aide de la fonction `stat.slide()`. Cette fonction expose de nombreux arguments qu'il est intéressant de connaître. N'hésitez pas à lire l'aide de la fonction (`?pastecs::stat.slide` dans la console R). Nous n'utiliserons que quelques-uns de ces arguments dans le présent tutoriel, mais cela sera suffisant pour en comprendre la logique globale.
 
 #### Blocs annuels
 
-Réalisez des statistiques glissantes sur la série `nottem`. Vous devez produire un graphique qui montre les valeurs moyenne par blocs *annuels*.
+Réalisez des statistiques glissantes sur la série `nottem`. Vous devez produire un graphique qui montre les valeurs moyennes par blocs *annuels*.
 
 ```{r statslide1_h3, exercise=TRUE}
 not.stat <- stat.slide(___, ___, xmin = ___, deltat = ___)
@@ -158,11 +157,11 @@ grade_code("Lorsque la taille du bloc est une fraction de l'unité de mesure du 
 
 ## Construction d'un objet **ts**
 
-Avant de manipuler un objet **ts**, il faut être capable de le construire. La fonction `ts()` set à cela. Pour plus d'informations sur cette fonction et ses arguments, voyez `?ts` dans la console R. Nous n'utiliserons que les principaux arguments dans ce tutoriel.
+Avant de manipuler un objet **ts**, il faut être capable de le construire. La fonction `ts()` sert à cela. Pour plus d'informations sur cette fonction et ses arguments, voyez `?ts` dans la console R. Nous n'utiliserons que les principaux arguments dans ce tutoriel.
 
 ### Série 1
 
-Vous allez construire une série fictive qui débute au 1er janvier 2000. Une observation est réalisée chaque mois. Un vecteur de valeurs numériques correspondant aux observations de cette série est à votre disposition sous le nom `vec`. Transformez-le en un objet **ts** nommés `serie` en prenant soin de bien encoder le temps. Réalisez ensuite un graphique de cette série avec la fonction `plot()`.
+Vous allez construire une série fictive qui débute au 1^er^ janvier 2000. Une observation est réalisée chaque mois. Un vecteur de valeurs numériques correspondant aux observations de cette série est à votre disposition sous le nom `vec`. Transformez-le en un objet **ts** nommés `serie` en prenant soin de bien encoder le temps. Réalisez ensuite un graphique de cette série avec la fonction `plot()`.
 
 ```{r ts1, exercise=TRUE}
 serie <- ts(vec, start = ___, frequency = ___)
@@ -235,7 +234,7 @@ frequency(serie)
 ```
 
 ```{r manip1-check}
-grade_code("C'est bien la fonction `frenquency()` nous donne cette information.")
+grade_code("C'est bien la fonction `frequency()` nous donne cette information.")
 ```
 
 ### Exercice 2

@@ -14,8 +14,7 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 BioDataScience3::learnr_setup()
-SciViews::R()
-library(mlearning)
+SciViews::R("ts", lang = "fr")
 
 # ...
 ```
