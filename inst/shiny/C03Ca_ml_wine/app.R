@@ -149,7 +149,7 @@ server <- function(input, output) {
       if (!grepl("^.+__.+\\.rds", file$name)) {
         "Le nom de votre fichier est incorrect : il faut <repos>__<model>.rds. Corrigez et resoumettez."
       } else {
-        solution <- data.io::read$rds(file$datapath)$value
+        solution <- data.io::read$rds(file$datapath)
         # Check if a model of the same name already exists
         name <- file$name
         project <- sub("(^.+)__.+$", "\\1", name)
@@ -169,7 +169,7 @@ server <- function(input, output) {
     file <- input$file
     if (!is.null(file$datapath) && grepl("^.+__.+\\.rds", file$name) &&
       !is_done()) {
-      solution <- data.io::read$rds(file$datapath)$value
+      solution <- data.io::read$rds(file$datapath)
       message("data read")
       score <- score_model(solution)
       message("score is ", score)
@@ -203,7 +203,7 @@ server <- function(input, output) {
     # Rework the ranking table
     if (NROW(ranking)) {
       ranking <- ranking[order(-ranking$score, as.numeric(ranking$date)), ]
-      ranking$date <- as.POSIXct(ranking$date, origin = "1960-01-01")
+      ranking$date <- as.POSIXct(ranking$date, origin = "1970-01-01")
       ranking$date <- format(ranking$date, "%Y-%m-%d %H:%M:%S")
     }
     message("Date reworked")
