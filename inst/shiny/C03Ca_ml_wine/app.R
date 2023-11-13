@@ -57,8 +57,11 @@ score_model <- function(x, reference = wine2quality) {
     c("autre", "excellent")[(as.character(x) == "excellent") + 1]
   wine_true2 <-
     c("autre", "excellent")[(as.character(reference) == "excellent") + 1]
+  # If there is no excellent in the result, the model is rejected
+  if (!sum(wine_true2 == "excellent"))
+    return(structure(NA,
+      message = "Il faut classer au moins un vin dans 'excellent', or il n'y en a aucun dans votre solution. Corrigez et resoumettez !"))
   res <- summary(confusion(as.factor(wine_pred2), as.factor(wine_true2)))
-  #res
   # Precision for 'excellent' must by higher than 25%
   prec <- res["excellent", "Precision"]
   if (prec < 0.25)
