@@ -1,0 +1,273 @@
+---
+title: "Décomposition de séries spatio-temporelles"
+author: "Guyliann Engels & Philippe Grosjean"
+description: "**SDD III Module 5** Décomposition de séries spatio-temporelles."
+tutorial:
+  id: "C05Lb_ts_decomp"
+version: 2.0.0/8
+output:
+  learnr::tutorial:
+  progressive: true
+allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+BioDataScience3::learnr_setup()
+SciViews::R('ts', lang = 'fr')
+# datasets
+flow <- read("flow", package = "TSA")
+flow <- flow/35.3147
+#tsp(flow)
+
+fl_loess <- tsd(flow, method = "loess", s.window = 13,
+  trend = TRUE, t.window = 30, robust = TRUE)
+fl_mts <- tseries(fl_loess)
+```
+
+```{r, echo=FALSE}
+BioDataScience3::learnr_banner()
+```
+
+```{r, context="server"}
+BioDataScience3::learnr_server(input, output, session)
+```
+
+------------------------------------------------------------------------
+
+## Objectifs
+
+-   Décrire une série spatio-temporelle
+-   Décomposez une série spatio-temporelle
+-   Extraire et analyser les composantes obtenues
+
+## Débit de la rivière Iowa
+
+Le débit de la rivière Iowa est mesuré mensuellement de 1958 à 2006 au niveau de la ville de Wapello, dans l'état de l'Iowa aux USA. Ce cours d'eau de 485km de long prend sa source dans le nord de l'état d'Iowa pour rejoindre le Mississippi au sud-est de l'état. Un barrage a été construit avant le début des mesures de la série qui a donné naissance à un lac artificiel le Coralville Lake. Vous vous intéressez aux fluctuations de débit en aval du barrage.
+
+```{r, echo=TRUE}
+yl <- expression(paste("Débit mensuel moyen [", m^3, s^-1, "]"))
+plot(flow, ylab = yl, xlab = "Temps [année]")
+```
+
+La variation du cours d'eau semble suivre un cycle saisonnier, ce qui est assez habituel et lié aux périodes plus sèches et plus humides de l'année. Toutefois, des variations interannuelles sont visibles. Le débit de l'Iowa a atteint des valeurs très importantes en 1993, ce qui a engendré des inondations importantes dans les villes proches de la rivière.
+
+Différentes questions peuvent se poser ici, auxquelles nous allons tenter de répondre :
+
+-   Y a-t-il une tendance générale dans cette série ? Et si oui, quelle forme prend-elle ?
+-   Observe-t-on un cycle différent du cycle saisonnier ?
+
+## Description de la série
+
+Commençons l'analyse en représentant l'autocorrélation de la série, ainsi que par sa description à l'aide de statistiques glissantes.
+
+Réalisez le graphique de l'autocorrélation de la série `flow`.
+
+```{r acf_h1, exercise=TRUE, exercise.lines=2}
+___
+```
+
+```{r acf_h1-solution}
+## Solution ##
+acf(flow)
+```
+
+```{r acf_h1-check}
+grade_code("On observe une autocorrélation caractéristique de la dominance d'un cycle à une unité de temps, c'est-à-dire, un cycle annuel.")
+```
+
+Affichez un graphique avec des statistiques glissantes utilisant un pas de temps de deux ans (ce pas de temps est déterminé par essai et erreur en regardant quel intervalle donne l'information qui paraît la plus pertinente ; vous pouvez aussi essayer différentes valeurs par vous-même). Représentez la moyenne glissante sur le graphique. Ajoutez la légende à la position suivante : x = 1960 et y = 2100.
+
+```{r sl_h2, exercise=TRUE, exercise.lines=4}
+sl <- ___(___, ___, deltat = ___)
+plot(sl, stat = ___, ___ = ___, lpos = c(___, ___))
+```
+
+```{r sl_h2-hint-1}
+sl <- stat.slide(time(___), ___, deltat = ___)
+plot(sl, stat = "___", leg = TRUE, lpos = c(___, ___))
+#### ATTENTION: Hint suivant = solution !####
+```
+
+```{r sl_h2-solution}
+## Solution ##
+sl <- stat.slide(time(flow), flow, deltat = 2)
+plot(sl, stat = "mean", leg = TRUE, lpos = c(1960, 2100))
+```
+
+```{r sl_h2-check}
+grade_code("Les valeurs moyennes par deux ans varient au cours du temps. On observe une moyenne élevée de plus de 500 m^3/s entre 1993 et 1994 à cause de l'année exceptionnelle de 1993. Les années 1973 et 1974, ainsi que 1983 et 1984 montrent aussi des valeurs moyennes élevées de débit.")
+```
+
+## Décomposition de la série
+
+Étant donné la dominance d'un cycle saisonnier, la décomposition de la série va viser prioritairement à séparer ce signal et ensuite, à analyser ce que l'on obtient une fois cette composante saisonnière retirée. D'autres variations à plus long terme que l'année étant également observées, nous allons les extraire dans la tendance générale. Le travail de décomposition est rendu plus complexe par la présence de plusieurs pics importants, dont celui de 1993. Pour gérer cela, nous utiliserons un lissage de tendance avec une fenêtre `t.window=` plus large et utiliserons une régression robuste. Effectuez une décomposition par la méthode LOESS avec une fenêtre de décomposition saisonnière (rappelez-vous que l'étendue de la fenêtre est 2 k + 1 et que les mesures sont mensuelles ici), une fenêtre de tendance `t.window` de 30 et une régression robuste avec `robust = TRUE`.
+
+```{r loess_h2, exercise=TRUE, exercise.lines=4}
+fl_loess <- tsd(___, method = ___, ___ = ___,
+  trend = ___, t.window = ___, ___ = TRUE)
+plot(___, col = 1:4)
+```
+
+```{r loess_h2-hint-1}
+fl_loess <- tsd(___, method = ___, s.window = ___,
+  trend = ___, t.window = 30, robust = TRUE)
+plot(fl_loess, col = 1:4)
+#### ATTENTION: Hint suivant = solution !####
+```
+
+```{r loess_h2-solution}
+## Solution ##
+fl_loess <- tsd(flow, method = "loess", s.window = 13,
+  trend = TRUE, t.window = 30, robust = TRUE)
+plot(fl_loess, col = 1:4)
+```
+
+```{r loess_h2-check}
+grade_code("Le signal désaisonnalisé semble contenir encore pas mal de choses. Le pic de 1993 est bien visible dans les résidus. Alors que la tendance générale présente un signal plus lissé, les résidus capturent les évènements extrêmes mais localisés dans le temps... et il y en a d'autres qu'en 1993, notamment vers l'observation 80 et vers l'observation 120. Le cycle saisonnier varie au cours du temps. Son amplitude est du même ordre de grandeur que la tendance générale.")
+```
+
+Extrayez maintenant les composantes en un objet **mts** `fl_mts` à l'aide de `tseries()` et faites-en le graphique pour vérifier.
+
+```{r mts_h2, exercise=TRUE, exercise.lines=2}
+fl_mts <- ___(____)
+plot(___)
+```
+
+```{r mts_h2-hint-1}
+fl_mts <- tseries(___)
+plot(fl_mts)
+#### ATTENTION: Hint suivant = solution !####
+```
+
+```{r mts_h2-solution}
+## Solution ##
+fl_mts <- tseries(fl_loess)
+plot(fl_mts)
+```
+
+```{r mts_h2-check}
+grade_code("Nous n'avons plus grand chose à faire sur la composante saisonnière car nous savons, par construction, qu'il s'agit d'un cycle annuel. Cette composante est utile pour décrire les variations de la rivière avec les saisons. La composante qui va être la plus intéressante à étudier est la tendance générale, mais ne négligeons pas les résidus tout de même.")
+```
+
+## Analyse de la tendance
+
+Commencez par un graphique de l'autocorrélation de la tendance extraite (composante "trend" de `fl_mts`).
+
+```{r acft_h2, exercise=TRUE, exercise.lines=2}
+___
+```
+
+```{r acft_h2-hint-1}
+acf(fl_mts[, ___])
+#### ATTENTION: Hint suivant = solution !####
+```
+
+
+```{r acft_h2-solution}
+## Solution ##
+acf(fl_mts[, "trend"])
+```
+
+```{r acft_h2-check}
+grade_code("Le graphique d'autocorrélation montre un effet mémoire assez long (sur près de deux ans), caractéristique d'une tendance très lissée. Ceci est normal car nous avons choisi une grande fenêtre de lissage de la tendance.")
+```
+
+Étant donné la forme de la tendance qui n'est manifestement pas monotone croissante ou décroissante, il est inutile d'effectuer un test de tendance globale ici. Nous devons plutôt rechercher des cycles de longue fréquence et/ou des tendances locales.
+
+Effectuez une analyse spectrale de la tendance extraite. Utilisez une fenêtre de lissage de 5 et 7.
+
+```{r spectrum_h2, exercise=TRUE, exercise.lines=4}
+___
+```
+
+```{r spectrum_h2-hint-1}
+spectrum(fl_mts[, ___])
+#### ATTENTION: Hint suivant = solution !####
+```
+
+```{r spectrum_h2-solution}
+## Solution ##
+spectrum(fl_mts[, "trend"], span = c(5, 7))
+```
+
+```{r spectrum_h2-check}
+grade_code("Le péridodogramme suggère un cycle significatif de fréquence proche de zéro... Soit pas de cycle supplémentaire en d'autres termes. Les variations observées dans la tendance ne se répètent donc pas de manière régulière. Nous devons plutôt rechercher des tendances locales.")
+```
+
+Réalisez maintenant le graphique pour l'analyse des tendances locales, toujours pour notre composante "trend" de `fl_mts`. Nous ajoutons des annotations pour différentes périodes identifiées par la méthode. Nous reportons également ces périodes sur la composante saisonnière pour voir si ces différentes périodes se reflètent dans les fluctuations saisonnières du débit de notre rivière.
+
+```{r lt_h1, exercise=TRUE, exercise.lines=9}
+# Préparation de deux graphiques superposés avec marges ajustées
+par(mfrow = c(2, 1), mar = c(4, 4, 1, 1))
+# Tendances locales pour la composante de tendance
+loc <- ___
+# Annotation et second graphique de la composante saisonnière
+abline(v = c(1972, 1982, 1987, 1991), col = "red", lty = 2)
+plot(fl_mts[, "seasonal"])
+abline(v = c(1972, 1982, 1987, 1991), col = "red", lty = 2)
+```
+
+```{r lt_h1-solution}
+# Préparation de deux graphiques superposés avec marges ajustées
+opar = par(mfrow = c(2, 1), mar = c(4, 4, 1, 1))
+# Tendances locales pour la composante de tendance
+loc <- local.trend(fl_mts[, "trend"])
+# Annotation et second graphique de la composante saisonnière
+abline(v = c(1972, 1982, 1987, 1991), col = "red", lty = 2)
+plot(fl_mts[, "seasonal"])
+abline(v = c(1972, 1982, 1987, 1991), col = "red", lty = 2)
+par(opar)
+```
+
+```{r lt_h1-check}
+grade_code("Le graphique des tendances locales vise à identifier des blocs dans le temps pour lesquels la valeur moyenne est constante. Cela se marque par un signal rouge à peu près linéaire sur cette période de temps. La pente de la droite indique la moyenne (horizontale = pente nulle = moyenne globale de la série, pente positive = moyenne supérieure et pente négative = moyenne inférieure). Ici, nous observons une période de 1958 à 1972 à pente négative, indiquant une moyenne de débit plutôt basse. Ensuite, de 1972 à 1982, le signal est en légère augmentation, mais cette augmentation s'accélère de 1982 à 1987. S'en suit de 1987 à 1991 une période où la pente est fortement négative, indiquant des moyennes très basses sur quatre années consécutives. Ceci est accompagné d'un resserrement de l'amplitude saisonnière déjà amorcé dans la période précédente. Enfin, après 1991, on assiste à la crue importante de 1993 mais sur le plus long terme, le régime du fleuve change avec une augmentation du débit moyen (pente du signal en rouge à nouveau positive) et apparition de pics saisonniers importants.")
+```
+
+## Analyse des résidus
+
+En principe, si la décomposition est bien réalisée, les résidus ne devraient contenir ni autocorrélation, ni cycle, ni tendance générale. Cependant, nous avons remarqué dès le début que cette série est compliquée avec des évènements exceptionnels, un cycle saisonnier variable dans le temps et une tendance non monotone ayant une forme complexe. Nous avons augmenté la fenêtre de lissage de la tendance et avons utilisé une régression robuste pour tenir compte de nos observations. Ces deux paramètres influent potentiellement sur les résidus. Nous devons donc vérifier les propriétés de ces résidus.
+
+Effectuez un graphique de l'autocorrélation de la composante "residuals" de `fl_mts`.
+
+```{r acfr_h2, exercise=TRUE, exercise.lines=2}
+___
+```
+
+```{r acfr_h2-hint-1}
+acf(fl_mts[, ___])
+#### ATTENTION: Hint suivant = solution !####
+```
+
+
+```{r acfr_h2-solution}
+## Solution ##
+acf(fl_mts[, "residuals"])
+```
+
+```{r acfr_h2-check}
+grade_code("Nous observons un effet mémoire à trois mois. Ceci est conforme avec une fenêtre de lissage plus grande de la tendance qui, inévitablement, laisse une partie de l'autocorrélation à court terme dans les résidus. À part cela, il n'y a rien de spécial : pas de cycle ou de tendance observables dans le graphique de l'autocorrélation.")
+```
+
+Les résidus ont tout de même capturé un aspect important de notre série : les évènements extrêmes, mais localisés dans le temps. Ces évènements produisent potentiellement des catastrophes (inondations) et ne doivent donc pas être ignorés. Une façon de les mettre en évidence est de représenter les résidus accompagnés d'une ligne représentant, par exemple, le percentile 99% qui met en évidence les 1% plus larges évènements capturés dans ces résidus sur la durée des mesures, soit presque 50 ans.
+
+```{r, echo=TRUE}
+plot(fl_mts[, "residuals"])
+abline(h = quantile(fl_mts[, "residuals"], 0.99), col = "red", lty = 2)
+```
+
+Trois pics ressortent : un en 1965, un autre en 1969 et enfin le gros pic constitué de deux observations en 1993. Notez toutefois que le quantile 99% est choisi ici arbitrairement. Il faudrait plutôt déterminer un seuil sur base du débit maximum que la rivière peut encaisser sans déborder de son lit... mais cette information, nous ne la possédons pas.
+
+## Conclusion
+
+Vous venez de réaliser une analyse du débit de la rivière Iowa en utilisant la décomposition de série pour extraire le cycle saisonnier et la tendance. Les méthodes de décomposition sont des outils puissants qu'il faut manipuler avec prudence. Le choix des bonnes valeurs des arguments est très important, comme le montre cet exemple particulièrement délicat.
+
+```{r comm_noscore, echo=FALSE}
+question_text(
+  "Laissez-nous vos impressions sur cet outil pédagogique",
+  answer("", TRUE, message = "Pas de commentaires... C'est bien aussi."),
+  incorrect = "Vos commentaires sont enregistrés.",
+  placeholder = "Entrez vos commentaires ici...",
+  allow_retry = TRUE
+)
+```

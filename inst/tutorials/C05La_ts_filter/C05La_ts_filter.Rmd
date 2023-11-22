@@ -36,25 +36,11 @@ BioDataScience3::learnr_server(input, output, session)
 
 ## Objectifs
 
-La décomposition d'une série spatio-temporelle est un outil important pour son analyse. Vous avez découvert que l'on ne peut pas étudier les cycles d'une série si une tendance générale est présente. Il faut dans ce cas décomposer la série afin d'étudier chaque composante séparément. Nous aborderons dans ce tutoriel un exemple pratique de filtrage d'une série.
+Le filtrage d'une série spatio-temporelle est un outil important pour son analyse. Vous avez déjà vu que l'on ne peut pas étudier les cycles d'une série si une tendance générale est présente. Il faut dans ce cas filtrer la série pour en éliminer la tendance générale et obtenir une série stationnarisée. Nous aborderons dans ce tutoriel un autre exemple pratique de filtrage d'une série.
 
 ## Variation de la fréquence cardiaque
 
-Un sportif travaille avec un médecin du sport afin d'optimiser ses performances. Le médecin n'est pas un expert dans le traitement des données collectées. Le sportif a couru sous les 36 minutes lors d'un effort maximal sur 10km, ce qui est une performance correcte pour un sportif amateur. En collaboration avec son médecin et vous, il souhaite comprendre les informations collectées par les différents capteurs qu'il a employées. Nous disposons de la distance parcourue, la puissance, la vitesse instantanée et la fréquence cardiaque.
-
-```{r}
-a <- chart(data = hr, speed ~ time/60) +
-  geom_line() +
-  labs(y = "Vitesse [m/s]", x = "Temps [min]")
-
-b <- chart(data = hr, power ~ time/60) +
-  geom_line() +
-  labs(y = "Puissance [W]", x = "Temps [min]")
-
-combine_charts(list(a,b))
-```
-
-La même tendance à la baisse s'observe sur les deux graphiques. La vitesse du coureur au cours du temps (A) et la puissance (B) qu'il développe baissent légèrement au cours du temps. En tant que biologiste doué dans l'analyse de données biologiques, on fait appel à vous afin de traiter le signal suivant :
+Un sportif travaille avec un médecin du sport afin d'optimiser ses performances. Le médecin n'est pas un expert dans le traitement des données collectées. Le sportif a couru sous les 36 minutes lors d'un effort maximal dans une course de 10km, ce qui est une performance correcte pour un sportif amateur. En collaboration avec son médecin et vous, il souhaite comprendre les informations collectées concernant la fréquence cardiaque dont voici les résultats :
 
 ```{r}
 chart(data = hr, heart_rate ~ time/60) +
@@ -62,17 +48,19 @@ chart(data = hr, heart_rate ~ time/60) +
   labs(y = "Fréquence cardiaque [bpm]", x = "Temps [min]")
 ```
 
-À première vue, le médecin avance les observations suivantes. Il note une montée rapide de la fréquence cardiaque puis un plateau, suivi d'une montée progressive de la fréquence cardiaque et d'un nouveau plateau. Cependant, le médecin aurait besoin d'un signal "lissé" afin d'étudier l'évolution de la fréquence cardiaque au cours du temps plus facilement. C'est à présent à vous de jouer !
+Vous noterez tout de suite que le signal est tronqué à 184bmp. Il s'agit probablement d'un défaut du capteur utilisé. Le signal reste cependant exploitable à condition de tenir compte de ce problème. En particulier, nous devons nous méfier des moyennes qui seront erronées vers la fin de la course. Par contre, les médianes étant peu sensibles à la valeur des extrêmes, et la fréquence cardiaque médiane se situant probablement en dessous des 184bmp tout au long de la course, nous pouvons utiliser ici la médiane comme mesure de tendance centrale.
+
+À première vue, le médecin avance les observations suivantes. Il note une montée rapide de la fréquence cardiaque puis un plateau, suivi d'une montée progressive de la fréquence cardiaque et d'un nouveau plateau. Cependant, le médecin aurait besoin d'un signal "lissé" afin d'étudier l'évolution de la fréquence cardiaque au cours du temps plus facilement. C'est à présent à vous de jouer !
 
 ## Création de l'objet ts
 
-Les observations sont réalisées sur la même personne au cours du temps, nous sommes face à une série temporelle. Appliquez l'ensemble de vos connaissances. La fréquence cardiaque est mesurée toute les secondes.
+Les observations sont réalisées sur la même personne au cours du temps, nous sommes face à une série temporelle. Appliquez l'ensemble de vos connaissances. La fréquence cardiaque est mesurée toutes les secondes.
 
 ```{r, echo=TRUE}
 head(hr[,c("time", "heart_rate")])
 ```
 
-Réalisez un objet `ts` dont le pas de temps est la minute et nommez-le `hr_ts`. Réalisez ensuite un graphique de `hr_ts`. Enfin, étudiez l'autocorrélation. Le tableau de données initial est `hr`.
+Créez un objet **ts** dont l'unité de temps est la minute et nommez-le `hr_ts`. Réalisez ensuite un graphique de `hr_ts`. Enfin, étudiez l'autocorrélation. Le tableau de données initial est `hr`.
 
 ```{r ts_h2, exercise=TRUE}
 ___ <- ts(___$___, frequency = ___)
@@ -101,12 +89,12 @@ acf(hr_ts)
 ```
 
 ```{r ts_h2-check}
-grade_code("On compte 60 secondes par minute. Il semble donc cohérent d'avoir une fréquence de 60. L'étude de l'autocorrélation de la série indique une forte corrélation.")
+grade_code("On compte 60 secondes par minute. Il semble donc cohérent d'avoir une fréquence de 60. L'étude de l'autocorrélation de la série indique qu'elle est forte pour tous les décalages. Ceci indique généralement la dominance d'une tendance générale.")
 ```
 
 ## Décomposition de la série
 
-Filtrez cette série à l'aide des médianes mobiles avec fenêtre de 30 observations et reproduisez la décomposition 20 fois dans le but de dégager différentes phases successives tout au long de la série. Nommez cet objet `hr_decomp`
+Filtrez cette série à l'aide des médianes mobiles avec fenêtre de 61 observations et reproduisez le lissage 20 fois dans le but de dégager différentes phases successives tout au long de la série. Nommez cet objet `hr_decomp`.
 
 ```{r, decmed_h2, exercise=TRUE}
 ___ <- tsd(___, method = "___", order = ___, times = ___)
@@ -127,10 +115,10 @@ plot(hr_decomp)
 ```
 
 ```{r, decmed_h2-check}
-grade_code("Vous avez réussi à filtrer la tendance de la série et placer le reste dans les résidus.")
+grade_code("Vous avez réussi à filtrer la tendance de la série et placer le reste dans les résidus. L'utilisation des médianes mobiles est une bonne approche ici, car d'une part elle met en évidence les plateaux successifs, et d'autre part elle nous permet d'éviter en grande partie les erreurs de calcul liées au signal tronqué au dessus de 184bpm.")
 ```
 
-Extrayez la composante filtrée à l'aide d'`extract()` de l'objet `hr_decomp` puis réalisez un graphique de cette nouvelle série.
+Extrayez la composante filtrée en utilisant `extract()` sur l'objet `hr_decomp` puis réalisez un graphique de cette nouvelle série.
 
 ```{r extract_h2, exercise=TRUE}
 hr_filtered <- extract(___, ___ = ___)
@@ -151,12 +139,12 @@ plot(hr_filtered)
 ```
 
 ```{r extract_h2-check}
-grade_code("Vous avez correctement converti votre objet `tsd` en objet `ts`.")
+grade_code("Vous avez correctement extrait la composante cible de votre objet **tsd** pour en faire un objet **ts**.")
 ```
 
 ## Analyse de la série filtrée
 
-L'utilisation des médianes mobiles est une approche intéressante afin de faire ressortir les plateaux observés par le médecin. Faites à présent un test de tendance par bootstrap sur votre objet `hr_filtered`. Réalisez 99 ré-échantillonnages. Affichez les graphiques associés à ce test.
+Faites à présent un test de tendance par bootstrap sur votre objet `hr_filtered`. Réalisez 199 ré-échantillonnages. Affichez les graphiques associés à ce test.
 
 ```{r trend_h2, exercise = TRUE}
 ___(trend.test(___, R = ___))
@@ -170,11 +158,11 @@ plot(trend.test(___, R = ___))
 
 ```{r trend_h2-solution}
 ## Solution ##
-plot(trend.test(hr_filtered, R = 99))
+plot(trend.test(hr_filtered, R = 199))
 ```
 
 ```{r trend_h2-check}
-grade_code("Un test de tendance avec bootstrap est bien plus intéressant qu'un test sans. Cependant, cette opération prend du temps. Nous avons donc décidé de faire seulement 99 rééchantillonage. En pratique, il vaut mieux en faire, par exemple, 999.")
+grade_code("Un test de tendance avec bootstrap est bien plus intéressant qu'un test classique. Cependant, cette opération prend du temps. C'est pourquoi nous avons limité les rééchantillonnages à 199. En pratique, il vaut mieux en faire, par exemple, 999.")
 ```
 
 ```{r qu_tren}
@@ -188,7 +176,7 @@ question("Y a t'il un tendance générale dans cette série ? ",
 )
 ```
 
-Calculez des statistiques glissantes afin de délimiter la période de 0 à 5, 5 à 15, 15 à 25 et de 25 à 36. Réalisez un graphique des statistiques glissantes en y ajoutant les médianes pour chaque période. Ajoutez la légende en position c(1,182). Renommez l'axe Y en "Fréquence cardiaque [bpm]", l'axe X en "Temps [min]" et le titre par "Statistiques glissantes".
+Calculez des statistiques glissantes afin de délimiter les périodes de 0 à 5, 5 à 15, 15 à 25 et de 25 à 36. Réalisez un graphique des statistiques glissantes en y ajoutant les médianes pour chaque période. Ajoutez la légende en position c(1,182). Renommez l'axe X en "Temps [min]", l'axe Y en "Fréquence cardiaque [bpm]" et le titre en "Statistiques glissantes".
 
 ```{r sl_h2, exercise = TRUE}
 sl <- stat.slide(___(___), ___, xcut = c(___, ___, ___, ___, ___))
@@ -223,11 +211,11 @@ grade_code("Ce graphique est très explicite et va permettre au médécin d'expl
 
 Grâce à votre analyse, le médecin peut confirmer ses premières observations. Les cinq premières minutes, la fréquence cardiaque augmente rapidement pour atteindre un plateau entre la minute 5 et la minute 15 d'une valeur médiane de 174 bpm. Une seconde augmentation plus progressive est observable entre la minute 15 et la minute 25. Enfin un nouveau plateau est observé entre la minute 25 et la fin de la course.
 
-Le médecin émet l'hypothèse suivante. Le sportif atteint le premier plateau puis on observe une probable dérive cardiaque. La dérive cardiaque est liée à l'augmentation de la température corporelle. Le corps tente de dissiper la chaleur en dilatant les vaisseaux sanguins. Afin de maintenir le débit cardiaque constant, la fréquence cardiaque va augmenter. Le dernier plateau est probablement lié à la diminution de la vitesse qui va contrer l'augmentation de la vitesse cardiaque.
+Le médecin émet l'hypothèse suivante. Le sportif atteint le premier plateau puis on observe une probable dérive cardiaque. La dérive cardiaque est liée à l'augmentation de la température corporelle. Le corps tente de dissiper la chaleur en dilatant les vaisseaux sanguins. Afin de maintenir le débit cardiaque constant, la fréquence cardiaque va augmenter. Le dernier plateau est probablement lié à la diminution de la vitesse de course (observée par ailleurs à l'aide d'un autre capteur) qui va contrer l'augmentation de la vitesse cardiaque.
 
 ## Conclusion
 
-Vous venez d'appliquer vos connaissances sur le filtrage d'une série afin d'étudier une série temporelle de la variation cardiaque d'un sportif sur un effort de 10km.
+Vous venez d'appliquer vos connaissances sur le filtrage d'une série pour étudier une série temporelle de la variation cardiaque d'un sportif sur une course de 10km.
 
 ```{r comm_noscore, echo=FALSE}
 question_text(
