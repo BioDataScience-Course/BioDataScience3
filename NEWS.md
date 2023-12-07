@@ -1,3 +1,7 @@
+# BioDataScience3 2023.6.0
+
+-   Revision of **C06La_map**.
+
 # BioDataScience3 2023.5.0
 
 -   Revision of **C05La_ts_filter** and **C05Lb_ts_decomp**.

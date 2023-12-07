@@ -182,7 +182,7 @@ chart(data = nld, ~ 0 %fill=% name) +
 ```
 
 ```{r chartmap2-check}
-grade_code("Comme pour les autres graphiques ggplot2/chart, le remplissage se fait via l'argument `fill =` qui se traduit par `%fill=%` dans l'interface formule.")
+grade_code("Comme pour les autres graphiques ggplot2/chart, le remplissage se fait via l'argument `fill=` qui se traduit par `%fill=%` dans l'interface formule.")
 ```
 
 ```{r}
@@ -204,7 +204,7 @@ chart(data = nld) +
 ```
 
 ```{r chartmap3-check}
-grade_code("Le choix des variables pour les différentes propriétés passe ici via la fonction `aes()`. Si c'est l'interface formule que vous souhaitez utiliser à cet endroit, alors vous utiliserez plutôt `f_aes()`.")
+grade_code("Le choix des variables pour les différentes propriétés passe ici par la fonction `aes()`. Si c'est l'interface formule que vous souhaitez utiliser à cet endroit, alors vous utiliserez plutôt `f_aes()`.")
 ```
 
 ### Carte en R de base avec `plot()`
