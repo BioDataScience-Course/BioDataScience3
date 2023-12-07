@@ -78,13 +78,13 @@ BioDataScience3::learnr_server(input, output, session)
 
 ## Avant de débuter
 
-Les packages suivant sont chargés par défaut pour chaque exercice :
+Les packages suivants sont chargés par défaut pour chaque exercice :
 
 ```{r, eval=FALSE, echo=TRUE}
 SciViews::R("spatial")
 ```
 
-Ce code est exécuté par défaut avant de débuter votre séance d'exercices. Il permet de réaliser des cartes avec la fonction `chart()`. Dans vos projets plus tard, vous devrez prendre soin de l'inclure dans un script R et de le sourcer dans vos différents documents.
+Ce code est exécuté par défaut avant de commencer votre séance d'exercices. Il permet de réaliser des cartes avec la fonction `chart()`. Dans vos projets plus tard, vous devrez prendre soin de l'inclure dans un script R et de le sourcer dans vos différents documents.
 
 ```{r, eval=FALSE, echo=TRUE}
 SciViews::R("spatial")
@@ -168,7 +168,7 @@ chart(data = nld, ~ 0 %fill=% name) +
   geom_sf()
 ```
 
--   Reproduisez avec `chart()` le graphique ci-dessus en utilisant l'interface formule pour moduler l'apparence de votre carte.
+Reproduisez avec `chart()` le graphique ci-dessus en utilisant l'interface formule pour moduler l'apparence de votre carte.
 
 ```{r chartmap2, exercise=TRUE, exercise.lines=3}
 ___(___ = ___, ~ ___ %___% ___) +
@@ -291,7 +291,7 @@ tm_shape(nld) +
   tm_scale_bar(position = c("left", "bottom"))
 ```
 
-A présent, tentez de reproduire une carte un peu plus complexes en cinq couches, toujours avec le package {tmap}. Partez de la solution de l'exercice précédent que vous complétez.
+À présent, tentez de reproduire une carte un peu plus complexe en cinq couches, toujours avec le package {tmap}. Partez de la solution de l'exercice précédent que vous complétez.
 
 1.  définissez le fond de carte,
 2.  ajoutez les limites de chaque province au fond de carte,
