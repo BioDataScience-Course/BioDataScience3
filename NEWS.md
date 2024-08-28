@@ -1,3 +1,7 @@
+# BioDataScience3 2024.0.0
+
+-   New version for academic year 2024-2025.
+
 # BioDataScience3 2023.6.0
 
 -   Revision of **C06La_map**.
