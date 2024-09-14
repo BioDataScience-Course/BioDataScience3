@@ -1,3 +1,7 @@
+# BioDataScience3 2024.1.0
+
+-   Inactivation of all learnrs except those of module 1.
+
 # BioDataScience3 2024.0.0
 
 -   New version for academic year 2024-2025.
