@@ -2,6 +2,8 @@
 
 -   Inactivation of all learnrs except those of module 1.
 
+-   Shiny apps in v2.0.0 version (recording in the events table)
+
 # BioDataScience3 2024.0.0
 
 -   New version for academic year 2024-2025.
