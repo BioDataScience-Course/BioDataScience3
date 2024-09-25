@@ -4,6 +4,8 @@
 
 -   Shiny apps in v2.0.0 version (recording in the events table)
 
+-   Revision of **C00La_refresh**, **C01La_confusion** and **C01Lb_ml1**.
+
 # BioDataScience3 2024.0.0
 
 -   New version for academic year 2024-2025.
