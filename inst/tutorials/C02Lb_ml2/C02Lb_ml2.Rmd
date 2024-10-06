@@ -62,14 +62,14 @@ Ce tutoriel a pour objectif de vous permettre de découvrir de nouveaux algorith
 
 Toutes ces méthodes font partie de votre boite à outils pour la classification supervisée à côté de l'analyse discriminante linéaire et de la quantification vectorielle, ainsi que d'autres techniques encore que vous découvrirez dans le module 3 du cours. Concrètement, vous utiliserez la méthode la plus judicieuse en fonction du contexte. Il est même conseillé d'en tester plusieurs et de les comparer pour ensuite conserver le classifieur le plus efficace après cette étude comparative.
 
-Pour l'ADL, vous avez utilisé la fonction `mlLda()`. Voici les fonctions du package {mlearning} que vous utiliserez ici :
+Pour l'ADL, vous avez utilisé la fonction `ml_lda()`. Voici les fonctions du package {mlearning} que vous utiliserez ici :
 
-| **Méthode**                    | **Fonction**                          |
-|--------------------------------|---------------------------------------|
-| Analyse discriminante linéaire | `mlLda(data = <df>, formula,...)`     |
-| K plus proches voisins         | `mlKnn(data = <df>, formula,...)`     |
-| Partitionnement récursif       | `mlRpart(data = <df>, formula,...)`   |
-| Foret aléatoire                | `mlRforest(data = <df>, formula,...)` |
+| **Méthode**                    | **Fonction**                           |
+|--------------------------------|----------------------------------------|
+| Analyse discriminante linéaire | `ml_lda(data = <df>, formula,...)`     |
+| K plus proches voisins         | `ml_knn(data = <df>, formula,...)`     |
+| Partitionnement récursif       | `ml_rpart(data = <df>, formula,...)`   |
+| Forêt aléatoire                | `ml_rforest(data = <df>, formula,...)` |
 
 Le package {mlearning} permet d'utiliser une interface similaire et simplifiée pour chaque méthode. Il fait partie du dialecte `SciViews::R` et est chargé en spécifiant que la section relative au "machine learning" doit être également chargée à l'aide de `SciViews::R("ml")`
 
@@ -151,7 +151,7 @@ pumpkins_rf <- ml___(data = ___, ___~___, ___ = ___)
 ```{r ml_h2-hint-1}
 set.seed(3265)
 # K plus proches voisins
-pumpkins_knn <- mlKnn(data = pumpkins_train, class ~ ., k.nn = 15)
+pumpkins_knn <- ml_knn(data = pumpkins_train, class ~ ., k.nn = 15)
 # Partitionnement récursif
 pumpkins_part <- ml___(data = ___, ___~___)
 # Forêt aléatoire
@@ -164,11 +164,11 @@ pumpkins_rf <- ml___(data = ___, ___~___, ___ = ___)
 ## Solution ##
 set.seed(3265)
 # K plus proches voisins
-pumpkins_knn <- mlKnn(data = pumpkins_train, class ~ ., k.nn = 15)
+pumpkins_knn <- ml_knn(data = pumpkins_train, class ~ ., k.nn = 15)
 # Partitionnement récursif
-pumpkins_part <- mlRpart(data = pumpkins_train, class ~ .)
+pumpkins_part <- ml_rpart(data = pumpkins_train, class ~ .)
 # Forêt aléatoire
-pumpkins_rf <- mlRforest(data = pumpkins_train, class ~ ., ntree = 100)
+pumpkins_rf <- ml_rforest(data = pumpkins_train, class ~ ., ntree = 100)
 ```
 
 ```{r ml_h2-check}

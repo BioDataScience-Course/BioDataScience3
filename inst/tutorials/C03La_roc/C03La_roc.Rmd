@@ -25,7 +25,7 @@ breast <- sselect(breast, -id)
 # Partitionnement récursif
 ## rpart1
 set.seed(12)
-breast_part <- mlRpart(data = breast, class ~ .)
+breast_part <- ml_rpart(data = breast, class ~ .)
 breast_pred1 <- cvpredict(breast_part, cv.k = 5) 
 part1_conf <- confusion(breast_pred1, breast$class)
 part1_tab <- summary(part1_conf)
@@ -46,7 +46,7 @@ breast %>.%
 breast2 <- bind_rows(br_m2, br_b2)
 # Création du classifieur
 set.seed(256)
-breast_part2 <- mlRpart(data = breast2, class ~ .)
+breast_part2 <- ml_rpart(data = breast2, class ~ .)
 # Évaluation du classifieur
 breast_pred2 <- cvpredict(breast_part2, cv.k = 5) 
 part2_conf <- confusion(breast_pred2, breast2$class)
@@ -134,7 +134,7 @@ cvpredict(___, cv.k = ___) |> confusion(___$___) |> summary()
 ```{r rpart1_h2-hint-1}
 set.seed(12)
 # Création du classifieur
-breast_part <- mlRpart(data = breast, class ~ .)
+breast_part <- ml_rpart(data = breast, class ~ .)
 # Évaluation du classifieur
 cvpredict(___, cv.k = ___) |> confusion(___$___) |> summary()
 
@@ -145,7 +145,7 @@ cvpredict(___, cv.k = ___) |> confusion(___$___) |> summary()
 ## Solution ##
 set.seed(12)
 # Création du classifieur
-breast_part <- mlRpart(data = breast, class ~ .)
+breast_part <- ml_rpart(data = breast, class ~ .)
 # Évaluation du classifieur
 cvpredict(breast_part, cv.k = 5) |> confusion(breast$class) |> summary()
 ```
@@ -163,13 +163,13 @@ question("Quel est le taux de vrais positifs pour les personnes malades ?",
   allow_retry = TRUE, 
   submit_button = "Soumettre une réponse",
   try_again_button = "Resoumettre une réponse",
-  incorrect = "Mauvaise réponse. Recommencez et analysez plus finement les métriques associés à ce classifieur.",
+  incorrect = "Mauvaise réponse. Recommencez et analysez plus finement les métriques associées à ce classifieur.",
   correct = "Notez bien cette valeur pour plus tard.")
 ```
 
 Pour rappel, nous avons les effectifs suivants dans les deux classes :
 
-```{r, echo=TRUE}
+```{r, echo=TRUE, warning=FALSE}
 table(breast$class) |>
   tabularise()
 ```
@@ -245,7 +245,7 @@ summary(part2_conf)
 
 ```{r rpart2_h2-hint-1}
 set.seed(256)
-breast_part2 <- mlRpart(data = breast2, class ~ .)
+breast_part2 <- ml_rpart(data = breast2, class ~ .)
 part2_conf <- confusion(cvpredict(breast_part2, cv.k = ___), ___$___)
 summary(part2_conf) 
 
@@ -255,7 +255,7 @@ summary(part2_conf)
 ```{r rpart2_h2-solution}
 ## Solution ##
 set.seed(256)
-breast_part2 <- mlRpart(data = breast2, class ~ .)
+breast_part2 <- ml_rpart(data = breast2, class ~ .)
 part2_conf <- confusion(cvpredict(breast_part2, cv.k = 5), breast2$class)
 summary(part2_conf) 
 ```
@@ -321,7 +321,7 @@ quiz(
     submit_button = "Soumettre une réponse",
     try_again_button = "Resoumettre une réponse",
     incorrect = "Mauvaise réponse. Recommencez et analysez plus finement les métriques associés aux classifieurs.",
-    correct = "Vous pouvez observer que la modification des proportions a permis d'augmenter grandement le rappel. Cependant, nous observons une perte de précision. Les médecins vont préférer détecter un maximum des tumeurs malignes, quitte à avoir un peu plus de faux positifs dans le lot qu'ils démasqueront via des analyses plus poussées sur les patientes déclarés positifs.")
+    correct = "Vous pouvez observer que la modification des proportions a permis d'augmenter grandement le rappel. Cependant, nous observons une perte de précision. Les médecins vont préférer détecter un maximum des tumeurs malignes, quitte à avoir un peu plus de faux positifs dans le lot qu'ils démasqueront via des analyses plus poussées sur les patientes déclarées positifs.")
 )
 ```
 
@@ -357,9 +357,12 @@ ___<- performance(___, "tpr", "fpr")
 # 3) Tracer le graphique ROC
 plot(___)
 abline(a = 0, b = 1, lty = 2)
+
+## Attention, le prochain indice est la solution ##
 ```
 
 ```{r roc_h2-solution}
+## Solution ##
 library(ROCR)
 # 1) Formater les prédictions pour ROCR
 pred_obj <- prediction(breast_pred[,"malignant"], breast$class == "malignant")
@@ -381,9 +384,12 @@ ___::___(___$___, ___[, "malignant"])
 
 ```{r auc_h2-hint-1}
 ___::auc(___$___, ___[, "malignant"])
+
+## Attention, le prochain indice est la solution ##
 ```
 
 ```{r auc_h2-solution}
+## Solution ##
 pROC::auc(breast$class, breast_pred[, "malignant"])
 ```
 
@@ -393,7 +399,7 @@ grade_code("Vous avez déterminé la valeur de l'aire sous la courbe ROC pour vo
 
 ## Conclusion
 
-Vous venez d'explorer l'effet des proportions par classes sur un classifieur et sur les métriques de perfomance de ce classifieur. Vous avez aussi corrigé vos métriques en renseignant la probabilité *a priori*. Enfin, vous avez tracé une courbe ROC et calculé son aire sous la courbe, AUC. Tous ces outils vous seront bien utiles pour optimiser vos propres classifieurs.
+Vous venez d'explorer l'effet des proportions par classes sur un classifieur et sur les métriques de performance de ce classifieur. Vous avez aussi corrigé vos métriques en renseignant la probabilité *a priori*. Enfin, vous avez tracé une courbe ROC et calculé son aire sous la courbe, AUC. Tous ces outils vous seront bien utiles pour optimiser vos propres classifieurs.
 
 ```{r comm_noscore, echo=FALSE}
 question_text(

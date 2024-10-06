@@ -130,7 +130,7 @@ rice_test <- testing(rice_split)
 ```
 
 ```{r rice_split_h2-check}
-grade_code("Vous avez réalisé votre set d'apprentissage et votre set de test avec les proportions demandées.", "Avez-vous bien respectée les consignes ? Il ne faut compléter que les champs ___.")
+grade_code("Vous avez réalisé votre set d'apprentissage et votre set de test avec les proportions demandées.", "Avez-vous bien respecté les consignes ? Il ne faut compléter que les champs ___.")
 ```
 
 ## Analyse discriminante linéaire
@@ -138,12 +138,12 @@ grade_code("Vous avez réalisé votre set d'apprentissage et votre set de test a
 Entraînez un premier classifieur `rice_lda` avec l'analyse discriminante linéaire (formule condensée) pour prédire `class` à l'aide des sept autres variables **sans utiliser la validation croisée** ensuite. Quel jeu de données devez-vous utiliser ? `rice`, `rice_train` ou `rice_test` ?
 
 ```{r lda_h2, exercise=TRUE}
-rice_lda <- mlLda(data = ___, ___ ~ ___)
+rice_lda <- ml_lda(data = ___, ___ ~ ___)
 summary(rice_lda)
 ```
 
 ```{r lda_h2-hint-1}
-rice_lda <- mlLda(data = rice_train, ___ ~ ___)
+rice_lda <- ml_lda(data = rice_train, ___ ~ ___)
 summary(rice_lda)
 
 ## Attention, le prochain indice est la solution ##
@@ -151,7 +151,7 @@ summary(rice_lda)
 
 ```{r lda_h2-solution}
 ## Solution ##
-rice_lda <- mlLda(data = rice_train, class ~ .)
+rice_lda <- ml_lda(data = rice_train, class ~ .)
 summary(rice_lda)
 ```
 
@@ -162,12 +162,12 @@ grade_code("Votre classifieur LDA est entrainé. Il faut encore en mesurer les p
 Entraînez maintenant un second classifieur `rice_lda_cv`, mais cette fois dans le but d'en étudier les performances par validation croisée (toujours en utilisant la formule condensée).
 
 ```{r lda_cv_h2, exercise=TRUE}
-rice_lda_cv <- mlLda(data = ___, ___ ~ ___)
+rice_lda_cv <- ml_lda(data = ___, ___ ~ ___)
 summary(rice_lda_cv)
 ```
 
 ```{r lda_cv_h2-hint-1}
-rice_lda_cv <- mlLda(data = rice, ___ ~ ___)
+rice_lda_cv <- ml_lda(data = rice, ___ ~ ___)
 summary(rice_lda_cv)
 
 ## Attention, le prochain indice est la solution ##
@@ -175,7 +175,7 @@ summary(rice_lda_cv)
 
 ```{r lda_cv_h2-solution}
 ## Solution ##
-rice_lda_cv <- mlLda(data = rice, class ~ .)
+rice_lda_cv <- ml_lda(data = rice, class ~ .)
 summary(rice_lda_cv)
 ```
 
@@ -249,7 +249,7 @@ summary(rice_conf_cv)
 ```
 
 ```{r lda_pred_cv_h2-check}
-grade_code("Toute la mécanique de la validation croisée est déployée à l'intérieur de `cvpredict()`. En réalité, les données sont divisées en dix sous-tableaux et dix classifieurs différents sont entraînées et testés successivement. Aucun n'est identique à `rice_lda_cv`, mais ils en sont tous relativement proches. Prenez un peu de temps pour analyser votre matrice de confusion et les métriques qui en découlent. Combien de données sont utilisées ici ?")
+grade_code("Toute la mécanique de la validation croisée est déployée à l'intérieur de `cvpredict()`. En réalité, les données sont divisées en dix sous-tableaux et dix classifieurs différents sont entraînés et testés successivement. Aucun n'est identique à `rice_lda_cv`, mais ils en sont tous relativement proches. Prenez un peu de temps pour analyser votre matrice de confusion et les métriques qui en découlent. Combien de données sont utilisées ici ?")
 ```
 
 Répondez aux questions ci-dessous relatives aux deux classifieurs `rice_lda` et `rice_lda_cv`.
@@ -264,7 +264,7 @@ quiz(
     try_again_button = "Resoumettre une réponse",
     incorrect = "Mauvaise réponse. Recommencez afin de trouver la bonne réponse",
     correct = "C'est le nombre d'observations utilisées en apprentissage qui sont déterminantes ici (plus d'observations mènent potentiellement à un meilleur classifieur)."),
-  question("Combien d'items sont employé pour déterminer les performances du classifieur avec validation croisée ?",
+  question("Combien d'items sont employés pour déterminer les performances du classifieur avec validation croisée ?",
     answer(sprintf("%1.f", nrow(rice)), correct = TRUE),
     answer(sprintf("%1.f", nrow(rice_train))),
     answer(sprintf("%1.f", nrow(rice_test))),

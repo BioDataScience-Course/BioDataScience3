@@ -1,3 +1,11 @@
+# BioDataScience3 2024.3.0
+
+-   Learnrs **C03La_roc** and **C03Lb_ml3** revised.
+
+# BioDataScience3 2024.2.0
+
+-   Learnrs **C02La_cv** and **C02Lb_ml2** revised.
+
 # BioDataScience3 2024.1.0
 
 -   Inactivation of all learnrs except those of module 1.

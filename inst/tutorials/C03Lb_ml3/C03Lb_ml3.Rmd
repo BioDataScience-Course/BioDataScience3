@@ -24,11 +24,11 @@ derma <- na_omit(derma, cols = "age")
 set.seed(960412)
 ## Classifieur
 # Machine à vecteurs supports
-derma_svmr <- mlSvm(data = derma, class ~ .)
+derma_svmr <- ml_svm(data = derma, class ~ .)
 # Machine à vecteurs supports avec un noyau linéaire
-derma_svml <- mlSvm(data = derma, class ~ ., kernel = "linear")
+derma_svml <- ml_svm(data = derma, class ~ ., kernel = "linear")
 # Réseaux de neurones artificiels
-derma_nnet <- mlNnet(data = derma, class ~ ., size = 5)
+derma_nnet <- ml_nnet(data = derma, class ~ ., size = 5)
 ## Métriques
 set.seed(367)
 # Machine à vecteurs supports
@@ -58,14 +58,14 @@ Ce tutoriel a pour objectif de vous faire découvrir deux nouvelles méthodes de
 
 Ces deux méthodes sont disponibles dans le package {mlearning}
 
-| **Méthode**                     | **Fonction**                   |
-|---------------------------------|--------------------------------|
-| Analyse discriminante linéaire  | `mlLda(data, formula,...)`     |
-| K plus proches voisins          | `mlKnn(data, formula,...)`     |
-| Partitionnement récursif        | `mlRpart(data, formula,...)`   |
-| Forêt aléatoire                 | `mlRforest(data, formula,...)` |
-| Machine à vecteurs supports     | `mlSvm(data, formula,...)`     |
-| Réseaux de neurones artificiels | `mlNnet(data, formula,...)`    |
+| **Méthode**                     | **Fonction**                    |
+|---------------------------------|---------------------------------|
+| Analyse discriminante linéaire  | `ml_lda(data, formula,...)`     |
+| K plus proches voisins          | `ml_knn(data, formula,...)`     |
+| Partitionnement récursif        | `ml_rpart(data, formula,...)`   |
+| Forêt aléatoire                 | `ml_rforest(data, formula,...)` |
+| Machine à vecteurs supports     | `ml_svm(data, formula,...)`     |
+| Réseaux de neurones artificiels | `ml_nnet(data, formula,...)`    |
 
 ## Discrimination de maladies de la peau
 
@@ -85,7 +85,7 @@ Il y a huit valeurs manquantes pour la variable `age`. La variable `class` repre
 
 La variable `family_history` peut prendre soit la valeur de 0 (aucune maladie de la peau dans la famille), soit la valeur de 1 (maladie présente dans la famille.) Les autres attributs peuvent prendre quatre valeurs : 0 (absence), 1, 2 et 3 (très important).
 
-Calculez un classifieur n'utilisant que les observations cliniques. Sélectionnez les variables 1 à 11 et 34 à 35. Utilisez la fonction `sselect()`. Éliminez ensuite les individus contenant des valeurs manquantes pour `age` avec `na_omit()`. Votre jeu de données nettoyé s'appelera `derma`.
+Calculez un classifieur n'utilisant que les observations cliniques. Sélectionnez les variables 1 à 11 et 34 à 35. Utilisez la fonction `sselect()`. Éliminez ensuite les individus contenant des valeurs manquantes pour `age` avec `na_omit()`. Votre jeu de données nettoyé s'appellera `derma`.
 
 ```{r derma_h2, exercise=TRUE}
 # Sélection des variables d'intérêts
@@ -99,6 +99,8 @@ ___ <- na_omit(___, cols = ___)
 derma <- sselect(dermatology, c(___:___, ___:___))
 # Élimination des NA
 derma <- na_omit(derma, cols = ___)
+
+## Attention, le prochain indice est la solution ##
 ```
 
 ```{r derma_h2-solution}
@@ -110,7 +112,7 @@ derma <- na_omit(derma, cols = "age")
 ```
 
 ```{r derma_h2-check}
-grade_code("Une fois le remaniement des données réaliser, on va pouvoir s'attaquer à nos classifieurs.")
+grade_code("Une fois le remaniement des données réalisé, on va pouvoir s'attaquer à nos classifieurs.")
 ```
 
 Explorez ce jeu de données comme bon vous semble. Vous avez la possibilité de réaliser tous les analyses et graphiques que vous désirez ci-dessous.
@@ -126,31 +128,34 @@ Créez à présent trois classifieurs utilisant la machine à vecteurs supports 
 ```{r, classif_h2, exercise=TRUE}
 set.seed(960412)
 # Machine à vecteurs supports
-derma_svmr <- mlSvm(data = ___, ___ ~ ___)
+derma_svmr <- ml_svm(data = ___, ___ ~ ___)
 # Machine à vecteurs supports avec un noyau linéaire
-derma_svml <- mlSvm(data = ___, ___ ~ ___, ___ = "linear")
+derma_svml <- ml_svm(data = ___, ___ ~ ___, ___ = "linear")
 # Réseaux de neurones artificiels
-derma_nnet <- mlNnet(data = ___, ___ ~ ___, ___ = ___)
+derma_nnet <- ml_nnet(data = ___, ___ ~ ___, ___ = ___)
 ```
 
 ```{r, classif_h2-hint-1}
 set.seed(960412)
 # Machine à vecteurs supports
-derma_svmr <- mlSvm(data = derma, ___ ~ ___)
+derma_svmr <- ml_svm(data = derma, ___ ~ ___)
 # Machine à vecteurs supports avec un noyau linéaire
-derma_svml <- mlSvm(data = ___, ___ ~ ___, kernel = "linear")
+derma_svml <- ml_svm(data = ___, ___ ~ ___, kernel = "linear")
 # Réseaux de neurones artificiels
-derma_nnet <- mlNnet(data = ___, ___ ~ ___, size = 12)
+derma_nnet <- ml_nnet(data = ___, ___ ~ ___, size = 12)
+
+## Attention, le prochain indice est la solution ##
 ```
 
 ```{r, classif_h2-solution}
+## Solution ##
 set.seed(960412)
 # Machine à vecteurs supports
-derma_svmr <- mlSvm(data = derma, class ~ .)
+derma_svmr <- ml_svm(data = derma, class ~ .)
 # Machine à vecteurs supports avec un noyau linéaire
-derma_svml <- mlSvm(data = derma, class ~ ., kernel = "linear")
+derma_svml <- ml_svm(data = derma, class ~ ., kernel = "linear")
 # Réseaux de neurones artificiels
-derma_nnet <- mlNnet(data = derma, class ~ ., size = 12)
+derma_nnet <- ml_nnet(data = derma, class ~ ., size = 12)
 ```
 
 ```{r classif_h2-check}
@@ -177,9 +182,12 @@ cvpredict(derma_svmr, cv.k = 5) |> confusion(___$___) |> summary()
 cvpredict(___, ___) |> confusion(___$___) |> summary()
 # Réseaux de neurones artificiels
 cvpredict(___, ___) |> confusion(___$___) |> summary()
+
+## Attention, le prochain indice est la solution ##
 ```
 
 ```{r predict_h2-solution}
+## Solution ##
 set.seed(367)
 # Machine à vecteurs supports
 cvpredict(derma_svmr, cv.k = 10) |> confusion(derma$class) |> summary()
