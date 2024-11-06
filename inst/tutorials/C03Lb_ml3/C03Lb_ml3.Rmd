@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III Module 3** Machines à vecteurs supports et réseaux de neurones."
 tutorial:
   id: "C03Lb_ml3"
-version: 2.1.0/5
+version: 2.1.1/5
 output:
   learnr::tutorial:
   progressive: true
@@ -204,9 +204,9 @@ grade_code("Il ne vous reste plus qu'à répondre aux questions ci-dessous")
 ```{r qu_pred}
 quiz(
   question("Quel classifieur permet d'avoir la meilleure précision pour la classe des `seboreic dermatitis`?",
-    answer("Machine à vecteurs supports avec un noyau linéaire"),
+    answer("Machine à vecteurs supports avec un noyau linéaire", correct = TRUE),
     answer("Machine à vecteurs supports à noyau radial"),
-    answer("Réseaux de neurones artificiels", correct = TRUE),
+    answer("Réseaux de neurones artificiels"),
     allow_retry = TRUE, 
     submit_button = "Soumettre une réponse",
     try_again_button = "Resoumettre une réponse",
