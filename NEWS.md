@@ -1,3 +1,7 @@
+# BioDataScience3 2025.0.0
+
+-   New version for academic year 2024-2025.
+
 # BioDataScience3 2024.5.0
 
 -   Learnrs **C05La_ts_filter** and **C05Lb_ts_decomp** revised.
