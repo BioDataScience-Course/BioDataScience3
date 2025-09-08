@@ -1,3 +1,7 @@
+# BioDataScience3 2025.1.0
+
+-   Revision of **C00La_refresh**, **C01La_confusion** and **C01Lb_ml1** for 2025-2026.
+
 # BioDataScience3 2025.0.1
 
 -   Argument `envir=` added to `learnr_server()` to accomodate changes for compatibility with a Posit Connect server.
