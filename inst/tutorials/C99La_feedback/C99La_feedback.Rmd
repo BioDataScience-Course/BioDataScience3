@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III** Vos commentaires et suggestions..."
 tutorial:
   id: "C99La_feedback"
-  version: 2.0.0/0
+  version: 3.0.0/0
 output:
   learnr::tutorial:
     progressive: true
@@ -14,6 +14,7 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 BioDataScience3::learnr_setup()
+library(testthat)
 ```
 
 ```{r, echo=FALSE}
@@ -37,7 +38,6 @@ question("Quelle partie du cours évaluez-vous ?",
   answer("Module 3 : Classification supervisée III", correct = TRUE),
   answer("Module 4 : Séries chronologiques I", correct = TRUE),
   answer("Module 5 : Séries chronologiques II", correct = TRUE),
-  answer("Module 6 : Statistiques spatiales", correct = TRUE),
   answer("**Tout le cours**", correct = TRUE),
   allow_retry = TRUE,
   type = "single", correct = "OK, indiquez maintenant vous commentaires relatifs à cette partie ci-dessous.")
