@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III Module 3** Machines à vecteurs supports et réseaux de neurones."
 tutorial:
   id: "C03Lb_ml3"
-version: 2.1.1/5
+version: 3.0.0/5
 output:
   learnr::tutorial:
   progressive: true
@@ -47,6 +47,12 @@ BioDataScience3::learnr_banner()
 ```
 
 ```{r, context="server"}
+if (Sys.info()["user"] == "rstudio-connect") {
+  options(learnr_user_id = session$user)
+  assignInNamespace("default_user_id", function() {
+    getOption("learnr_user_id", unname(Sys.info()["user"]))
+  }, ns = "learnr")
+}
 BioDataScience3::learnr_server(input, output, session)
 ```
 

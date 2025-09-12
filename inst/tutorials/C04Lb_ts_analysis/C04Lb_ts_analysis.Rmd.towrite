@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III Module 4** Autocorrélation, analyse spectrale et tendance."
 tutorial:
   id: "C04Lb_ts_analysis"
-version: 2.0.0/0
+version: 3.0.0/0
 output:
   learnr::tutorial:
   progressive: true
@@ -24,6 +24,12 @@ BioDataScience3::learnr_banner()
 ```
 
 ```{r, context="server"}
+if (Sys.info()["user"] == "rstudio-connect") {
+  options(learnr_user_id = session$user)
+  assignInNamespace("default_user_id", function() {
+    getOption("learnr_user_id", unname(Sys.info()["user"]))
+  }, ns = "learnr")
+}
 BioDataScience3::learnr_server(input, output, session)
 ```
 

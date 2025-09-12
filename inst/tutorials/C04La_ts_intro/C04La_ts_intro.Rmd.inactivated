@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III Module 4** Statistiques glissantes, création et manipulation d'objets ts."
 tutorial:
   id: "C04La_ts_intro"
-  version: 2.0.1/9
+  version: 3.0.0/9
 output:
   learnr::tutorial:
     progressive: true
@@ -27,6 +27,12 @@ BioDataScience3::learnr_banner()
 ```
 
 ```{r, context="server"}
+if (Sys.info()["user"] == "rstudio-connect") {
+  options(learnr_user_id = session$user)
+  assignInNamespace("default_user_id", function() {
+    getOption("learnr_user_id", unname(Sys.info()["user"]))
+  }, ns = "learnr")
+}
 BioDataScience3::learnr_server(input, output, session)
 ```
 

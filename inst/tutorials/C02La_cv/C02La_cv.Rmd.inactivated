@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III Module 2** Utilisation de la validation croisée sur une ADL."
 tutorial:
   id: "C02La_cv"
-  version: 2.1.0/8
+  version: 3.0.0/8
 output:
   learnr::tutorial:
     progressive: true
@@ -38,6 +38,12 @@ BioDataScience3::learnr_banner()
 ```
 
 ```{r, context="server"}
+if (Sys.info()["user"] == "rstudio-connect") {
+  options(learnr_user_id = session$user)
+  assignInNamespace("default_user_id", function() {
+    getOption("learnr_user_id", unname(Sys.info()["user"]))
+  }, ns = "learnr")
+}
 BioDataScience3::learnr_server(input, output, session)
 ```
 

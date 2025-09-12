@@ -4,7 +4,7 @@ author: "Guyliann Engels & Philippe Grosjean"
 description: "**SDD III Module 6** Différentes techniques d'interpolation spatiale."
 tutorial:
   id: "C06Lb_interp"
-version: 2.0.0/0
+version: 3.0.0/0
 output:
   learnr::tutorial:
   progressive: true
@@ -25,6 +25,12 @@ BioDataScience3::learnr_banner()
 ```
 
 ```{r, context="server"}
+if (Sys.info()["user"] == "rstudio-connect") {
+  options(learnr_user_id = session$user)
+  assignInNamespace("default_user_id", function() {
+    getOption("learnr_user_id", unname(Sys.info()["user"]))
+  }, ns = "learnr")
+}
 BioDataScience3::learnr_server(input, output, session)
 ```
 
