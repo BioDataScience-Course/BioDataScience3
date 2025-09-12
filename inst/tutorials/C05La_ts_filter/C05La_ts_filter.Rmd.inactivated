@@ -181,16 +181,16 @@ Calculez des statistiques glissantes afin de délimiter les périodes de 0 à 5,
 ```{r sl_h2, exercise = TRUE}
 sl <- stat.slide(___(___), ___, xcut = c(___, ___, ___, ___, ___))
 # Graphique de l'objet `sl`
-plot(__, stat = ___, leg = ___, lpos = c(___, ___), 
-  xlab = ___, ylab = ____, 
+plot(__, stat = ___, leg = ___, lpos = c(___, ___),
+  xlab = ___, ylab = ____,
   main = ___)
 ```
 
 ```{r sl_h2-hint-1}
 sl <- stat.slide(___(___), ___, xcut = c(0, 5, 15, 25, 36))
 # Graphique de l'objet `sl`
-plot(sl, stat = ___, leg = TRUE, lpos = c(1, 182), 
-  xlab = ___, ylab = ____, 
+plot(sl, stat = ___, leg = TRUE, lpos = c(1, 182),
+  xlab = ___, ylab = ____,
   main = ___)
 
 ## Attention, le prochain indice est la solution ##
@@ -200,9 +200,9 @@ plot(sl, stat = ___, leg = TRUE, lpos = c(1, 182),
 ## Solution ##
 sl <- stat.slide(time(hr_filtered), hr_filtered, xcut = c(0, 5, 15, 25, 36))
 # Graphique de l'objet `sl`
-plot(sl, stat = "median", leg = TRUE, lpos = c(1, 182), 
-  xlab = "Temps [min]", ylab = "Fréquence cardiaque [bpm]", 
-  main = "Statistiques glissantes") 
+plot(sl, stat = "median", leg = TRUE, lpos = c(1, 182),
+  xlab = "Temps [min]", ylab = "Fréquence cardiaque [bpm]",
+  main = "Statistiques glissantes")
 ```
 
 ```{r sl_h2-check}
@@ -225,4 +225,16 @@ question_text(
   placeholder = "Entrez vos commentaires ici...",
   allow_retry = TRUE
 )
+```
+
+```{css, echo=FALSE}
+@media print {
+  .topics {
+    width: 100% !important;
+    padding: 0 0.5em 0 !important;
+  }
+  .topicsContainer, .topicsContainer *, .learnrBanner, .learnrBanner *, .topicActions, .topicActions * {
+    display: none !important;
+  }
+}
 ```

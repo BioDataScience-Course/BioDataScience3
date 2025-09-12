@@ -39,7 +39,7 @@ pumpkins_rf <- mlRforest(data = pumpkins_train, class ~ ., ntree = 100)
 predict(pumpkins_knn, pumpkins_test) |> confusion(pumpkins_test$class) |> summary() ->
   conf_knn
 ## Partitionnement récursif
-predict(pumpkins_part, pumpkins_test) |> confusion(pumpkins_test$class) |> summary() -> 
+predict(pumpkins_part, pumpkins_test) |> confusion(pumpkins_test$class) |> summary() ->
   conf_part
 ## forêt aléatoire
 predict(pumpkins_rf, pumpkins_test) |> confusion(pumpkins_test$class) |> summary() ->
@@ -220,7 +220,7 @@ quiz(
     answer(sprintf("%.4f", conf_knn["Cercevelik",]$Precision)),
     answer(sprintf("%.4f", conf_knn["Cercevelik",]$Fscore)),
     answer(sprintf("%.4f", conf_knn["Cercevelik",]$FDR)),
-    allow_retry = TRUE, 
+    allow_retry = TRUE,
     submit_button = "Soumettre une réponse",
     try_again_button = "Resoumettre une réponse",
     incorrect = "Mauvaise réponse. Recommencez et analysez plus finement les métriques calculées pour ce classifieur.",
@@ -230,7 +230,7 @@ quiz(
     answer(sprintf("%.4f", conf_part["Urgup Sivrisi",]$Precision)),
     answer(sprintf("%.4f", conf_part["Urgup Sivrisi",]$Fscore)),
     answer(sprintf("%.4f", conf_part["Urgup Sivrisi",]$FDR)),
-    allow_retry = TRUE, 
+    allow_retry = TRUE,
     submit_button = "Soumettre une réponse",
     try_again_button = "Resoumettre une réponse",
     incorrect = "Mauvaise réponse. Recommencez et analysez plus finement les métriques calculées pour ce classifieur.",
@@ -260,4 +260,16 @@ question_text(
   placeholder = "Entrez vos commentaires ici...",
   allow_retry = TRUE
 )
+```
+
+```{css, echo=FALSE}
+@media print {
+  .topics {
+    width: 100% !important;
+    padding: 0 0.5em 0 !important;
+  }
+  .topicsContainer, .topicsContainer *, .learnrBanner, .learnrBanner *, .topicActions, .topicActions * {
+    display: none !important;
+  }
+}
 ```

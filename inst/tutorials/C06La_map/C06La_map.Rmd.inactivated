@@ -54,7 +54,7 @@ theme = theme_svmap, env = parent.frame()) {
       p <- p + facet_grid(facets)
     }
   }
-  if (inherits(p, "ggplot")) 
+  if (inherits(p, "ggplot"))
     class(p) <- unique(c("Chart", class(p)))
   p
 }
@@ -121,7 +121,7 @@ theme = theme_svmap, env = parent.frame()) {
       p <- p + facet_grid(facets)
     }
   }
-  if (inherits(p, "ggplot")) 
+  if (inherits(p, "ggplot"))
     class(p) <- unique(c("Chart", class(p)))
   p
 }
@@ -218,12 +218,12 @@ plot(st_geometry(nld))
 Reproduisez la carte ci-dessus à l'aide de `plot()` et à partir du jeu de données `nld`.
 
 ```{r basemap1, exercise=TRUE, exercise.lines=3}
-___(___(___)) 
+___(___(___))
 ```
 
 ```{r basemap1-solution}
 ## Solution ##
-plot(st_geometry(nld)) 
+plot(st_geometry(nld))
 ```
 
 ```{r basemap1-check}
@@ -330,4 +330,16 @@ question_text(
   placeholder = "Entrez vos commentaires ici...",
   allow_retry = TRUE
 )
+```
+
+```{css, echo=FALSE}
+@media print {
+  .topics {
+    width: 100% !important;
+    padding: 0 0.5em 0 !important;
+  }
+  .topicsContainer, .topicsContainer *, .learnrBanner, .learnrBanner *, .topicActions, .topicActions * {
+    display: none !important;
+  }
+}
 ```

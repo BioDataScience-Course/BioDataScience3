@@ -188,7 +188,7 @@ grade_code("Si vous souhaitez utiliser la validation croisée pour le test, vous
 Évaluez les performances du premier classifieur `rice_lda` sans validation croisée. Pour rappel, les jeux de données disponibles sont les suivants : `rice`, `rice_train` et `rice_test`
 
 ```{r pred_lda_h2, exercise=TRUE}
-# prédiction 
+# prédiction
 rice_pred <- ___(___, ___)
 # matrice de confusion
 rice_conf <- confusion(___, ___$___)
@@ -221,7 +221,7 @@ grade_code("Vous venez de calculer les métriques de performances du premier cla
 
 ```{r lda_pred_cv_h2, exercise=TRUE}
 set.seed(76456)
-# prédiction 
+# prédiction
 rice_pred_cv <- ___(___, cv.k = ___)
 # matrice de confusion
 rice_conf_cv <- confusion(___, ___$___)
@@ -259,7 +259,7 @@ quiz(
   question("Quel classifieur permet d'avoir le taux d'erreur globale le plus bas ?",
     answer("L'analyse discriminante linéaire sans validation croisée"),
     answer("L'analyse discriminante linéaire avec validation croisée 10 fois", correct = TRUE),
-    allow_retry = TRUE, 
+    allow_retry = TRUE,
     submit_button = "Soumettre une réponse",
     try_again_button = "Resoumettre une réponse",
     incorrect = "Mauvaise réponse. Recommencez afin de trouver la bonne réponse",
@@ -302,4 +302,16 @@ question_text(
   placeholder = "Entrez vos commentaires ici...",
   allow_retry = TRUE
 )
+```
+
+```{css, echo=FALSE}
+@media print {
+  .topics {
+    width: 100% !important;
+    padding: 0 0.5em 0 !important;
+  }
+  .topicsContainer, .topicsContainer *, .learnrBanner, .learnrBanner *, .topicActions, .topicActions * {
+    display: none !important;
+  }
+}
 ```

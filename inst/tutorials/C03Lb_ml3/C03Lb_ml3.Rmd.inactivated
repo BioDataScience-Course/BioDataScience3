@@ -207,7 +207,7 @@ quiz(
     answer("Machine à vecteurs supports avec un noyau linéaire", correct = TRUE),
     answer("Machine à vecteurs supports à noyau radial"),
     answer("Réseaux de neurones artificiels"),
-    allow_retry = TRUE, 
+    allow_retry = TRUE,
     submit_button = "Soumettre une réponse",
     try_again_button = "Resoumettre une réponse",
     incorrect = "Mauvaise réponse. Recommencez et analysez les métriques des trois classifieurs.",
@@ -216,7 +216,7 @@ quiz(
     answer("Machine à vecteurs supports avec un noyau linéaire", correct = TRUE),
     answer("Machine à vecteurs supports à noyau radial"),
     answer("Réseaux de neurones artificiels"),
-    allow_retry = TRUE, 
+    allow_retry = TRUE,
     submit_button = "Soumettre une réponse",
     try_again_button = "Resoumettre une réponse",
     incorrect = "Mauvaise réponse. Recommencez et analysez les métriques des trois classifieurs.",
@@ -236,4 +236,16 @@ question_text(
   placeholder = "Entrez vos commentaires ici...",
   allow_retry = TRUE
 )
+```
+
+```{css, echo=FALSE}
+@media print {
+  .topics {
+    width: 100% !important;
+    padding: 0 0.5em 0 !important;
+  }
+  .topicsContainer, .topicsContainer *, .learnrBanner, .learnrBanner *, .topicActions, .topicActions * {
+    display: none !important;
+  }
+}
 ```

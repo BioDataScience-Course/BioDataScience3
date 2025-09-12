@@ -14,7 +14,7 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 BioDataScience3::learnr_setup()
-SciViews::R("ml") 
+SciViews::R("ml")
 
 # Importation des données
 breast <- read("BreastCancer", package = "mlbench")
@@ -26,7 +26,7 @@ breast <- sselect(breast, -id)
 ## rpart1
 set.seed(12)
 breast_part <- ml_rpart(data = breast, class ~ .)
-breast_pred1 <- cvpredict(breast_part, cv.k = 5) 
+breast_pred1 <- cvpredict(breast_part, cv.k = 5)
 part1_conf <- confusion(breast_pred1, breast$class)
 part1_tab <- summary(part1_conf)
 
@@ -48,7 +48,7 @@ breast2 <- bind_rows(br_m2, br_b2)
 set.seed(256)
 breast_part2 <- ml_rpart(data = breast2, class ~ .)
 # Évaluation du classifieur
-breast_pred2 <- cvpredict(breast_part2, cv.k = 5) 
+breast_pred2 <- cvpredict(breast_part2, cv.k = 5)
 part2_conf <- confusion(breast_pred2, breast2$class)
 part2_tab <- summary(part2_conf)
 
@@ -65,7 +65,7 @@ part2_conf2_tab <- summary(part2_conf2)
 
 # Courbe ROC
 set.seed(875467)
-breast_pred <- cvpredict(breast_part, cv.k = 5, type = "membership") 
+breast_pred <- cvpredict(breast_part, cv.k = 5, type = "membership")
 #head(breast_pred)
 ```
 
@@ -160,7 +160,7 @@ question("Quel est le taux de vrais positifs pour les personnes malades ?",
   answer(sprintf("%.4f", part1_tab["malignant",]$Specificity)),
   answer(sprintf("%.4f", part1_tab["malignant",]$LRPT)),
   answer(sprintf("%.4f", part1_tab["malignant",]$FDR)),
-  allow_retry = TRUE, 
+  allow_retry = TRUE,
   submit_button = "Soumettre une réponse",
   try_again_button = "Resoumettre une réponse",
   incorrect = "Mauvaise réponse. Recommencez et analysez plus finement les métriques associées à ce classifieur.",
@@ -240,14 +240,14 @@ Calculez le second classifieur `breast_part2` comme le premier, mais avec ce sec
 set.seed(256)
 breast_part2 <- ml___(data = ___, ___~___)
 part2_conf <- confusion(cvpredict(breast_part2, cv.k = ___), ___$___)
-summary(part2_conf) 
+summary(part2_conf)
 ```
 
 ```{r rpart2_h2-hint-1}
 set.seed(256)
 breast_part2 <- ml_rpart(data = breast2, class ~ .)
 part2_conf <- confusion(cvpredict(breast_part2, cv.k = ___), ___$___)
-summary(part2_conf) 
+summary(part2_conf)
 
 ## Attention, le prochain indice est la solution ##
 ```
@@ -257,7 +257,7 @@ summary(part2_conf)
 set.seed(256)
 breast_part2 <- ml_rpart(data = breast2, class ~ .)
 part2_conf <- confusion(cvpredict(breast_part2, cv.k = 5), breast2$class)
-summary(part2_conf) 
+summary(part2_conf)
 ```
 
 ```{r rpart2_h2-check}
@@ -307,7 +307,7 @@ quiz(
     answer(sprintf("%.4f", part2_tab["malignant",]$Precision)),
     answer(sprintf("%.4f", part1_tab["malignant",]$Precision)),
     answer(sprintf("%.4f", part2_conf2_tab["benign",]$Precision)),
-    allow_retry = TRUE, 
+    allow_retry = TRUE,
     submit_button = "Soumettre une réponse",
     try_again_button = "Resoumettre une réponse",
     incorrect = "Mauvaise réponse. Recommencez et analysez plus finement les métriques associées aux classifieurs.",
@@ -317,7 +317,7 @@ quiz(
     answer(sprintf("%.4f", part2_tab["malignant",]$Specificity)),
     answer(sprintf("%.4f", part1_tab["malignant",]$Fscore)),
     answer(sprintf("%.4f", part2_conf2_tab["malignant",]$FDR)),
-    allow_retry = TRUE, 
+    allow_retry = TRUE,
     submit_button = "Soumettre une réponse",
     try_again_button = "Resoumettre une réponse",
     incorrect = "Mauvaise réponse. Recommencez et analysez plus finement les métriques associés aux classifieurs.",
@@ -331,7 +331,7 @@ Dans la section précédente, nous avons altéré les proportions relatives dans
 
 ```{r, echo=TRUE}
 set.seed(875467)
-breast_pred <- cvpredict(breast_part, cv.k = 5, type = "membership") 
+breast_pred <- cvpredict(breast_part, cv.k = 5, type = "membership")
 head(breast_pred)
 ```
 
@@ -409,4 +409,16 @@ question_text(
   placeholder = "Entrez vos commentaires ici...",
   allow_retry = TRUE
 )
+```
+
+```{css, echo=FALSE}
+@media print {
+  .topics {
+    width: 100% !important;
+    padding: 0 0.5em 0 !important;
+  }
+  .topicsContainer, .topicsContainer *, .learnrBanner, .learnrBanner *, .topicActions, .topicActions * {
+    display: none !important;
+  }
+}
 ```
