@@ -1,3 +1,11 @@
+# BioDataScience3 2025.3.0
+
+-   Revision of **C03La_roc** and **C03Lb_ml3** for 2025-2026.
+
+# BioDataScience3 2025.2.0
+
+-   Revision of **C02La_cv** and **C02Lb_ml2** for 2025-2026.
+
 # BioDataScience3 2025.1.0
 
 -   Revision of **C00La_refresh**, **C01La_confusion** and **C01Lb_ml1** for 2025-2026.

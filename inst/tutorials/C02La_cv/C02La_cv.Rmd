@@ -15,6 +15,41 @@ runtime: shiny_prerendered
 ```{r setup, include=FALSE}
 BioDataScience3::learnr_setup()
 SciViews::R("explore", "ml", lang = "fr")
+# Required for RSConnect
+# SciViews::R
+library(rlang)
+library(data.table)
+library(ggplot2)
+library(tibble)
+library(tidyr)
+library(dplyr)
+library(dtplyr)
+library(broom)
+library(forcats)
+library(collapse)
+library(fs)
+library(data.trame)
+library(svFast)
+library(svTidy)
+library(svMisc)
+library(svBase)
+library(svFlow)
+library(data.io)
+library(chart)
+library(tabularise)
+library(SciViews)
+# ... more
+library(readxl)
+library(testthat)
+library(equatags)
+# 'explore' and 'ml' packages
+library(exploreit)
+library(mlearning)
+library(ROCR)
+library(parsnip)
+library(recipes)
+library(rsample)
+library(BioDataScience3)
 
 # Import dataset
 rice <- read("rice", package = "BioDataScience3", lang = "fr")
