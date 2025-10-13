@@ -67,6 +67,7 @@ bio_lda <- mlLda(data = bio_train, gender ~ .)
 # Confusion 
 bio_conf <- confusion(predict(bio_lda, bio_test), bio_test$gender)
 bio_conf_tab <- summary(bio_conf)
+rm(bio_split, bio_train, bio_test, bio_lda, bio_conf)
 ```
 
 ```{r, echo=FALSE}
@@ -169,22 +170,30 @@ bio <- sdrop_na(bio, wrist)
 
 Utilisez les fonctions `initial_split()`, `training()` et `testing()` pour définir votre set d'apprentissage et votre set de test. Votre set d'apprentissage va se nommer `bio_train` et votre set de test sera `bio_test`. Il vous est demandé de réaliser un set d'apprentissage contenant 3/4 des observations et en conservant les mêmes proportions qu'au départ pour le genre.
 
-```{r split_h2, exercise=TRUE}
+```{r split_prep}
+#rm(bio_split)
+#rm(bio_train)
+#rm(bio_test)
+```
+
+```{r split_h2, exercise=TRUE, exercise.setup="split_prep"}
 set.seed(164) # Fixer le début du générateur de nombres pseudo-aléatoires
 bio_split <- initial_split(___, prop = ___, ___ = gender)
-bio_split
 # Diviser le tableau
 ___ <- training(___)
 bio_test <- testing(___)
+# Voir bio_split
+bio_split
 ```
 
 ```{r split_h2-hint-1}
 set.seed(164) # Fixer le début du générateur de nombres pseudo-aléatoires
 bio_split <- initial_split(bio, prop = 3/4, ___ = gender)
-bio_split
 # Diviser le tableau
 ___ <- training(___)
 bio_test <- testing(___)
+# Voir bio_split
+bio_split
 
 ## Attention, le prochain indice est la solution ##
 ```
@@ -193,10 +202,11 @@ bio_test <- testing(___)
 ## Solution ##
 set.seed(164) # Fixer le début du générateur de nombres pseudo-aléatoires
 bio_split <- initial_split(bio, prop = 3/4, strata = gender)
-bio_split
 # Diviser le tableau
 bio_train <- training(bio_split)
 bio_test <- testing(bio_split)
+# Voir bio_split
+bio_split
 ```
 
 ```{r split_h2-check}
@@ -207,7 +217,16 @@ grade_code("Vous avez réalisez votre set d'apprentissage et votre set de test a
 
 Créez maintenant un classifieur du genre en fonction des autres variables (en utilisant une formule abrégée). Choisissez le tableau adéquat pour ce faire et placez ce classifieur dans la variable `bio_lda`.
 
-```{r lda1_h2, exercise=TRUE}
+```{r lda1_prep}
+# Prepare train and test sets
+set.seed(164)
+bio_split <- initial_split(bio, prop = 2/3)
+bio_train <- training(bio_split)
+bio_test <- testing(bio_split)
+```
+
+
+```{r lda1_h2, exercise=TRUE, exercise.setup="lda1_prep"}
 bio_lda <- ___(data = ___, ___ ~ ___)
 summary(bio_lda)
 ```
@@ -233,7 +252,20 @@ grade_code("Voici donc votre premier classifieur ADL. Voyons quoi en faire...", 
 
 Vous allez maintenant déterminer les performances de votre classifieur `bio_lda`. Ne vous trompez pas dans les jeux de données à utiliser `bio`, `bio_train` et `bio_test` pour ce faire.
 
-```{r lda2_h2, exercise=TRUE}
+```{r lda2_prep}
+# Prepare train and test sets
+set.seed(164)
+bio_split <- initial_split(bio, prop = 2/3)
+bio_train <- training(bio_split)
+bio_test <- testing(bio_split)
+
+# Create an LDA model
+bio_lda <- mlLda(data = bio_train, gender ~ .)
+
+```
+
+
+```{r lda2_h2, exercise=TRUE, exercise.setup="lda2_prep"}
 bio_pred <- predict(___, ___)
 bio_conf <- confusion(___, ___$___)
 bio_conf

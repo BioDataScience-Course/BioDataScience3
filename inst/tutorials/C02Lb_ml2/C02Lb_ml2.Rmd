@@ -141,21 +141,23 @@ Réalisez le set d'apprentissage et le set de test. 80% des observations vont se
 ```{r split_h2, exercise=TRUE}
 set.seed(101121) # Générateur de nombres pseudo-aléatoires
 pumpkins_split <- initial_split(___, prop = ___)
-pumpkins_split
 # training set
 pumpkins_train <- ___(___)
 # test set
 pumpkins_test <- ___(___)
+# Afficher pumpkins_split
+pumpkins_split
 ```
 
 ```{r split_h2-hint-1}
 set.seed(101121) # Générateur de nombres pseudo-aléatoires
 pumpkins_split <- initial_split(___, prop = ___)
-pumpkins_split
 # training set
 pumpkins_train <- training(pumpkins_split)
 # test set
 pumpkins_test <- ___(___)
+# Afficher pumpkins_split
+pumpkins_split
 
 ## Attention, le prochain indice est la solution ##
 ```
@@ -164,11 +166,12 @@ pumpkins_test <- ___(___)
 ## Solution ##
 set.seed(101121) # Générateur de nombres pseudo-aléatoires
 pumpkins_split <- initial_split(pumpkins, prop = 0.8)
-pumpkins_split
 # training set
 pumpkins_train <- training(pumpkins_split)
 # test set
 pumpkins_test <- testing(pumpkins_split)
+# Afficher pumpkins_split
+pumpkins_split
 ```
 
 ```{r split_h2-check}

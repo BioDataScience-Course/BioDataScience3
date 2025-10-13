@@ -144,19 +144,21 @@ Utilisez les fonctions `initial_split()`, `training()` et `testing()` pour défi
 ```{r rice_split_h2, exercise=TRUE}
 set.seed(8888) # Fixer le début du générateur de nombres pseudo-aléatoires
 rice_split <- initial_split(___, prop = ___, strata = ___)
-rice_split
 # Diviser le tableau
 ___ <- training(___)
 rice_test <- testing(___)
+# Afficher rice_split
+rice_split
 ```
 
 ```{r rice_split_h2-hint-1}
 set.seed(8888) # Fixer le début du générateur de nombres pseudo-aléatoires
 rice_split <- initial_split(rice, prop = 0.8, strata = ___)
-rice_split
 # Diviser le tableau
 ___ <- training(___)
 rice_test <- testing(___)
+# Afficher rice_split
+rice_split
 
 ## Attention, le prochain indice est la solution ##
 ```
@@ -164,10 +166,11 @@ rice_test <- testing(___)
 ```{r rice_split_h2-solution}
 set.seed(8888) # Fixer le début du générateur de nombres pseudo-aléatoires
 rice_split <- initial_split(rice, prop = 0.8, strata = class)
-rice_split
 # Diviser le tableau
 rice_train <- training(rice_split)
 rice_test <- testing(rice_split)
+# Afficher rice_split
+rice_split
 ```
 
 ```{r rice_split_h2-check}
