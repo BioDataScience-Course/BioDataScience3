@@ -15,6 +15,32 @@ runtime: shiny_prerendered
 ```{r setup, include=FALSE}
 BioDataScience3::learnr_setup()
 SciViews::R("ts", lang = "fr")
+# Required for RSConnect
+# SciViews::R
+library(rlang)
+library(data.table)
+library(ggplot2)
+library(tibble)
+library(tidyr)
+library(dplyr)
+library(dtplyr)
+library(broom)
+library(forcats)
+library(collapse)
+library(fs)
+library(data.trame)
+library(svFast)
+library(svTidy)
+library(svMisc)
+library(svBase)
+library(svFlow)
+library(data.io)
+library(chart)
+library(tabularise)
+library(SciViews)
+# ... more
+library(pastecs)
+library(testthat)
 
 nottem <- read("nottem", package = "datasets")
 set.seed(13313)
@@ -186,7 +212,7 @@ grade_code("Pour spécifier le temps d'un objet **ts**, vous commencez par chois
 
 ### Série 2
 
-Toujours à partir du vecteur des observations `vec`, vous allez maintenant considérer que votre série fictive débute le 1er juillet 2005. Faites le même exercice que ci-dessus avec cette nouvelle information.
+Toujours à partir du vecteur des observations `vec`, vous allez maintenant considérer que votre série fictive débute le 1^er^ juillet 2005. Faites le même exercice que ci-dessus avec cette nouvelle information.
 
 ```{r ts2, exercise=TRUE}
 serie <- ts(vec, start = c(___,___), frequency = ___)

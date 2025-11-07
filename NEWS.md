@@ -1,3 +1,7 @@
+# BioDataScience3 2025.4.0
+
+-   Revision of **C04La_ts_intro** for 2025-2026.
+
 # BioDataScience3 2025.3.1
 
 -   A bug in {gradethis} is avoided (error when an object is generated, printed, and then, another object is generated with a wrong name in the same exercise). It appeared in **C01Lb_ml1**, **C02La_cv**, and **C02Lb_ml2**. The workaround consists in printing the intermediate object at the end of the exercise.
