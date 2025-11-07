@@ -15,9 +15,40 @@ runtime: shiny_prerendered
 ```{r setup, include=FALSE}
 BioDataScience3::learnr_setup()
 SciViews::R("spatial")
+# Required for RSConnect
+# SciViews::R
+library(rlang)
+library(data.table)
+library(ggplot2)
+library(tibble)
+library(tidyr)
+library(dplyr)
+library(dtplyr)
+library(broom)
+library(forcats)
+library(collapse)
+library(fs)
+library(data.trame)
+library(svFast)
+library(svTidy)
+library(svMisc)
+library(svBase)
+library(svFlow)
+library(data.io)
+library(chart)
+library(tabularise)
+library(SciViews)
+# ... more
+library(ggspatial)
+library(sf)
+library(abind)
+library(stars)
+library(terra)
+library(tmap)
+library(testthat)
+
 
 read("NLD_prov", package = "tmap") %>.%
-  fselect(., name, population, geometry) %>.%
   st_as_sf(.) ->
   nld
 
@@ -137,7 +168,6 @@ theme = theme_svmap, env = parent.frame()) {
 
 ```{r, echo=TRUE}
 read("NLD_prov", package = "tmap") %>.%
-  fselect(., name, population, geometry) %>.%
   st_as_sf(.) ->
   nld
 nld
@@ -193,7 +223,7 @@ grade_code("Comme pour les autres graphiques ggplot2/chart, le remplissage se fa
 
 ```{r}
 chart(data = nld) +
-  geom_sf(aes(fill = population))
+  geom_sf(aes(fill = code))
 ```
 
 Refaites la carte ci-dessus, mais maintenant *sans* utiliser l'interface formule dans `chart()`, mais en spécifiant les paramètres dans `geom_sf()`.
@@ -206,7 +236,7 @@ ___(___ = ___) +
 ```{r chartmap3-solution}
 ## Solution ##
 chart(data = nld) +
-  geom_sf(aes(fill = population))
+  geom_sf(aes(fill = code))
 ```
 
 ```{r chartmap3-check}
@@ -233,7 +263,7 @@ plot(st_geometry(nld))
 ```
 
 ```{r basemap1-check}
-grade_code("La fonction `sf_geometry()` extrait l'info nécessaire de l'objet **sf** dans ce cas.")
+grade_code("La fonction `st_geometry()` extrait l'info nécessaire de l'objet **sf** dans ce cas.")
 ```
 
 Le code R de base est bien plus rapide que les cartes réalisées avec `chart()`(ou `ggplot()`). Cette remarque est valable pour tous les types de graphiques entre les deux moteurs graphiques.
@@ -267,7 +297,7 @@ grade_code("Notez la similitude entre `chart()` et `tmap()` auxquels on ajoute d
 ```{r}
 tm_shape(nld) +
   tm_borders() +
-  tm_fill("name", title = "Province")
+  tm_fill("name", fill.legend = tm_legend(title = "Province"))
 ```
 
 Reproduisez la carte ci-dessus avec le package {tmap} en modulant les arguments des fonctions utilisées et en ajoutant une couche de remplissage.
@@ -275,14 +305,14 @@ Reproduisez la carte ci-dessus avec le package {tmap} en modulant les arguments 
 ```{r tmap2, exercise=TRUE, exercise.lines=3}
 tm_shape(___) +
   tm_borders() +
-  tm_fill(___, title = ___)
+  tm_fill(___, fill.legend = tm_legend(title = ___))
 ```
 
 ```{r tmap2-solution}
 ## Solution ##
 tm_shape(nld) +
   tm_borders() +
-  tm_fill("name", title = "Province")
+  tm_fill("name", fill.legend = tm_legend(title = "Province"))
 ```
 
 ```{r tmap2-check}
@@ -292,9 +322,9 @@ grade_code("Le remplissage des polygones se fait effectivement en ajoutant une c
 ```{r}
 tm_shape(nld) +
   tm_borders() +
-  tm_fill("name", title = "Province") +
+  tm_fill("name", fill.legend = tm_legend(title = "Province")) +
   tm_compass() +
-  tm_scale_bar(position = c("left", "bottom"))
+  tm_scalebar(position = c("left", "bottom"))
 ```
 
 À présent, tentez de reproduire une carte un peu plus complexe en cinq couches, toujours avec le package {tmap}. Partez de la solution de l'exercice précédent que vous complétez.
@@ -308,7 +338,7 @@ tm_shape(nld) +
 ```{r tmap3, exercise=TRUE, exercise.lines=6}
 tm_shape(nld) +
   tm_borders() +
-  tm_fill("name", title = "Province") +
+  tm_fill("name", fill.legend = tm_legend(title = "Province")) +
   ___() +
   ___(position = c(___, ___))
 ```
@@ -317,9 +347,9 @@ tm_shape(nld) +
 ## Solution ##
 tm_shape(nld) +
   tm_borders() +
-  tm_fill("name", title = "Province") +
+  tm_fill("name", fill.legend = tm_legend(title = "Province")) +
   tm_compass() +
-  tm_scale_bar(position = c("left", "bottom"))
+  tm_scalebar(position = c("left", "bottom"))
 ```
 
 ```{r tmap3-check}

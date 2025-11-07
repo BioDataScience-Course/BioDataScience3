@@ -1,10 +1,14 @@
+# BioDataScience3 2025.6.0
+
+-   Revision of **C06La_map** for 2025-2026 (still non C06Lb_interp).
+
 # BioDataScience3 2025.5.0
 
--   Revision of **C05La_ts_filter** and **C05La_ts_decomp** for 2025-2026.
+-   Revision of **C05La_ts_filter** and **C05Lb_ts_decomp** for 2025-2026.
 
 # BioDataScience3 2025.4.0
 
--   Revision of **C04La_ts_intro** for 2025-2026.
+-   Revision of **C04La_ts_intro** for 2025-2026 (still no C04Lb_ts_analysis).
 
 # BioDataScience3 2025.3.1
 
