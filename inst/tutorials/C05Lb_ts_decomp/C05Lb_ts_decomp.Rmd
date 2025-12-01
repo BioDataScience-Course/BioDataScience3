@@ -233,13 +233,14 @@ Réalisez maintenant le graphique pour l'analyse des tendances locales, toujours
 
 ```{r lt_h1, exercise=TRUE, exercise.lines=9}
 # Préparation de deux graphiques superposés avec marges ajustées
-par(mfrow = c(2, 1), mar = c(4, 4, 1, 1))
+opar = par(mfrow = c(2, 1), mar = c(4, 4, 1, 1))
 # Tendances locales pour la composante de tendance
 loc <- ___
 # Annotation et second graphique de la composante saisonnière
 abline(v = c(1972, 1982, 1987, 1991), col = "red", lty = 2)
 plot(fl_mts[, "seasonal"])
 abline(v = c(1972, 1982, 1987, 1991), col = "red", lty = 2)
+par(opar)
 ```
 
 ```{r lt_h1-solution}

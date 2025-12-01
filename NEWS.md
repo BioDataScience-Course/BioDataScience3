@@ -1,5 +1,9 @@
 # BioDataScience3 2025.6.0
 
+-   Correction of the lt_h1 exercise from learnr **C05Lb_ts_decomp**
+
+# BioDataScience3 2025.6.0
+
 -   Revision of **C06La_map** for 2025-2026 (still non C06Lb_interp).
 
 # BioDataScience3 2025.5.0
