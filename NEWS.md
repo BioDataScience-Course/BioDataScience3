@@ -1,6 +1,6 @@
-# BioDataScience3 2025.6.0
+# BioDataScience3 2025.6.1
 
--   Correction of the lt_h1 exercise from learnr **C05Lb_ts_decomp**
+-   Correction of the `lt_h1` exercise from learnr **C05Lb_ts_decomp**.
 
 # BioDataScience3 2025.6.0
 
